@@ -35,7 +35,7 @@ public class Mario extends Gem {
         this.cacheHeight = GameView.scaledDefaultSide;
         this.width = this.cacheWidth;
         this.height = this.cacheHeight;
-        font = new UI.Font(UI.Font.FontSize.Normal);
+        font = new UI.Font(R.drawable.oldskol, 2.0f);
     }
 
     public synchronized static boolean RenderTiles(Board board)

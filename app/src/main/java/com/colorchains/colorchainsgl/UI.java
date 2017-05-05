@@ -5,8 +5,12 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.RectF;
+import android.opengl.GLES20;
 import android.view.MotionEvent;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +21,7 @@ import javax.microedition.khronos.opengles.GL10;
  */
 
 public class UI {
-    public Texture texture;
+
     private static boolean _modal = false;
     private static Context _context;
     private static Control mainContainer;
@@ -118,7 +122,7 @@ public class UI {
                 this.height = cacheHeight;
                 this.text = text;
                 loadTexture(R.drawable.button);
-                font = new Font(UI.Font.FontSize.Normal);
+                font = new Font(R.drawable.oldskol, 2.0f);
                 font.text = text;
                 font.x = this.x + (cacheWidth / 2);
                 font.y = this.y + (cacheHeight / 2);
@@ -127,7 +131,7 @@ public class UI {
             public void draw(GL10 gl)
             {
                 super.draw(gl);
-                font.draw(gl);
+                font.draw();
             }
 
             public void clicked(Object args) {
@@ -202,7 +206,7 @@ public class UI {
                 cancelButton.addUIListener(this);
                 this.controls.add(okButton);
                 this.controls.add(cancelButton);
-                this.font = new Font(UI.Font.FontSize.Normal);
+                this.font = new Font(R.drawable.oldskol, 2.0f);
             }
 
             // Assign the listener implementing events interface that will receive the events
@@ -249,8 +253,8 @@ public class UI {
         private Font fontBig;
         public InfoBox(String id, Float x, Float y) {
             super(id, TYPE.INFOBOX, x, y, 0, 0);
-            font = new Font(UI.Font.FontSize.Normal);
-            fontBig = new Font(Font.FontSize.Large);
+            font = new Font(R.drawable.oldskol, 2.0f);
+            fontBig = new Font(R.drawable.oldskol, 2.0f);
             loadTexture(R.drawable.infobox);
         }
 
@@ -273,15 +277,15 @@ public class UI {
             fontBig.text = score.toString();
             fontBig.x = this.x + 224;
             fontBig.y = this.y + 64;
-            fontBig.draw(gl);
+            fontBig.draw();
             fontBig.text = targetScore.toString();
             fontBig.x = this.x + 224;
             fontBig.y = this.y + 116;
-            fontBig.draw(gl);
+            fontBig.draw();
             fontBig.text = puzzleScore.toString();
             fontBig.x = this.x + 224;
             fontBig.y = this.y + 168;
-            fontBig.draw(gl);
+            fontBig.draw();
         }
     }
 
@@ -298,75 +302,160 @@ public class UI {
             /*Render.draw(this.image, Math.round(this.x), Math.round(this.y));*/
         }
     }
-
-    public static class Font{
+    public static class Font extends Shape{
         String fontImagePath;
         int fontHeight = 40;
         int fontWidth = 20;
         float fontWidthGl, fontHeightGl;
         int startChar = 32;
-        int[] charCodes = new int[95];
+        int[] charCodes = new int[96];
         float size = 2f;
         int defaultSize = 8;
-        TYPE type;
         FontSize fontSize = FontSize.Normal;
-        float x, y = 0;
         float r = 1;
-        HorizontalAlignment hAlign = HorizontalAlignment.CENTER;
-        VerticalAlignment vAlign = VerticalAlignment.MIDDLE;
+        HorizontalAlignment hAlign = HorizontalAlignment.LEFT;
+        VerticalAlignment vAlign = VerticalAlignment.BOTTOM;
         float valgn = 0;
         float halgn = 0;
-        public String text = "";
-        Texture texture;
+        private String text = "";
+        static float fontCoords[] = {
+                -0.5f,  0.5f, 0.0f,  // top left      0
+                -0.5f, -0.5f, 0.0f,  // bottom left   1
+                0.5f, -0.5f, 0.0f,  // bottom right  2
+                0.5f,  0.5f, 0.0f }; // top right     3
+        private static short drawOrder[] = {0, 1, 2, 0, 2, 3}; // order to draw vertices
+        private static float[][] uvMap;//textureMap
+        public static final String vs_Image =
+                "uniform mat4 uMVPMatrix;" +
+                        "attribute vec4 vPosition;" +
+                        "attribute vec2 a_texCoord;" +
+                        "varying vec2 v_texCoord;" +
+                        "void main() {" +
+                        "  gl_Position = uMVPMatrix * vPosition;" +
+                        "  v_texCoord = a_texCoord;" +
+                        "}";
+        public static final String fs_Image =
+                "precision mediump float;" +
+                        "varying vec2 v_texCoord;" +
+                        "uniform vec4 color;" +
+                        "uniform vec2 resolution;" +
+                        "uniform float time;" +
+                        "uniform sampler2D s_texture;" +
+                        "void main() {" +
+                        "  gl_FragColor = texture2D( s_texture, v_texCoord ) * vec4(color.r,color.g,color.b,color.a);\n" +
+                        "}";
 
-        private static float[][] textureMap;
-
-        public Font(FontSize fontSize) {
-            switch (fontSize) {
-                case Large:
-                    size = 4f;
-                    this.type = TYPE.FONT_LARGE;
-                    break;
-                case Normal:
-                default:
-                    size = 2f;
-                    this.type = TYPE.FONT_NORMAL;
-                    break;
-            }
-            Bitmap resizedBitmap;
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inScaled = false;
-            Bitmap bmp = BitmapFactory.decodeResource(GameView.context.getResources(), R.drawable.oldskol, options);//
-            resizedBitmap = Bitmap.createScaledBitmap(bmp, defaultSize * (int) this.size * 10, defaultSize * (int) this.size * 10, false);
-            texture = GameView.renderer.loadTexture(this.type, resizedBitmap);
-            fontWidth = resizedBitmap.getWidth() / 10;
-            fontHeight = resizedBitmap.getHeight() / 10;
-            fontWidthGl = 1 / 10f;
-            fontHeightGl = 1 / 10f;
-            if(textureMap == null) buildTextureMap();
+        public Font(Integer resourceId, float scale) {
+            super(fontCoords,drawOrder,  vs_Image/*vs_Text*/ , fs_Image/*fs_Text*/, resourceId, GLES20.GL_NEAREST);
+            fontWidth = Math.round(width / 10)/* *Math.round(scale)*/;
+            fontHeight = Math.round(height / 10)/* *Math.round(scale)*/;
+            fontWidthGl = (1 / 10f)/* *scale*/;
+            fontHeightGl = (1 / 10f)/* *scale*/;
+            this.scale = scale;
+            width = fontWidth*scale;
+            height = fontHeight*scale;
+            offSetX = 0;
+            offSetY = 0;
+            if(uvMap == null) buildTextureMap();
         }
         public void buildTextureMap(){
-            textureMap = new float[1][8];
-            for (int i = 0; i < (95); i++) {
+            uvMap = new float[96][8];
+            for (int i = 0; i < (96); i++) {
                 int code = i;
-                float s = (code * fontWidthGl) % (fontWidthGl * 10);
-                float t = (((int)Math.floor((code * fontWidthGl) / (fontWidthGl * 10)) * fontHeightGl));
-                textureMap[i][0] = s;//s
-                textureMap[i][1] = t;//t
-                textureMap[i][2] = s +  fontWidthGl;
-                textureMap[i][3] = t;
-                textureMap[i][4] = s;
-                textureMap[i][5] = t +  fontHeightGl;
-                textureMap[i][6] = s +  fontWidthGl;
-                textureMap[i][7] = t +  fontHeightGl;
+                float u = (code * fontWidthGl) % (fontWidthGl * 10);
+                float v = (((int)Math.floor((code * fontWidthGl) / (fontWidthGl * 10)) * fontHeightGl));
+                uvMap[i][0] = u;
+                uvMap[i][1] = v +  fontHeightGl;
+                uvMap[i][2] = u;
+                uvMap[i][3] = v;
+                uvMap[i][4] = u +  fontWidthGl;
+                uvMap[i][5] = v;
+                uvMap[i][6] = u +  fontWidthGl;
+                uvMap[i][7] = v +  fontHeightGl;
             }
         }
         public float getX() {
-            return x * GameView.w / GameView.screenW;
+            return x;
+        }
+        public FloatBuffer vertexBuffer;
+        @Override
+        public void setVertexBuffer(float[] coords){
+            // initialize vertex byte buffer for shape coordinates
+            ByteBuffer bb = ByteBuffer.allocateDirect(
+                    // (number of coordinate values * 4 bytes per float)
+                    coords.length * 4);
+            // use the device hardware's native byte order
+            bb.order(ByteOrder.nativeOrder());
+
+            // create a floating point buffer from the ByteBuffer
+            vertexBuffer = bb.asFloatBuffer();
+            // add the coordinates to the FloatBuffer
+            vertexBuffer.put(coords);
+            // set the buffer to read the first coordinate
+            vertexBuffer.position(0);
         }
 
+        public void setText(String text){
+            this.text = text;
+            int textLength = text.replace("\n","").length();
+            float[] uvData = new float[textLength*8];
+            short[] drawOrder = {0, 1, 2, 0, 2, 3};
+            short[] drawOrderFinal = new short[textLength*6];
+            float[] vertexData = new float[textLength*12];
+
+            String lines[] = this.text.split("\\r?\\n");
+            Integer lastVerIndex = 0;
+            Integer lastUVIndex = 0;
+            Integer lastDOFIndex = 0;
+            Integer lastDOIndex = 0;
+            for (int l = 0; l < lines.length; l++) {
+                /*
+                font.x = this.x + (width / 2);
+                font.y = this.y + (height * .2f) + (i * font.fontHeight);
+                font.text = lines[i];
+                font.draw(gl);*/
+                String lineText = lines[l];
+                _getCharCodes(lineText);
+                if(hAlign == HorizontalAlignment.CENTER) halgn = -(lineText.length() / 2f);
+                else if(hAlign == HorizontalAlignment.RIGHT) halgn = -(lineText.length());
+                if(vAlign == VerticalAlignment.TOP) valgn = (1 / 2f);
+                else if(vAlign == VerticalAlignment.BOTTOM) valgn = -(1/2f);
+
+                for (int i = 0; i < charCodes.length; i++) {
+//                texture.setMapping(textureMap[charCodes[i]]);
+//                texture.draw(gl, getX() + (i * (fontWidth)) + halgn, getY() + valgn, fontWidth * r, fontHeight * r, 0, true);
+                    for (int j = 0; j < 8; j++) {
+                        uvData[(lastUVIndex)+(i*8)+j] = uvMap[Math.min(charCodes[i], 95)][j];
+                    }
+                    for (int j = 0; j < 6; j++) {
+                        drawOrderFinal[(lastDOFIndex)+(i*6)+j] = (short) (drawOrder[j]+(((lastDOIndex+i)*4)));
+                    }
+                    vertexData[(lastVerIndex) + (i*12)+0]  = -0.5f + i + (halgn);  //x
+                    vertexData[(lastVerIndex) + (i*12)+1]  =  0.5f + (valgn) + l;  //y
+                    vertexData[(lastVerIndex) + (i*12)+2]  =  0.0f;  //z
+                    vertexData[(lastVerIndex) + (i*12)+3]  = -0.5f + i + (halgn); //x
+                    vertexData[(lastVerIndex) + (i*12)+4]  = -0.5f + (valgn) + l;  //y
+                    vertexData[(lastVerIndex) + (i*12)+5]  =  0.0f;  //z
+                    vertexData[(lastVerIndex) + (i*12)+6]  =  0.5f + i + (halgn);  //x
+                    vertexData[(lastVerIndex) + (i*12)+7]  = -0.5f + (valgn) + l;  //y
+                    vertexData[(lastVerIndex) + (i*12)+8]  =  0.0f;  //z
+                    vertexData[(lastVerIndex) + (i*12)+9]  =  0.5f + i + (halgn);  //x
+                    vertexData[(lastVerIndex) + (i*12)+10] =  0.5f + (valgn) + l;  //y
+                    vertexData[(lastVerIndex) + (i*12)+11] =  0.0f;  //z
+                }
+                lastVerIndex += lineText.length()*12;
+                lastUVIndex += lineText.length()*8;
+                lastDOFIndex += lineText.length()*6;
+                lastDOIndex += lineText.length();
+                //if(l == 2) break;
+            }
+
+            setVertexBuffer(vertexData);
+            setUVBuffer(uvData);
+            setDrawListBuffer(drawOrderFinal);
+        }
         public float getY() {
-            return y * GameView.h / GameView.screenH;
+            return y;
         }
 
         private void _getCharCodes(String text){
@@ -375,16 +464,8 @@ public class UI {
                 charCodes[i] = (((int)text.charAt(i)) - startChar);
             }
         }
-        public void draw(GL10 gl) {
-            _getCharCodes(text);
-            if(hAlign == HorizontalAlignment.CENTER) halgn = -(fontWidth * text.length() / 2);
-            else if(hAlign == HorizontalAlignment.RIGHT) halgn = -(fontWidth * text.length());
-            if(vAlign == VerticalAlignment.MIDDLE) valgn = -(fontHeight / 2);
-            else if(vAlign == VerticalAlignment.BOTTOM) valgn = -(fontHeight);
-            for (int i = 0; i < charCodes.length; i++) {
-                texture.setMapping(textureMap[charCodes[i]]);
-                texture.draw(gl, getX() + (i * (fontWidth)) + halgn, getY() + valgn, fontWidth * r, fontHeight * r, 0, true);
-            }
+        public void draw() {
+            super.draw();
         }
 
         public enum FontSize{

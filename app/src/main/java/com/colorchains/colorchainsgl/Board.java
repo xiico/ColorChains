@@ -57,8 +57,8 @@ public class Board extends Entity {
     public Board(Context context)  throws JSONException {
         super("board", TYPE.BOARD,0f,0f,1280,768);
         this.context = context;
-        font = new UI.Font(UI.Font.FontSize.Normal);
-        font.text = "Loading";
+        font = new UI.Font(R.drawable.oldskol, 2.0f);
+        font.setText("Loading");
         font.x = GameView.metrics.widthPixels / 2;
         font.y = GameView.metrics.heightPixels / 2;
         stages = Stage.getStageList(loadJSONFromAsset("levels.json"));
@@ -350,9 +350,9 @@ public class Board extends Entity {
     void draw(GL10 gl) {
         //Render.clearScreen();
         //Render.clearScreen(bg);//Render.clearScreen(Render.cached.get(TYPE.FONT) == null ?  bg: Render.cached.get(TYPE.FONT));//Render.clearScreen(bg);//Render.clearScreen();
-        texture.draw(gl, x, y, width, height, 0, true);
+        //texture.draw(gl, x, y, width, height, 0, true);
         if (!this.ready()) {
-            if (this.curStage != null) font.draw(gl);
+            if (this.curStage != null) font.draw();
             return;
         }
         ((UI.InfoBox) UI.findControlById("infoBox")).visible = true;
