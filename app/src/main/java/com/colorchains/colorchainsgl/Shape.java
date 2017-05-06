@@ -41,12 +41,12 @@ public class Shape implements Comparable<Shape> {
     public float minScale;
     public float maxScale;
     public float scaleStep = 0.025f;
-    public Integer offSetX = (92/2) + 16;
-    public Integer offSetY = 92*3;//(92/2) + 16;
+    public float offSetX = (92/2) + 16;
+    public float offSetY = 92*3;//(92/2) + 16;
     public boolean doScale = false;
     public boolean rotate = false;
     public String id;
-    public static List<Integer> programs = new ArrayList<>();
+    public List<Integer> programs = new ArrayList<>();
 
     public Shape(float[] coords, short[] drawOrder , String vertexShaderCode, String fragmentShaderCode, Integer resourceId, Integer filtering){
         mProgram = setupImage(resourceId, vertexShaderCode, fragmentShaderCode, filtering);
@@ -54,7 +54,9 @@ public class Shape implements Comparable<Shape> {
     }
 
     public Shape(float[] coords, short[] drawOrder , String vertexShaderCode, String fragmentShaderCode, Integer resourceId){
-        mProgram = setupImage(resourceId, vertexShaderCode, fragmentShaderCode, GLES20.GL_NEAREST);
+        if(resourceId != -1) {
+            mProgram = setupImage(resourceId, vertexShaderCode, fragmentShaderCode, GLES20.GL_NEAREST);
+        }
         init(coords, drawOrder);
     }
 
@@ -116,7 +118,7 @@ public class Shape implements Comparable<Shape> {
 
         if(resourceId > 0) {
             textures.get(resourceId).program = program;
-            programs.add(program);
+            //programs.add(program);
         }
 
         return program;

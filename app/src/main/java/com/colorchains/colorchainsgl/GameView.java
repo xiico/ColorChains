@@ -62,6 +62,7 @@ public class GameView extends GLSurfaceView {
         setRenderer(renderer);
         GameView.context = context;
         metrics = context.getResources().getDisplayMetrics();
+        UI.init();
         Media.init();
         Media.setBackGroundMusic(R.raw.title);
 
@@ -123,6 +124,10 @@ public class GameView extends GLSurfaceView {
     }
 
     public void touchStart(MotionEvent evt){
+        if(renderer.backGround.index + 1 < renderer.backGround.programs.size()){
+            renderer.backGround.index++;
+        } else  renderer.backGround.index = 0;
+        renderer.backGround.mProgram = renderer.backGround.programs.get(renderer.backGround.index);
         /*if(GameView.paused) GameView.paused = false;
         if(GameView.disableTouch) return;
         UI.checkUITouch(evt);
@@ -287,11 +292,11 @@ public class GameView extends GLSurfaceView {
             // Set the camera position (View matrix)
             Matrix.setLookAtM(mViewMatrix, 0, 0f, 0f, 1f, 0f, 0f, 0f, 0f, 1.0f, 0.0f);
 
-            backGround = new BackGround(R.drawable.bg_color);
-            backGround.x = width/2f;
-            backGround.y = height/2f;
-            backGround.offSetX = 0;
-            backGround.offSetY = 0;
+            backGround = new BackGround(TYPE.BACKGROUND);
+            backGround.setX(width/2f);
+            backGround.setY(height/2f);
+            backGround.setOffSetX(0);
+            backGround.setOffSetY(0);
             backGround.doScale = false;
             backGround.rotate = false;
             backGround.index = 0;
@@ -305,10 +310,11 @@ public class GameView extends GLSurfaceView {
 
         @Override
         public void onDrawFrame(GL10 gl) {
+            Timer.update();
             /******* onDrawFrame GL 1.1 **********/
 //            gl.glClear(GLES10.GL_COLOR_BUFFER_BIT);
 //            gl.glVertexPointer(3, GL10.GL_FLOAT, 0, vertexBuffer);
-//            Timer.update();
+//
 //            /***** TEST *****/
 //            gl.glEnable(GL10.GL_TEXTURE_2D);
 //            //gl.glBindTexture(GL10.GL_TEXTURE_2D, textureId);
@@ -323,8 +329,11 @@ public class GameView extends GLSurfaceView {
 
             changeProgram(backGround.mProgram, Shape.vertexBuffer);
             Shape.bindTexture(backGround.getResourceId());
+            backGround.draw();
             /********** end onDrawFrame GL2 ****************************/
             if(GameView.showFPS) {
+                changeProgram(font.mProgram, font.vertexBuffer);
+                Shape.bindTexture(font.getResourceId());
                 // Display the current fps on the screen
                 font.setText(String.valueOf(Timer.fps));
                 font.draw();

@@ -38,16 +38,16 @@ public class Gem extends Entity {
 
     public Integer getRow(){
         if(this.movingSpeed > 0)
-            return (int) Math.floor((this.y /*+ Render.screenOffsetY*/) / GameView.scaledDefaultSide);
+            return (int) Math.floor((this.getX() /*+ Render.screenOffsetY*/) / GameView.scaledDefaultSide);
         else
-            return (int) Math.ceil((this.y /*+ Render.screenOffsetY*/) / GameView.scaledDefaultSide);
+            return (int) Math.ceil((this.getY() /*+ Render.screenOffsetY*/) / GameView.scaledDefaultSide);
     }
 
     public Integer getCol(){
         if(this.movingSpeed > 0)
-            return (int) Math.floor((this.x /*+ Render.screenOffsetX*/) / GameView.scaledDefaultSide);
+            return (int) Math.floor((this.getX() /*+ Render.screenOffsetX*/) / GameView.scaledDefaultSide);
         else
-            return (int) Math.ceil((this.x /*+ Render.screenOffsetX*/) / GameView.scaledDefaultSide);
+            return (int) Math.ceil((this.getY() /*+ Render.screenOffsetX*/) / GameView.scaledDefaultSide);
     }
 
     public int getGemSprites(){
@@ -104,14 +104,14 @@ public class Gem extends Entity {
         if (this.moveTo != null) {
             if (this.moveTo.y != this.getRow()) {
                 this.movingSpeed = this.moveTo.y > this.getRow() ? Math.abs(this.movingSpeed) : -Math.abs(this.movingSpeed);
-                this.y += this.movingSpeed * Timer.deltaTime;
+                this.setY(this.getY() + this.movingSpeed * Timer.deltaTime);
             } else {
                 this.movingSpeed = this.moveTo.x > this.getCol() ? Math.abs(this.movingSpeed) : -Math.abs(this.movingSpeed);
-                this.x += this.movingSpeed * Timer.deltaTime;
+                this.setX(this.getX() + this.movingSpeed * Timer.deltaTime);
             }
             if (this.moveTo.y == this.getRow() && this.moveTo.x == this.getCol()) {
-                this.x = (float)this.moveTo.x * this.cacheWidth;
-                this.y = (float)this.moveTo.y * this.cacheHeight;
+                this.setX((float)this.moveTo.x * this.cacheWidth);
+                this.setY((float)this.moveTo.y * this.cacheHeight);
                 if (board.entities[this.moveTo.y][this.moveTo.x] != this) {
                     Integer lastRow = parseInt(this.id.split("-")[0]), lastCol = parseInt(this.id.split("-")[1]);
                     Gem obj = (Gem) board.entities[this.moveTo.y][this.moveTo.x];

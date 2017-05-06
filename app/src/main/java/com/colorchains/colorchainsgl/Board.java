@@ -93,8 +93,8 @@ public class Board extends Entity {
         });
         nextButton.visible = false;
         progressBar = new UI.Control.ProgressBar();
-        progressBar.x = (float)gemOffsetX;
-        progressBar.y = gemOffsetY + (GameView.scaledDefaultSide * 8f) + (4*GameView.scale);
+        progressBar.setX((float)gemOffsetX);
+        progressBar.setY(gemOffsetY + (GameView.scaledDefaultSide * 8f) + (4*GameView.scale));
         progressBar.width = GameView.scaledDefaultSide * 8;
         progressBar.height = GameView.scaledDefaultSide / 4;
         progressBar.bgColor = Color.parseColor("#000000");
@@ -114,7 +114,7 @@ public class Board extends Entity {
         confirm.visible = false;
 
         UI.InfoBox infoBox = new UI.InfoBox("infoBox", 0f, GameView.scale * 5);
-        infoBox.x = (GameView.metrics.widthPixels / 2f) - (infoBox.width / 2);
+        infoBox.setX((GameView.metrics.widthPixels / 2f) - (infoBox.width / 2));
         infoBox.visible = false;
         UI.addControl(infoBox);
     }
@@ -254,8 +254,8 @@ public class Board extends Entity {
     private void addEntity(String row, TYPE type, int i, int k, Integer cx, Integer cy, Integer idx) {
         this.entities[i][k] = Entity.create(i + "-" + k, type, (float)GameView.scaledDefaultSide * k, (float)GameView.scaledDefaultSide * i, cx, cy, this);
         if(this.entities[i][k] == null) return;
-        this.entities[i][k].offSetX = gemOffsetX;
-        this.entities[i][k].offSetY = gemOffsetY;
+        this.entities[i][k].setOffSetX(gemOffsetX);
+        this.entities[i][k].setOffSetY(gemOffsetY);
         if (this.entities[i][k] == null) return;
         //if (this.entities[i][k].setYs) this.entities[i][k].setYs(null, null);
         if (this.entities[i][k].type == TYPE.MARIO) this.marioBuffer.add(this.entities[i][k]);

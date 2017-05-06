@@ -135,80 +135,8 @@ public class BackGround extends Entity {
                     "      f=(sin(a*g)+1.0)/2.0;\n" +
                     "      gl_FragColor=vec4(vec3(f*i/1.6,i/2.0+d/13.0,i)*d*p.x+vec3(i/1.3+d/8.0,i/2.0+d/18.0,i)*d*(1.0-p.x),1.0);\n" +
                     "}";
-    public static final String shootingStars =
-            "#ifdef GL_ES\n" +
-                    "precision mediump float;\n" +
-                    "#endif\n" +
-                    "\n" +
-                    "uniform float time;\n" +
-                    "uniform vec2 resolution;\n" +
-                    "\n" +
-                    "const float Tau\t\t= 6.2832;\n" +
-                    "const float speed\t= .02;\n" +
-                    "const float density\t= .04;\n" +
-                    "const float shape\t= .06;\n" +
-                    "\n" +
-                    "float random( vec2 seed ) {\n" +
-                    "    return fract(sin(dot(seed.xy ,vec2(12.9898,78.233))) * 43758.5453);\n" +
-                    "}\n" +
-                    "\n" +
-                    "float Cell(vec2 coord) {\n" +
-                    "\tvec2 cell = fract(coord) * vec2(.5,2.) - vec2(.0,.5);\n" +
-                    "\treturn (1.-length(cell*2.-1.))*step(random(floor(coord)),density)*2.;\n" +
-                    "}\n" +
-                    "\n" +
-                    "void main( void ) {\n" +
-                    "\n" +
-                    "\tvec2 p = gl_FragCoord.xy / resolution  - 0.5;\n" +
-                    "\t\n" +
-                    "\tfloat a = fract(atan(p.x, p.y) / Tau);\n" +
-                    "\tfloat d = pow(length(p),0.5);\n" +
-                    "\t\n" +
-                    "\tvec2 coord = vec2(pow(d, shape), a)*256.;\n" +
-                    "\tvec2 delta = vec2(-time*speed*256., .5);\n" +
-                    "\t\n" +
-                    "\tfloat c = 0.;\n" +
-                    "\tfor(int i=0; i<9; i++) {\n" +
-                    "\t\tcoord += delta;\n" +
-                    "\t\tc = max(c, Cell(coord));\n" +
-                    "\t}\n" +
-                    "\t\n" +
-                    "\tgl_FragColor = vec4(c*d);\n" +
-                    "\t\n" +
-                    "}";
-    public static final String rain =
-            "//--- hatsuyuki ---\n" +
-                    "// by Catzpaw 2016\n" +
-                    "precision mediump float;\n" +
-                    "uniform float time;\n" +
-                    "uniform vec2 mouse;\n" +
-                    "uniform vec2 resolution;\n" +
-                    "\n" +
-                    "float snow(vec2 uv,float scale)\n" +
-                    "{\n" +
-                    "\tfloat w=smoothstep(1.,0.,-uv.y*(scale/10.));if(w<.1)return 0.;\n" +
-                    "\tuv+=time/scale;uv.y+=time*2./scale;uv.x+=sin(uv.y+time*.5)/scale;\n" +
-                    "\tuv*=scale;vec2 s=floor(uv),f=fract(uv),p;float k=3.,d;\n" +
-                    "\tp=.5+.35*sin(11.*fract(sin((s+p+scale)*mat2(7,3,6,5))*5.))-f;d=length(p);k=min(d,k);\n" +
-                    "\tk=smoothstep(0.,k,sin(f.x+f.y)*0.01);\n" +
-                    "    \treturn k*w;\n" +
-                    "}\n" +
-                    "\n" +
-                    "void main(void){\n" +
-                    "\tvec2 uv=(gl_FragCoord.xy*2.-resolution.xy)/min(resolution.x,resolution.y); \n" +
-                    "\tvec3 finalColor=vec3(0);\n" +
-                    "\tfloat c=smoothstep(1.,0.3,clamp(uv.y*.3+.8,0.,.75));\n" +
-                    "\tc+=snow(uv,30.)*.0;\n" +
-                    "\tc+=snow(uv,20.)*.0;\n" +
-                    "\tc+=snow(uv,15.)*.0;\n" +
-                    "\tc+=snow(uv,10.);\n" +
-                    "\tc+=snow(uv,8.);\n" +
-                    "\tc+=snow(uv,6.);\n" +
-                    "\tc+=snow(uv,5.);\n" +
-                    "\tfinalColor=(vec3(c));\n" +
-                    "\tfinalColor *= vec3(.7, 0.5, 1.);\n" +
-                    "\tgl_FragColor = vec4(finalColor,1);\n" +
-                    "}";
+
+
     public static final String swirl =
             "#ifdef GL_ES\n" +
                     "precision mediump float;\n" +
@@ -285,47 +213,7 @@ public class BackGround extends Entity {
                     "\t\n" +
                     "    gl_FragColor = vec4(col*0.6, col , col, 1.0);}";
 
-    public static final String swirl2 =
-            "#ifdef GL_ES\n" +
-                    "precision mediump float;\n" +
-                    "#endif\n" +
-                    "//nuclear throne tunnel\n" +
-                    "//2017.01.29 tigrou dot ind at gmail dot com\n" +
-                    "#extension GL_OES_standard_derivatives : enable\n" +
-                    "\n" +
-                    "uniform float time;\n" +
-                    "uniform vec2 mouse;\n" +
-                    "uniform vec2 resolution;\n" +
-                    "\n" +
-                    "vec4 pattern(vec2 pos, float ang) \n" +
-                    "{\n" +
-                    "        pos = vec2(pos.x * cos(ang) - pos.y * sin(ang), pos.y * cos(ang) + pos.x * sin(ang));\t\n" +
-                    "\t\n" +
-                    "\t//if(length(pos) < 0.2)\n" +
-                    "\tif(abs(pos.x) < 0.2 && abs(pos.y) < 0.2)\n" +
-                    "\t   return vec4(0.0, 0.0, 0.0, 0.0);\n" +
-                    "\telse if((abs(pos.x) - abs(pos.y)) > 0.0)\n" +
-                    "\t   return vec4(0.59, 0.45, 0.05, 1.0);\n" +
-                    "\telse\n" +
-                    "\t   return vec4(0.27, 0.07, 0.39, 1.0);\t\t\t\n" +
-                    "}\n" +
-                    "\n" +
-                    "void main( void ) \n" +
-                    "{\n" +
-                    "\tvec2 pos = ( gl_FragCoord.xy / resolution.xy ) - vec2(0.5, 0.5);\n" +
-                    "\tvec4 color = vec4(0.0);\n" +
-                    "\t\n" +
-                    "\tfor(float i = 0.01 ; i < 1.0 ; i += 0.05)\n" +
-                    "\t{\n" +
-                    "\t\tfloat o = 1.0 - i;\n" +
-                    "\t\tvec2 offset = vec2(o*cos(o*2.0+time)*0.5, o*sin(o*2.0+time)*0.5);\n" +
-                    "\t\tvec4 res = pattern(pos/vec2(i*i*2.7)+offset, i*10.0+time);\n" +
-                    "\t\tif(res.a > 0.0)\n" +
-                    "\t\t     color = res*i*2.7;\n" +
-                    "\t}\n" +
-                    "\n" +
-                    "\tgl_FragColor = color;\n" +
-                    "}";
+
     public static final String river =
             "precision mediump float;\n" +
                     "\n" +
@@ -356,138 +244,79 @@ public class BackGround extends Entity {
                     "\t}\n" +
                     "\tgl_FragColor = vec4(allcol, 0.4);\n" +
                     "}";
-    public static final String greenWater =
-            "precision mediump float;\n" +
-                    "\n" +
-                    "        uniform float     time;\n" +
-                    "        uniform vec2      resolution;\n" +
-                    "        uniform vec2      mouse;\n" +
-                    "\tvarying vec2 surfacePosition;\n" +
-                    "\n" +
-                    "        #define MAX_ITER 5\n" +
-                    "\n" +
-                    "        void main( void )\n" +
-                    "        {\n" +
-                    "            vec2 v_texCoord = gl_FragCoord.xy / resolution;\n" +
-                    "\n" +
-                    "            vec2 p =  v_texCoord * 8.0 - vec2(20.0);\n" +
-                    "\t\tp = (surfacePosition - vec2(1.5))* 8.0;\n" +
-                    "            vec2 i = p;\n" +
-                    "            float c = 1.0;\n" +
-                    "            float inten = .03;\n" +
-                    "\n" +
-                    "            for (int n = 0; n < MAX_ITER; n++)\n" +
-                    "            {\n" +
-                    "                float t = time * (1.0 - (3.0 / float(n+1)));\n" +
-                    "\n" +
-                    "                i = p + vec2(cos(t - i.x) + sin(t + i.y),\n" +
-                    "                sin(t - i.y) + cos(t + i.x));\n" +
-                    "\t\t    \n" +
-                    "                c += 1.0/length(vec2(p.x / (sin(i.x+t)/inten),\n" +
-                    "                p.y / (cos(i.y+t)/inten)));\n" +
-                    "            }\n" +
-                    "\n" +
-                    "            c /= float(MAX_ITER);\n" +
-                    "            c = 1.5 - sqrt(c);\n" +
-                    "\n" +
-                    "            vec4 texColor = vec4(0.02, 0.15, 0.02, 1.);\n" +
-                    "\n" +
-                    "            texColor.rgb *= (1.0 / (1.0 - (c + 0.05)));\n" +
-                    "\n" +
-                    "            gl_FragColor = texColor;\n" +
-                    "}       ";
-    public static final String tunnel =
-            "// Endless Tunnel\n" +
-                    "// By: Brandon Fogerty\n" +
-                    "// bfogerty at gmail dot com\n" +
-                    "\n" +
-                    "#ifdef GL_ES\n" +
+
+    public static final String tunnel2 =
+            "#ifdef GL_ES\n" +
                     "precision mediump float;\n" +
                     "#endif\n" +
+                    "\n" +
+                    "#extension GL_OES_standard_derivatives : enable\n" +
                     "\n" +
                     "uniform float time;\n" +
                     "uniform vec2 mouse;\n" +
                     "uniform vec2 resolution;\n" +
                     "\n" +
-                    "#define HorizontalAmplitude\t\t1.00\n" +
-                    "#define VerticleAmplitude\t\t0.80\n" +
-                    "#define HorizontalSpeed\t\t\t0.90\n" +
-                    "#define VerticleSpeed\t\t\t3.10\n" +
-                    "#define ParticleMinSize\t\t\t1.76\n" +
-                    "#define ParticleMaxSize\t\t\t1.71\n" +
-                    "#define ParticleBreathingSpeed\t\t0.30\n" +
-                    "#define ParticleColorChangeSpeed\t0.70\n" +
-                    "#define ParticleCount\t\t\t7.0\n" +
-                    "#define ParticleColor1\t\t\tvec3(9.0, 5.0, 3.0)\n" +
-                    "#define ParticleColor2\t\t\tvec3(1.0, 3.0, 9.0)\n" +
+                    "float iGlobalTime = time;\n" +
+                    "vec2 iResolution = resolution;\n" +
                     "\n" +
+                    "// built for the Ello gif contest:\n" +
+                    "// https://ello.co/medialivexello/post/gif-exhibition\n" +
+                    "// Converted by Batblaster\n" +
                     "\n" +
-                    "vec3 checkerBoard( vec2 uv, vec2 pp )\n" +
-                    "{\n" +
-                    "    vec2 p = floor( uv * 4.6 );\n" +
-                    "    float t = mod( p.x + p.y, 2.2);\n" +
-                    "    vec3 c = vec3(t+pp.x, t+pp.y, t+(pp.x*pp.y));\n" +
+                    "#define PI 3.141592653589793\n" +
+                    "#define TAU 6.283185307179586\n" +
                     "\n" +
-                    "    return c;\n" +
+                    "// from iq / bookofshaders\n" +
+                    "float cubicPulse( float c, float w, float x ){\n" +
+                    "    x = abs(x - c);\n" +
+                    "    if( x>w ) return 0.0;\n" +
+                    "    x /= w;\n" +
+                    "    return 1.0 - x*x*(3.0-2.0*x);\n" +
                     "}\n" +
                     "\n" +
-                    "vec3 tunnel( vec2 p, float scrollSpeed, float rotateSpeed )\n" +
-                    "{    \n" +
-                    "    float a = 2.0 * atan( p.x, p.y  );\n" +
-                    "    float po = 2.0;\n" +
-                    "    float px = pow( p.x*p.x, po );\n" +
-                    "    float py = pow( p.y*p.y, po );\n" +
-                    "    float r = pow( px + py, 1.0/(2.0*po) );    \n" +
-                    "    vec2 uvp = vec2( 1.0/r + (time*scrollSpeed), a + (time*rotateSpeed));\t\n" +
-                    "    vec3 finalColor = checkerBoard( uvp, p ).xyz;\n" +
-                    "    finalColor *= r;\n" +
-                    "\n" +
-                    "    return finalColor;\n" +
-                    "}\n" +
-                    "\n" +
-                    "vec3 particles( vec2 uv )\n" +
+                    "void mainImage( out vec4 fragColor, in vec2 fragCoord )\n" +
                     "{\n" +
-                    "\tvec2 pos = uv * 2.0 - 1.0;\n" +
-                    "\tpos.x *= (resolution.x / resolution.y);\n" +
-                    "\t\n" +
-                    "\tvec3 c = vec3( 0, 0, 0 );\n" +
-                    "\t\n" +
-                    "\tfor( float i = 1.0; i < ParticleCount+1.0; ++i )\n" +
-                    "\t{\n" +
-                    "\t\tfloat cs = cos( time * HorizontalSpeed * (i/ParticleCount) ) * HorizontalAmplitude;\n" +
-                    "\t\tfloat ss = sin( time * VerticleSpeed   * (i/ParticleCount) ) * VerticleAmplitude;\n" +
-                    "\t\tvec2 origin = vec2( cs , ss );\n" +
-                    "\t\t\n" +
-                    "\t\tfloat t = sin( time * ParticleBreathingSpeed * i ) * 0.5 + 0.5;\n" +
-                    "\t\tfloat particleSize = mix( ParticleMinSize, ParticleMaxSize, t );\n" +
-                    "\t\tfloat d = clamp( sin( length( pos - origin )  + particleSize ), 0.0, particleSize);\n" +
-                    "\t\t\n" +
-                    "\t\tfloat t2 = sin( time * ParticleColorChangeSpeed * i ) * 0.5 + 0.5;\n" +
-                    "\t\tvec3 color = mix( ParticleColor1, ParticleColor2, t2 );\n" +
-                    "\t\tc += color * pow( d, 70.0 );\n" +
-                    "\t}\n" +
-                    "\t\n" +
-                    "\treturn c;\n" +
-                    "}\n" +
-                    "\n" +
-                    "void main(void)\n" +
-                    "{\n" +
-                    "    vec2 uv = gl_FragCoord.xy / resolution.xy;\n" +
-                    "    float timeSpeedX = time * 0.3;\n" +
-                    "    float timeSpeedY = time * 0.2;\n" +
-                    "    vec2 p = uv + vec2( -0.50+cos(timeSpeedX)*0.2, -0.5-sin(timeSpeedY)*0.3 );\n" +
-                    "\n" +
-                    "    vec3 finalColor = tunnel( p , 1.0, 0.0);\n" +
-                    "\n" +
-                    "\n" +
-                    "    timeSpeedX = time * 0.30001;\n" +
-                    "    timeSpeedY = time * 0.20001;\n" +
-                    "    p = uv + vec2( -0.50+cos(timeSpeedX)*0.2, -0.5-sin(timeSpeedY)*0.3 );\n" +
+                    "    float time = iGlobalTime * 0.55;\n" +
+                    "    float rainbowSpeed = 5.0;\n" +
+                    "    float colIntensity = 0.15;\n" +
                     "    \n" +
-                    "\t\n" +
-                    "\tfinalColor += particles( uv );\n" +
-                    "\t\n" +
-                    "    gl_FragColor = vec4( finalColor, 1.0 );\n" +
+                    "    //////////////////////////////////////////////////////\n" +
+                    "    // Create tunnel coordinates (p) and remap to normal coordinates (uv)\n" +
+                    "    // Technique from @iq: https://www.shadertoy.com/view/Ms2SWW\n" +
+                    "\t// and a derivative:   https://www.shadertoy.com/view/Xd2SWD\n" +
+                    "    vec2 p = (-iResolution.xy + 2.0*fragCoord)/iResolution.y;\t\t// normalized coordinates (-1 to 1 vertically)\n" +
+                    "    vec2 uvOrig = p;\n" +
+                    "    // added twist by me ------------\n" +
+                    "    float rotZ = 1. - 0.23 * sin(1. * cos(length(p * 1.5)));\n" +
+                    "    p *= mat2(cos(rotZ), sin(rotZ), -sin(rotZ), cos(rotZ));\n" +
+                    "\t//-------------------------------\n" +
+                    "    float a = atan(p.y,p.x);\t\t\t\t\t\t\t\t\t\t\t\t// angle of each pixel to the center of the screen\n" +
+                    "    float rSquare = pow( pow(p.x*p.x,4.0) + pow(p.y*p.y,4.0), 1.0/8.0 );\t// modified distance metric (http://en.wikipedia.org/wiki/Minkowski_distance)\n" +
+                    "    float rRound = length(p);\n" +
+                    "    float r = mix(rSquare, rRound, 0.5 + 0.5 * sin(time * 2.)); \t\t\t// interp between round & rect tunnels\n" +
+                    "    vec2 uv = vec2( 0.3/r + time, a/3.1415927 );\t\t\t\t\t\t\t// index texture by (animated inverse) radious and angle\n" +
+                    "    //////////////////////////////////////////////////////\n" +
+                    "\n" +
+                    "    // subdivide to grid\n" +
+                    "    uv += vec2(0., 0.25 * sin(time + uv.x * 1.2));\t\t\t// pre-warp\n" +
+                    "    uv /= vec2(1. + 0.0002 * length(uvOrig));\n" +
+                    "    vec2 uvDraw = fract(uv * 12.);\t\t\t\t\t\t\t// create grid\n" +
+                    "\n" +
+                    "    // draw lines\n" +
+                    "\tfloat col = cubicPulse(0.5, 0.06, uvDraw.x);\n" +
+                    "    col = max(col, cubicPulse(0.5, 0.06, uvDraw.y));\n" +
+                    "        \n" +
+                    "    // darker towards center, light towards outer\n" +
+                    "    col = col * r * 0.8;\n" +
+                    "    col += colIntensity * length(uvOrig);\n" +
+                    "    // NEW!\n" +
+                    "    // sine function creates monotonous sweep across color band, phase differences of 0, 120 and 240 degrees are added\n" +
+                    "    fragColor = vec4(vec3(col * sin(time*rainbowSpeed), col * sin(time*rainbowSpeed + 2.0*(PI/3.0)), col * sin(time*rainbowSpeed + 4.0*(PI/3.0))), 1.);\n" +
+                    "}\n" +
+                    "\n" +
+                    "void main( void ) {\n" +
+                    "\n" +
+                    "\tmainImage(gl_FragColor,gl_FragCoord.xy);\n" +
                     "}";
     static float squareCoords[] = {
             -0.5f,  0.5f, 0.0f,  // top left      0
@@ -503,24 +332,20 @@ public class BackGround extends Entity {
 
     private static short drawOrder[] = {0, 1, 2, 0, 2, 3}; // order to draw vertices
 
-    public BackGround(Integer resourceId) {
+    public BackGround(TYPE type) {
         //super(squareCoords,drawOrder,  vs_Image , fs_Image, resourceId);
-        super("gb", TYPE.IMAGE, GameView.metrics.widthPixels/2f, GameView.metrics.heightPixels/2f, 0, 0);
-        if(programs.size() == 1)
+        super("gb", type, GameView.metrics.widthPixels/2f, GameView.metrics.heightPixels/2f, 0, 0);
+        if(programs.size() == 0)
         {
-            //programs.add(Shape.createProgram(vs_Image, fs_Image, -1));
+            programs.add(Shape.createProgram(vs_Image, fs_Image, -1));
             programs.add(Shape.createProgram(vs_Image, fs_Image_effect, -1));
             programs.add(Shape.createProgram(vs_Image, effect, -1));
             programs.add(Shape.createProgram(vs_Image, effect3, -1));
             programs.add(Shape.createProgram(vs_Image, effect2, -1));
-            programs.add(Shape.createProgram(vs_Image, shootingStars, -1));
-            programs.add(Shape.createProgram(vs_Image, rain, -1));
             programs.add(Shape.createProgram(vs_Image, swirl, -1));
             programs.add(Shape.createProgram(vs_Image, balls, -1));
-            programs.add(Shape.createProgram(vs_Image, swirl2, -1));
             programs.add(Shape.createProgram(vs_Image, river, -1));
-            programs.add(Shape.createProgram(vs_Image, greenWater, -1));
-            programs.add(Shape.createProgram(vs_Image, tunnel, -1));
+            programs.add(Shape.createProgram(vs_Image, tunnel2, -1));
         }
         if(resourceId == R.drawable.greengem ||
                 resourceId == R.drawable.redgem ||

@@ -25,8 +25,7 @@ public class UI {
     private static boolean _modal = false;
     private static Context _context;
     private static Control mainContainer;
-    public static void init(Context context) {
-        _context = context;
+    public static void init() {
         mainContainer = new Control("mainContainer", TYPE.CONTAINER, 0f, 0f, GameView.metrics.widthPixels, GameView.metrics.heightPixels);
         /*
         BitmapFactory.Options options = new BitmapFactory.Options();
@@ -84,7 +83,7 @@ public class UI {
         if(ctrl.controls.size()  == 0) {
             float rawX = evt.getRawX();
             float rawY = evt.getRawY();
-            RectF ctrlRect = new RectF(ctrl.x, ctrl.y, ctrl.x + ctrl.cacheWidth, ctrl.y + ctrl.cacheHeight);
+            RectF ctrlRect = new RectF(ctrl.getX(), ctrl.getY(), ctrl.getX() + ctrl.cacheWidth, ctrl.getY() + ctrl.cacheHeight);
             RectF touchRect = new RectF(rawX, rawY, rawX + 1, rawY + 1);
             if (touchRect.intersect(ctrlRect) && ctrl.visible) {
                 ((Control.UIListener) ctrl).clicked(ctrl);
@@ -124,8 +123,8 @@ public class UI {
                 loadTexture(R.drawable.button);
                 font = new Font(R.drawable.oldskol, 2.0f);
                 font.text = text;
-                font.x = this.x + (cacheWidth / 2);
-                font.y = this.y + (cacheHeight / 2);
+                font.x = this.getX() + (cacheWidth / 2);
+                font.y = this.getY() + (cacheHeight / 2);
             }
             @Override
             public void draw(GL10 gl)
@@ -200,9 +199,9 @@ public class UI {
                 this.height = GameView.scaledDefaultSide * 2;
                 this.text = text;
                 this.width = GameView.metrics.widthPixels - (GameView.scaledDefaultSide * 2);
-                okButton = new Button("okButton","OK", this.x + (this.width / 2f) - (Button.defaultWidth * 1.5f), this.y + (this.height * .4f), 0, 0);
+                okButton = new Button("okButton","OK", this.getX() + (this.width / 2f) - (Button.defaultWidth * 1.5f), this.getY() + (this.height * .4f), 0, 0);
                 okButton.addUIListener(this);
-                cancelButton = new Button("cancelButton","Cancel", this.x + (this.width / 2f) +  (Button.defaultWidth * .5f), this.y + (this.height * .4f), 0, 0);
+                cancelButton = new Button("cancelButton","Cancel", this.getX() + (this.width / 2f) +  (Button.defaultWidth * .5f), this.getY() + (this.height * .4f), 0, 0);
                 cancelButton.addUIListener(this);
                 this.controls.add(okButton);
                 this.controls.add(cancelButton);
@@ -275,16 +274,16 @@ public class UI {
         {
             super.draw(gl);
             fontBig.text = score.toString();
-            fontBig.x = this.x + 224;
-            fontBig.y = this.y + 64;
+            fontBig.x = this.getX() + 224;
+            fontBig.y = this.getY() + 64;
             fontBig.draw();
             fontBig.text = targetScore.toString();
-            fontBig.x = this.x + 224;
-            fontBig.y = this.y + 116;
+            fontBig.x = this.getX() + 224;
+            fontBig.y = this.getY() + 116;
             fontBig.draw();
             fontBig.text = puzzleScore.toString();
-            fontBig.x = this.x + 224;
-            fontBig.y = this.y + 168;
+            fontBig.x = this.getX() + 224;
+            fontBig.y = this.getY() + 168;
             fontBig.draw();
         }
     }

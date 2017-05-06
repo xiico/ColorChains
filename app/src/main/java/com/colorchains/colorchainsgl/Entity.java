@@ -17,8 +17,8 @@ public abstract class Entity extends Shape {
     public Integer cacheWidth = 10;
     public Integer cacheHeight = 10;
     public String id;
-    public Float x;
-    public Float y;
+    private Float x;
+    private Float y;
     float ratio = 1;
     public final TYPE type;
     public Integer cacheX;
@@ -26,8 +26,8 @@ public abstract class Entity extends Shape {
     public HashMap<String, Animation> animations = new HashMap<>();
     public Animation curAnimation;
     public Entity parent;
-    public float offSetX;
-    public float offSetY;
+    private float offSetX;
+    private float offSetY;
     protected static float[][] textureMap;
 
     public static Entity create(String id, TYPE type, Float x, Float y, Integer cx, Integer cy, Object parent){
@@ -47,6 +47,13 @@ public abstract class Entity extends Shape {
             default:
                 return null;
         }
+    }
+
+    public void setX(float x){
+        super.x = x;
+    }
+    public void setY(float y){
+        super.y = y;
     }
 
     public float getX() {
@@ -115,6 +122,8 @@ public abstract class Entity extends Shape {
                 return R.drawable.cyangem;
             case MARIO:
                 return R.drawable.mario_tiles_46;
+            case BACKGROUND:
+                return R.drawable.bg_color;
             default:
                 return -1;
         }
@@ -137,6 +146,7 @@ public abstract class Entity extends Shape {
 //        texture.setMapping(textureMap[0]);
 //        texture.draw(gl, getX(), getY(), width * ratio, height * ratio, 0, true);
         /****** end gl 1.1  ************/
+        super.draw();
     }
 
     void addAnimation(String id, Integer x, Integer y, Integer[] frames, Float duration,Boolean loop){
@@ -149,5 +159,21 @@ public abstract class Entity extends Shape {
         /******  gl 1.1  ************/
 //        textureMap[0] = texture.textureMap;
         /****** end  gl 1.1  ************/
+    }
+
+    public float getOffSetX() {
+        return offSetX;
+    }
+
+    public void setOffSetX(float offSetX) {
+        super.offSetX = offSetX;
+    }
+
+    public float getOffSetY() {
+        return offSetY;
+    }
+
+    public void setOffSetY(float offSetY) {
+        super.offSetY = offSetY;
     }
 }

@@ -22,5 +22,6 @@ public enum TYPE {
     CONFIRM,
     CONTAINER,
     INFOBOX,
-    IMAGE
+    IMAGE,
+    BACKGROUND
 }
