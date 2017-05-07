@@ -71,25 +71,26 @@ public abstract class Entity extends Shape {
             0.5f,  0.5f, 0.0f}; // top right     3
     private static short drawOrder[] = {0, 1, 2, 0, 2, 3}; // order to draw vertices
     public static final String vs_Image =
-            "uniform mat4 uMVPMatrix;" +
-                    "attribute vec4 vPosition;" +
-                    "attribute vec2 a_texCoord;" +
-                    "varying vec2 v_texCoord;" +
-                    "void main() {" +
-                    "  gl_Position = uMVPMatrix * vPosition;" +
-                    "  v_texCoord = a_texCoord;" +
-                    "}";
+            "uniform mat4 uMVPMatrix;\n" +
+            "attribute vec4 vPosition;\n" +
+            "attribute vec2 a_texCoord;\n" +
+            "varying vec2 v_texCoord;\n" +
+            "void main() {\n" +
+            "  gl_Position = uMVPMatrix * vPosition;\n" +
+            "  v_texCoord = a_texCoord;\n" +
+            "}";
 
     public static final String fs_Image =
-            "precision mediump float;" +
-                    "varying vec2 v_texCoord;" +
-                    "uniform float color;" +
-                    "uniform vec2 resolution;" +
-                    "uniform float time;" +
-                    "uniform sampler2D s_texture;" +
-                    "void main() {" +
-                    "  gl_FragColor = texture2D( s_texture, v_texCoord );\n" +
-                    "}";
+            "precision mediump float;\n" +
+            "varying vec2 v_texCoord;\n" +
+            "uniform float color;\n" +
+            "uniform vec2 resolution;\n" +
+            "uniform float time;\n" +
+            "uniform sampler2D s_texture;\n" +
+            "void main() {\n" +
+            "  gl_FragColor = texture2D( s_texture, v_texCoord );\n" +
+            "}";
+
     public Entity(String id, TYPE type, Float x, Float y, Integer cx, Integer cy){
         super(squareCoords, drawOrder,vs_Image, fs_Image, getGemSprites(type));
         this.type = type;
@@ -124,6 +125,10 @@ public abstract class Entity extends Shape {
                 return R.drawable.mario_tiles_46;
             case BACKGROUND:
                 return R.drawable.bg_color;
+            case TITLE:
+                return R.drawable.title;
+            case BUTTON:
+                return R.drawable.button;
             default:
                 return -1;
         }

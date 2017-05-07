@@ -37,6 +37,7 @@ public class GameView extends GLSurfaceView {
     public static DisplayMetrics metrics;
     private static boolean showFPS = true;
     public static boolean started = false;
+    //private final UI.Title title;
     // A boolean which we will set and unset
     // when the game is running- or not.
     volatile boolean playing;
@@ -50,9 +51,6 @@ public class GameView extends GLSurfaceView {
     static Board board;
     public GameView(Context context) {
         super(context);
-        /******* init GL 1.1 **********/
-        //setEGLConfigChooser(8,8,8,8,0,0);
-        /******* End init GL 1.1 **********/
 
         /******* init GL2 **********/
         // Create an OpenGL ES 2.0 context
@@ -66,20 +64,6 @@ public class GameView extends GLSurfaceView {
         Media.init();
         Media.setBackGroundMusic(R.raw.title);
 
-        /******* vextex GL 1.1 **********/
-//        float vertices[] = {
-//                -0.5f,-0.5f,0.0f,
-//                0.5f,-0.5f,0.0f,
-//                -0.5f,0.5f,0.0f,
-//                0.5f,0.5f,0.0f,
-//        };
-//
-//        ByteBuffer vbb = ByteBuffer.allocateDirect(vertices.length * 4);
-//        vbb.order(ByteOrder.nativeOrder());
-//        vertexBuffer = vbb.asFloatBuffer();
-//        vertexBuffer.put(vertices);
-//        vertexBuffer.position(0);
-        /******* end vextex GL 1.1 **********/
     }
 
     // Everything that needs to be updated goes in here
@@ -195,55 +179,13 @@ public class GameView extends GLSurfaceView {
         // mMVPMatrix is an abbreviation for "Model View Projection Matrix"
         public static final float[] mProjectionMatrix = new float[16];
         public static final float[] mViewMatrix = new float[16];
-        private Integer curProgram = -1;
+        public static Integer curProgram = -1;
+        public static Integer curTexture = -1;
         private BackGround backGround;
+        private UI.Title title;
         /******* fields GL2 **********/
-        /******* load texture GL 1.1 **********/
-//        public Texture loadTexture(TYPE type, Bitmap bmp){
-//            Texture texture = new Texture();
-//            if(!textureIds.containsKey(type)) {
-//                int[] temp = new int[1];
-//                GLES10.glGenTextures(1, temp, 0);
-//                texture.textureId = temp[0];
-//                texture.width = bmp.getWidth();
-//                texture.height = bmp.getHeight();
-//                //textureId = newTextureID(type);
-//                GLES10.glBindTexture(GL10.GL_TEXTURE_2D, texture.textureId);
-//                GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, bmp, 0);
-//                GLES10.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MAG_FILTER, GL10.GL_LINEAR);
-//
-//                if(texture.mipmaps) {
-//                    GLES20.glGenerateMipmap(GLES20.GL_TEXTURE_2D);
-//                    GLES10.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MIN_FILTER, GL10.GL_LINEAR_MIPMAP_LINEAR);
-//                } else GLES10.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MIN_FILTER, GL10.GL_LINEAR);
-//
-//                bmp.recycle();
-//                texture.buildMapping();
-//                textureIds.put(type, texture);
-//                return  texture;
-//            } else {
-//                return textureIds.get(type);
-//            }
-//        }
-//
-//        public void loadTexture(TYPE type, Integer resourceId){
-//            BitmapFactory.Options opts = new BitmapFactory.Options();
-//            opts.inScaled = false;
-//            Bitmap bmp = BitmapFactory.decodeResource(context.getResources(), resourceId, opts);
-//            loadTexture(type, bmp);
-//        }
-        /******* end load texture GL 1.1 **********/
         @Override
         public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-            /******* onSurfaceCreated GL 1.1 **********/
-//            //set up alpha blending
-//            gl.glEnable(GL10.GL_ALPHA_TEST);
-//            gl.glEnable(GL10.GL_BLEND);
-//            gl.glBlendFunc(GL10.GL_ONE, GL10.GL_ONE_MINUS_SRC_ALPHA);
-//            //we are doing 2d
-//            gl.glDisable(GL10.GL_DEPTH_TEST);
-//            gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
-            /******* end onSurfaceCreated GL 1.1 **********/
             /**************** onSurfaceCreated GL2 **********************/
             // Set the background frame color
             GLES20.glClearColor(0.0f, 0.0f, 0.0f, 0.5f);
@@ -259,11 +201,18 @@ public class GameView extends GLSurfaceView {
             GameView.defaultSide = GameView.is16x9 ? 42 : (metrics.widthPixels < 800 ? 46 : 48);
             GameView.scaledDefaultSide = GameView.defaultSide * (int)scale;
             /********************/
-            try {
+            /*try {
                 board = new Board(context);
             } catch (JSONException e) {
                 e.printStackTrace();
-            }
+            }*/
+
+
+            title = new UI.Title();
+            title.setX((metrics.widthPixels / 2) - (title.width / 2f));
+            title.setY(scaledDefaultSide * 4f);
+            UI.addControl(title);
+
             font = new UI.Font(R.drawable.oldskol, 2.0f);
             font.setText("OK!");
             font.x = 32;
@@ -272,14 +221,6 @@ public class GameView extends GLSurfaceView {
 
         @Override
         public void onSurfaceChanged(GL10 gl, int width, int height) {
-            /******* onSurfaceChanged GL 1.1 **********/
-//            gl.glClearColor(0,0,1,1);
-//            gl.glViewport(0,0,screenW,screenH);
-//            gl.glMatrixMode(GL10.GL_MODELVIEW);//GL_PROJECTION
-//            gl.glLoadIdentity();
-//            gl.glOrthof(0,w,h,0,-1,1);
-            /******* end onSurfaceChanged GL 1.1 **********/
-
             /******* onSurfaceChanged GL2 **********/
             final float left = 0;
             final float right = width;
@@ -292,7 +233,11 @@ public class GameView extends GLSurfaceView {
             // Set the camera position (View matrix)
             Matrix.setLookAtM(mViewMatrix, 0, 0f, 0f, 1f, 0f, 0f, 0f, 0f, 1.0f, 0.0f);
 
-            backGround = new BackGround(TYPE.BACKGROUND);
+            /*title = new UI.Title();
+            title.setX((metrics.widthPixels / 2) - (title.width / 2f));
+            title.setY(scaledDefaultSide * 4f);*/
+
+            backGround = new BackGround();
             backGround.setX(width/2f);
             backGround.setY(height/2f);
             backGround.setOffSetX(0);
@@ -311,33 +256,24 @@ public class GameView extends GLSurfaceView {
         @Override
         public void onDrawFrame(GL10 gl) {
             Timer.update();
-            /******* onDrawFrame GL 1.1 **********/
-//            gl.glClear(GLES10.GL_COLOR_BUFFER_BIT);
-//            gl.glVertexPointer(3, GL10.GL_FLOAT, 0, vertexBuffer);
-//
-//            /***** TEST *****/
-//            gl.glEnable(GL10.GL_TEXTURE_2D);
-//            //gl.glBindTexture(GL10.GL_TEXTURE_2D, textureId);
-//            gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_S, GL10.GL_CLAMP_TO_EDGE);
-//            gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_T, GL10.GL_CLAMP_TO_EDGE);
-//            gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
-//            /***** TEST *****/
-            /******* onDrawFrame GL 1.1 **********/
             /********** onDrawFrame GL2 ****************************/
             // Redraw background color
             GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
 
             changeProgram(backGround.mProgram, Shape.vertexBuffer);
-            Shape.bindTexture(backGround.getResourceId());
+            //Shape.bindTexture(backGround.getResourceId());
             backGround.draw();
+            //Shape.bindTexture(title.getResourceId());
+            //title.draw();
             /********** end onDrawFrame GL2 ****************************/
             if(GameView.showFPS) {
                 changeProgram(font.mProgram, font.vertexBuffer);
-                Shape.bindTexture(font.getResourceId());
+                //Shape.bindTexture(font.getResourceId());
                 // Display the current fps on the screen
                 font.setText(String.valueOf(Timer.fps));
                 font.draw();
             }
+            UI.draw();
 
         }
         public static int loadShader(int type, String shaderCode) {
@@ -352,7 +288,7 @@ public class GameView extends GLSurfaceView {
             return shader;
         }
 
-        public void changeProgram(Integer program, FloatBuffer vertexBuffer){
+        public static void changeProgram(Integer program, FloatBuffer vertexBuffer){
             curProgram = program;
             // Add program to OpenGL ES environment
             GLES20.glUseProgram(curProgram);

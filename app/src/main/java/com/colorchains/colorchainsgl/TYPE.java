@@ -23,5 +23,6 @@ public enum TYPE {
     CONTAINER,
     INFOBOX,
     IMAGE,
-    BACKGROUND
+    BACKGROUND,
+    TITLE
 }

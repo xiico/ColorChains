@@ -1,5 +1,7 @@
 package com.colorchains.colorchainsgl;
 
+import android.renderscript.Element;
+
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 
@@ -318,6 +320,288 @@ public class BackGround extends Entity {
                     "\n" +
                     "\tmainImage(gl_FragColor,gl_FragCoord.xy);\n" +
                     "}";
+    private static final String hive =
+            "#ifdef GL_ES\n" +
+                    "precision mediump float;\n" +
+                    "#endif\n" +
+                    "\n" +
+                    "#extension GL_OES_standard_derivatives : enable\n" +
+                    "\n" +
+                    "uniform float time;\n" +
+                    "uniform vec2 mouse;\n" +
+                    "uniform vec2 resolution;\n" +
+                    "\n" +
+                    "\n" +
+                    "\n" +
+                    "float hexGrid(vec2 p)\n" +
+                    "{\n" +
+                    "  p.x *= 1.1547;\n" +
+                    "  p.y += mod(floor(p.x), 2.)*0.5;\n" +
+                    "  p = abs((mod(p, 1.0) - 0.5));\n" +
+                    "  return abs(max(p.x*1.5 + p.y, p.y*2.0)-1.0);\n" +
+                    "}\n" +
+                    "\n" +
+                    "void main( void ) {\n" +
+                    "\tvec2 p = ( gl_FragCoord.xy * 2.0 - resolution.xy ) / min(resolution.x, resolution.y);\n" +
+                    "\n" +
+                    "\tfloat color = hexGrid(p * 3.0 + vec2(time*0.5, time*0.3));\n" +
+                    "\t\n" +
+                    "\tvec4 finColor = vec4(p.x*max(p.x, p.y)-p.y, p.y, 0.4 + 0.8*sin(time), 1.0);\n" +
+                    "\t\t\n" +
+                    "\tgl_FragColor = vec4(color * finColor);\n" +
+                    "\n" +
+                    "\t\n" +
+                    "\n" +
+                    "}";
+    private static final String waves =
+            "#ifdef GL_ES\n" +
+                    "precision mediump float;\n" +
+                    "#endif\n" +
+                    "\n" +
+                    "uniform float time;\n" +
+                    "uniform vec2 resolution;\n" +
+                    "\n" +
+                    "\n" +
+                    "void main( void ) {\n" +
+                    "\tvec2 pos = gl_FragCoord.xy / resolution.xy;\n" +
+                    "\tpos.y -= 0.3;\n" +
+                    "\tvec3 c = vec3(0,0,0);\n" +
+                    "\tc = mix(vec3(0,1,1), vec3(0,0.1,0.1), pos.y);\n" +
+                    "\tfloat v = sin((pos.x + time*0.2) * 5.0)*0.05 + sin((pos.x * 3.0+ time*0.1) * 5.0)*0.05;\n" +
+                    "\tif(pos.y < v){\n" +
+                    "\t\tc = mix(c, vec3(0,0.5,0.5), 0.2);\n" +
+                    "\t}\n" +
+                    "\tv = sin((pos.x + time*0.1) * 5.0)*0.05 + sin((pos.x * 3.0+ time*0.05) * 5.0)*0.05;\n" +
+                    "\tif(pos.y < v){\n" +
+                    "\t\tc = mix(c, vec3(0,0.5,0.5), 0.2);\n" +
+                    "\t}\n" +
+                    "\tgl_FragColor = vec4(c, 13.0);\n" +
+                    "\n" +
+                    "}";
+    public static final String greenWater =
+            "precision mediump float;\n" +
+                    "\n" +
+                    "        uniform float     time;\n" +
+                    "        uniform vec2      resolution;\n" +
+                    "        uniform vec2      mouse;\n" +
+                    "\n" +
+                    "        #define MAX_ITER 3\n" +
+                    "\n" +
+                    "        void main( void )\n" +
+                    "        {\n" +
+                    "            vec2 v_texCoord = gl_FragCoord.xy / resolution;\n" +
+                    "\n" +
+                    "            vec2 p =  v_texCoord * 8.0 - vec2(20.0);\n" +
+                    "            vec2 i = p;\n" +
+                    "            float c = 1.0;\n" +
+                    "            float inten = .05;\n" +
+                    "\n" +
+                    "            for (int n = 0; n < MAX_ITER; n++)\n" +
+                    "            {\n" +
+                    "                float t = time * (1.0 - (3.0 / float(n+1)));\n" +
+                    "\n" +
+                    "                i = p + vec2(cos(t - i.x) + sin(t + i.y),\n" +
+                    "                sin(t - i.y) + cos(t + i.x));\n" +
+                    "\t\t    \n" +
+                    "                c += 1.0/length(vec2(p.x / (sin(i.x+t)/inten),\n" +
+                    "                p.y / (cos(i.y+t)/inten)));\n" +
+                    "            }\n" +
+                    "\n" +
+                    "            c /= float(MAX_ITER);\n" +
+                    "            c = 1.5 - sqrt(c);\n" +
+                    "\n" +
+                    "            vec4 texColor = vec4(0.02, 0.15, 0.02, 1.);\n" +
+                    "\n" +
+                    "            texColor.rgb *= (1.0 / (1.0 - (c + 0.05)));\n" +
+                    "\n" +
+                    "            gl_FragColor = texColor;\n" +
+                    "        }";
+    private static final String rainbow =
+            "#ifdef GL_ES\n" +
+                    "precision mediump float;\n" +
+                    "#endif\n" +
+                    "\n" +
+                    "uniform vec2 resolution;\n" +
+                    "uniform float time;\n" +
+                    "uniform vec2 mouse;\n" +
+                    "\n" +
+                    "void main()\n" +
+                    "{\n" +
+                    "\tvec2 p=(3.0*gl_FragCoord.xy-resolution)/max(resolution.x,resolution.y);\n" +
+                    "\tfor(int i=1;i<10;i++)\n" +
+                    "\t{\n" +
+                    "\t\tvec2 newp=p;\n" +
+                    "\t\tnewp.x+=0.6/float(i)*sin(float(i)*p.y+time/3.0+0.3*float(i))+1.0;\t\t\n" +
+                    "\t\tnewp.y+=0.6/float(i)*sin(float(i)*p.x+time/40.0+0.3*float(i+10))-0.0/20.0+15.0;\n" +
+                    "\t\tp=newp;\n" +
+                    "\t}\n" +
+                    "\tvec3 col=vec3(0.5*sin(4.0*p.x)+0.5,0.5*sin(2.0*p.y)+0.5,sin(2.1*(p.x+p.y)));\n" +
+                    "\tgl_FragColor=vec4(col, 1.0);\n" +
+                    "}";
+    private static final String tunnel3 =
+            "// Endless Tunnel\n" +
+                    "// By: Brandon Fogerty\n" +
+                    "// bfogerty at gmail dot com\n" +
+                    "\n" +
+                    "#ifdef GL_ES\n" +
+                    "precision mediump float;\n" +
+                    "#endif\n" +
+                    "\n" +
+                    "uniform float time;\n" +
+                    "uniform vec2 mouse;\n" +
+                    "uniform vec2 resolution;\n" +
+                    "\n" +
+                    "#define HorizontalAmplitude\t\t1.50\n" +
+                    "#define VerticleAmplitude\t\t0.50\n" +
+                    "\n" +
+                    "#define HorizontalSpeed\t\t\t0.90\n" +
+                    "#define VerticleSpeed\t\t\t0.50\n" +
+                    "\n" +
+                    "#define ParticleMinSize\t\t\t1.46\n" +
+                    "#define ParticleMaxSize\t\t\t1.71\n" +
+                    "\n" +
+                    "#define ParticleBreathingSpeed\t\t0.30\n" +
+                    "#define ParticleColorChangeSpeed\t0.70\n" +
+                    "\n" +
+                    "#define ParticleCount\t\t\t2.0\n" +
+                    "#define ParticleColor1\t\t\tvec3(9.0, 5.0, 3.0)\n" +
+                    "#define ParticleColor2\t\t\tvec3(1.0, 3.0, 9.0)\n" +
+                    "\n" +
+                    "\n" +
+                    "vec3 checkerBoard( vec2 uv, vec2 pp )\n" +
+                    "{\n" +
+                    "    vec2 p = floor( uv * 4.6 );\n" +
+                    "    float t = mod( p.x + p.y, 2.2);\n" +
+                    "    vec3 c = vec3(t+pp.x, t+pp.y, t+(pp.x*pp.y));\n" +
+                    "\n" +
+                    "    return c;\n" +
+                    "}\n" +
+                    "\n" +
+                    "vec3 tunnel( vec2 p, float scrollSpeed, float rotateSpeed )\n" +
+                    "{    \n" +
+                    "    float a  = 0.0 * atan( p.x, p.y  );\n" +
+                    "    float po = 1.0;\n" +
+                    "    float px = pow( p.x*p.x, po );\n" +
+                    "    float py = pow( p.y*p.y, po );\n" +
+                    "    float r  = pow( px + py, 1.0/(2.0*po) );    \n" +
+                    "    vec2 uvp = vec2( 1.0/r + (time*scrollSpeed), a + (time*rotateSpeed));\t\n" +
+                    "    vec3 finalColor = checkerBoard( uvp, p ).xyz;\n" +
+                    "    finalColor *= r;\n" +
+                    "\n" +
+                    "    return finalColor;\n" +
+                    "}\n" +
+                    "\n" +
+                    "vec3 particles( vec2 uv )\n" +
+                    "{\n" +
+                    "\tvec2 pos = uv * 2.0 - 1.0;\n" +
+                    "\tpos.x *= (resolution.x / resolution.y);\n" +
+                    "\t\n" +
+                    "\tvec3 c = vec3( 0, 0, 0 );\n" +
+                    "\t\n" +
+                    "\tfor( float i = 1.0; i < ParticleCount+1.0; ++i )\n" +
+                    "\t{\n" +
+                    "\t\tfloat cs = cos( time * HorizontalSpeed * (i/ParticleCount) ) * HorizontalAmplitude;\n" +
+                    "\t\tfloat ss = sin( time * VerticleSpeed   * (i/ParticleCount) ) * VerticleAmplitude;\n" +
+                    "\t\tvec2 origin = vec2( cs , ss );\n" +
+                    "\t\t\n" +
+                    "\t\tfloat t = sin( time * ParticleBreathingSpeed * i ) * 0.5 + 0.5;\n" +
+                    "\t\tfloat particleSize = mix( ParticleMinSize, ParticleMaxSize, t );\n" +
+                    "\t\tfloat d = clamp( sin( length( pos - origin )  + particleSize ), 0.0, particleSize);\n" +
+                    "\t\t\n" +
+                    "\t\tfloat t2 = sin( time * ParticleColorChangeSpeed * i ) * 0.5 + 0.5;\n" +
+                    "\t\tvec3 color = mix( ParticleColor1, ParticleColor2, t2 );\n" +
+                    "\t\tc += color * pow( d, 70.0 );\n" +
+                    "\t}\n" +
+                    "\t\n" +
+                    "\treturn c;\n" +
+                    "}\n" +
+                    "\n" +
+                    "void main(void)\n" +
+                    "{\n" +
+                    "    vec2 uv = gl_FragCoord.xy / resolution.xy;\n" +
+                    "    float timeSpeedX = time * 0.2;\n" +
+                    "    float timeSpeedY = time * 0.2;\n" +
+                    "//    vec2 p = uv + vec2( -0.50+cos(timeSpeedX)*0.2, -0.5-sin(timeSpeedY)*0.3 );\n" +
+                    "    vec2 p = uv + vec2( -0.5, -0.5 );\n" +
+                    "\n" +
+                    "    vec3 finalColor = tunnel( p , 1.0, 0.0);\n" +
+                    "\n" +
+                    "\n" +
+                    "    timeSpeedX = time * 1.30001;\n" +
+                    "    timeSpeedY = time * 1.20001;\n" +
+                    "    p = uv + vec2( -0.50+cos(timeSpeedX)*0.2, -0.5-sin(timeSpeedY)*0.3 );\n" +
+                    "    \n" +
+                    "\t\n" +
+                    "\tfinalColor += particles( uv );\n" +
+                    "\t\n" +
+                    "    gl_FragColor = vec4( finalColor, 1.0 );\n" +
+                    "}";
+    private static final String colorTunnel =
+            "#ifdef GL_ES\n" +
+                    "precision mediump float;\n" +
+                    "#endif\n" +
+                    "\n" +
+                    "#extension GL_OES_standard_derivatives : enable\n" +
+                    "\n" +
+                    "uniform float time;\n" +
+                    "uniform vec2 resolution;\n" +
+                    "\n" +
+                    "const float PI = 3.14159;\n" +
+                    "\n" +
+                    "vec3 hsv(float h, float s, float v) {\n" +
+                    "\tfloat c = s * v;\n" +
+                    "\tfloat _ = mod(h * 6.0, 6.0);\n" +
+                    "\tvec3 C = vec3(c, c*(1.0 - abs(mod(_, 2.0) - 1.0)), 0.0);\n" +
+                    "\tif (_ < 1.0) {\n" +
+                    "\t\tC = vec3(C.x, C.y, C.z);\n" +
+                    "\t} else if (_ < 2.0) {\n" +
+                    "\t\tC = vec3(C.y, C.x, C.z);\n" +
+                    "\t} else if (_ < 3.0) {\n" +
+                    "\t\tC = vec3(C.z, C.x, C.y);\n" +
+                    "\t} else if (_ < 4.0) {\n" +
+                    "\t\tC = vec3(C.z, C.y, C.x);\n" +
+                    "\t} else if (_ < 5.0) {\n" +
+                    "\t\tC = vec3(C.y, C.z, C.x);\n" +
+                    "\t} else {\n" +
+                    "\t\tC = vec3(C.x, C.z, C.y);\n" +
+                    "\t}\n" +
+                    "\treturn C + (v - c);\n" +
+                    "}\n" +
+                    "\n" +
+                    "float map(vec3 p) {\n" +
+                    "\treturn 2.0 - length(p.xz);\n" +
+                    "}\n" +
+                    "\n" +
+                    "float noise(vec2 co){\n" +
+                    "    return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);\n" +
+                    "}\n" +
+                    "\n" +
+                    "void main( void ) {\n" +
+                    "\tvec2 p = (2.0 * gl_FragCoord.xy - resolution) / resolution.y;\n" +
+                    "\tvec3 cp = vec3(cos(time * 0.2), 0.0, sin(time * 0.45)) * 0.5;\n" +
+                    "\tvec3 cl = vec3(-sin(time), 10.0, cos(time));\n" +
+                    "\tvec3 cf = normalize(cl - cp);\n" +
+                    "\tvec3 cs = normalize(cross(cf, vec3(sin(time * 0.1), 0.0, cos(time * 0.1))));\n" +
+                    "\tvec3 cu = normalize(cross(cs, cf));\n" +
+                    "\tfloat focus = 0.5;\n" +
+                    "\tvec3 rd = normalize(cs * p.x + cu * p.y + cf * focus);\n" +
+                    "\tvec3 rp = cp;\n" +
+                    "\tfor (int i = 0; i < 32; ++i) {\n" +
+                    "\t\tfloat d = map(rp);\n" +
+                    "\t\tif (d < 0.001)\n" +
+                    "\t\t\tbreak;\n" +
+                    "\t\trp += rd * d;\n" +
+                    "\t}\n" +
+                    "\tfloat a = (atan(rp.z, rp.x)) * 16.0 / PI;\n" +
+                    "\tfloat div = 1.;///pow(2.,3.+floor(sin(time*3.)*2.));\n" +
+                    "\tfloat ai = floor(a*div);\n" +
+                    "\tfloat af = fract(a*div);\n" +
+                    "\tfloat d = (rp.y + 2.5 * time) * 10.0;\n" +
+                    "\tfloat di = floor(d*div);\n" +
+                    "\tfloat df = fract(d*div);\n" +
+                    "\tfloat v = 32.0 * af * (1.0 - af) * df * (1.0 - df) * exp(-rp.y * 0.8);\n" +
+                    "\tgl_FragColor = vec4(hsv(noise(vec2(ai, di) * 0.01), 1.0, v), 1.0);\n" +
+                    "}\n";
     static float squareCoords[] = {
             -0.5f,  0.5f, 0.0f,  // top left      0
             -0.5f, -0.5f, 0.0f,  // bottom left   1
@@ -332,9 +616,9 @@ public class BackGround extends Entity {
 
     private static short drawOrder[] = {0, 1, 2, 0, 2, 3}; // order to draw vertices
 
-    public BackGround(TYPE type) {
+    public BackGround() {
         //super(squareCoords,drawOrder,  vs_Image , fs_Image, resourceId);
-        super("gb", type, GameView.metrics.widthPixels/2f, GameView.metrics.heightPixels/2f, 0, 0);
+        super("gb", TYPE.BACKGROUND, GameView.metrics.widthPixels/2f, GameView.metrics.heightPixels/2f, 0, 0);
         if(programs.size() == 0)
         {
             programs.add(Shape.createProgram(vs_Image, fs_Image, -1));
@@ -346,6 +630,12 @@ public class BackGround extends Entity {
             programs.add(Shape.createProgram(vs_Image, balls, -1));
             programs.add(Shape.createProgram(vs_Image, river, -1));
             programs.add(Shape.createProgram(vs_Image, tunnel2, -1));
+            programs.add(Shape.createProgram(vs_Image, hive, -1));
+            programs.add(Shape.createProgram(vs_Image, waves, -1));
+            programs.add(Shape.createProgram(vs_Image, greenWater, -1));
+            programs.add(Shape.createProgram(vs_Image, rainbow, -1));
+            programs.add(Shape.createProgram(vs_Image, tunnel3, -1));
+            programs.add(Shape.createProgram(vs_Image, colorTunnel, -1));
         }
         if(resourceId == R.drawable.greengem ||
                 resourceId == R.drawable.redgem ||

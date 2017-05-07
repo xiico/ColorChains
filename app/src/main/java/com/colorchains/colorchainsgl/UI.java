@@ -56,13 +56,16 @@ public class UI {
         return  result;
     }
 
-    public static void draw(GL10 gl) {
+    public static void draw() {
+        //GameView.GLRenderer.changeProgram(mainContainer.controls.get(0).mProgram, Shape.vertexBuffer);
         for (Control ctrl: mainContainer.controls ) {
-            if(ctrl.visible) ctrl.draw(gl);
+            //Shape.bindTexture(ctrl.getResourceId());
+            if(ctrl.visible)
+                ctrl.draw();
         }
     }
 
-    public static void show(){
+    public static void showAll(){
         for (Control ent: mainContainer.controls ) {
             ent.visible = true;
         }
@@ -288,17 +291,16 @@ public class UI {
         }
     }
 
-    public static class Image extends Control{
-        public Bitmap image;
-        public Image(String id, Bitmap bmp) {
-            super(id, TYPE.IMAGE, 0f, 0f, 0, 0);
-            this.image = bmp;
+    public static class Title extends Control{
+        public Title() {
+            super("title", TYPE.TITLE, 0f, 0f, 0, 0);
         }
 
         @Override
         public void draw(GL10 gl)
         {
             /*Render.draw(this.image, Math.round(this.x), Math.round(this.y));*/
+            super.draw();
         }
     }
     public static class Font extends Shape{

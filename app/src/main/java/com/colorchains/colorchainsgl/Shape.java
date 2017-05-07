@@ -136,6 +136,8 @@ public class Shape implements Comparable<Shape> {
     float[] mvpMatrix;
     public void draw() { // pass in the calculated transformation matrix
     //public void draw() { // pass in the calculated transformation matrix
+        if(GameView.GLRenderer.curProgram != this.mProgram) GameView.GLRenderer.changeProgram(this.mProgram, Shape.vertexBuffer);
+        if(GameView.GLRenderer.curTexture != this.getResourceId()) Shape.bindTexture(this.getResourceId());
         mvpMatrix = this.doTransformations();
         /**************old was inside shape *********/
 
@@ -340,6 +342,8 @@ public class Shape implements Comparable<Shape> {
     }
 
     public static void bindTexture(Integer resourceId){
+        GameView.GLRenderer.curTexture = resourceId;
+        if(resourceId < 0) return;
         // Bind texture to textureNames
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textures.get(resourceId).textureId);
