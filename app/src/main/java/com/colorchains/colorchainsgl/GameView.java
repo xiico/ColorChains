@@ -214,9 +214,9 @@ public class GameView extends GLSurfaceView {
             UI.addControl(title);
 
             font = new UI.Font(R.drawable.oldskol, 2.0f);
-            font.setText("OK!");
             font.x = 32;
             font.y = 32;
+            //font.doScale = true;
         }
 
         @Override

@@ -37,7 +37,7 @@ public class Shape implements Comparable<Shape> {
     public float x = 0;
     public float y = 0;
     public static HashMap<Integer,TextureInfo> textures = new HashMap<>();
-    public float angularSpeed;
+    public float angularSpeed = 0.25f;
     public float minScale;
     public float maxScale;
     public float scaleStep = 0.025f;
@@ -55,7 +55,7 @@ public class Shape implements Comparable<Shape> {
 
     public Shape(float[] coords, short[] drawOrder , String vertexShaderCode, String fragmentShaderCode, Integer resourceId){
         if(resourceId != -1) {
-            mProgram = setupImage(resourceId, vertexShaderCode, fragmentShaderCode, GLES20.GL_NEAREST);
+            mProgram = setupImage(resourceId, vertexShaderCode, fragmentShaderCode, GLES20.GL_LINEAR /*GLES20.GL_NEAREST*/);
         }
         init(coords, drawOrder);
     }
@@ -219,6 +219,42 @@ public class Shape implements Comparable<Shape> {
         return scratch;
     }
 
+
+    public static float[] doTransformations(float x, float y, float scaleX, float scaleY, float angle){
+        float[] scratch = new float[16];
+        float[] transformation = new float[16];
+        float[] mRotationMatrix = new float[16];
+        Matrix.setIdentityM(transformation,0);
+        /***************** Start move to Shape *******************/
+        // Calculate the projection and view transformation
+        //Matrix.multiplyMM(mMVPMatrix, 0, GameView.GLRenderer.mProjectionMatrix, 0, GameView.GLRenderer.mViewMatrix, 0);
+
+//        // Calculate translation and scale
+//        Matrix.translateM(mMVPMatrix, 0, x, y ,0);
+//        Matrix.scaleM(mMVPMatrix, 0, width * scale, height * scale, 1);
+//        Matrix.setRotateM(mRotationMatrix, 0, angle, 0, 0, -1.0f);
+
+        // Combine the rotation matrix with the projection and camera view
+        // Note that the mMVPMatrix factor *must be first* in order
+        // for the matrix multiplication product to be correct.
+        //Matrix.multiplyMM(scratch, 0, mMVPMatrix, 0, mRotationMatrix, 0);
+        /***************** End move to Shape ****************************/
+        Matrix.translateM(transformation, 0, x, y ,0);
+        Matrix.scaleM(transformation, 0, scaleX, scaleY, 1);
+        Matrix.setRotateM(mRotationMatrix, 0, angle, 0, 0, -1.0f);
+        //return mMVPMatrix;
+//        Matrix.multiplyMM(scratch, 0, new float[]{1,0,0,0,
+//                                                  0,1,0,0,
+//                                                  0,0,1,0,
+//                                                  2,0,0,1} , 0, mMVPMatrix, 0);
+//        scratch = new float[]{1.5f,  0.0f,  0.0f,  0.0f,
+//                              1.5f, -1.0f,  0.0f,  0.0f,
+//                              2.5f, -1.0f,  0.0f,  0.0f,
+//                              2.5f,  0.0f,  0.0f,  0.0f};
+        //Matrix.translateM(mMVPMatrix, 0, 16, 0 ,0);
+        Matrix.multiplyMM(scratch, 0,transformation,0,mRotationMatrix,0);
+        return scratch;
+    }
 
     public Integer resourceId = -1;
     public Integer index = -1;

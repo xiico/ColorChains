@@ -4,14 +4,17 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.opengl.Matrix;
 import android.graphics.RectF;
 import android.opengl.GLES20;
+import android.os.SystemClock;
 import android.view.MotionEvent;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.microedition.khronos.opengles.GL10;
@@ -314,6 +317,7 @@ public class UI {
         int defaultSize = 8;
         FontSize fontSize = FontSize.Normal;
         float r = 1;
+        float angle = 0;
         HorizontalAlignment hAlign = HorizontalAlignment.LEFT;
         VerticalAlignment vAlign = VerticalAlignment.BOTTOM;
         float valgn = 0;
@@ -396,6 +400,7 @@ public class UI {
             vertexBuffer.position(0);
         }
 
+        private float[] transformationMatrix = new float[16];
         public void setText(String text){
             this.text = text;
             int textLength = text.replace("\n","").length();
@@ -431,6 +436,7 @@ public class UI {
                     for (int j = 0; j < 6; j++) {
                         drawOrderFinal[(lastDOFIndex)+(i*6)+j] = (short) (drawOrder[j]+(((lastDOIndex+i)*4)));
                     }
+
                     vertexData[(lastVerIndex) + (i*12)+0]  = -0.5f + i + (halgn);  //x
                     vertexData[(lastVerIndex) + (i*12)+1]  =  0.5f + (valgn) + l;  //y
                     vertexData[(lastVerIndex) + (i*12)+2]  =  0.0f;  //z
@@ -443,6 +449,21 @@ public class UI {
                     vertexData[(lastVerIndex) + (i*12)+9]  =  0.5f + i + (halgn);  //x
                     vertexData[(lastVerIndex) + (i*12)+10] =  0.5f + (valgn) + l;  //y
                     vertexData[(lastVerIndex) + (i*12)+11] =  0.0f;  //z
+
+                    if(this.rotate || this.doScale) {
+                        transformationMatrix = Shape.doTransformations(0, 0, 1f, 1f, 0);
+                        float[] result = new float[4];
+                        for (int j = 0; j < 12; j += 3) {
+                            float[] data = new float[]{vertexData[(lastVerIndex) + (i * 12) + j + 0],
+                                    vertexData[(lastVerIndex) + (i * 12) + j + 1],
+                                    vertexData[(lastVerIndex) + (i * 12) + j + 2],
+                                    1};
+                            Matrix.multiplyMV(result, 0, transformationMatrix, 0, data, 0);
+                            vertexData[(lastVerIndex) + (i * 12) + j + 0] = result[0];
+                            vertexData[(lastVerIndex) + (i * 12) + j + 1] = result[1];
+                            vertexData[(lastVerIndex) + (i * 12) + j + 2] = result[2];
+                        }
+                    }
                 }
                 lastVerIndex += lineText.length()*12;
                 lastUVIndex += lineText.length()*8;
@@ -486,5 +507,8 @@ public class UI {
             MIDDLE,
             BOTTOM
         }
+
+
+
     }
 }
