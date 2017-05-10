@@ -33,8 +33,8 @@ public class Mario extends Gem {
         this.board = board;
         this.cacheWidth = GameView.scaledDefaultSide;
         this.cacheHeight = GameView.scaledDefaultSide;
-        this.width = this.cacheWidth;
-        this.height = this.cacheHeight;
+        this.setWidth(this.cacheWidth);
+        this.setHeight(this.cacheHeight);
         font = new UI.Font(R.drawable.oldskol, 2.0f);
     }
 

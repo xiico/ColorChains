@@ -641,8 +641,8 @@ public class BackGround extends Entity {
                 resourceId == R.drawable.redgem ||
                 resourceId == R.drawable.orangegem ||
                 resourceId == R.drawable.bluegem){
-            width /= 10;
-            height /= 3;
+            setWidth(getWidth() / 10f) ;
+            setWidth(getWidth() / 3);
         }
     }
 }

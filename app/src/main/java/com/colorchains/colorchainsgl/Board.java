@@ -37,9 +37,9 @@ public class Board extends Entity {
     public boolean levelComplete;
     public Entity selectedGem;
     private boolean _ready = false;
-    public Integer gemOffsetX = 0;
-    public Integer gemOffsetY = 0;
-    public Integer border = 0;
+    public float gemOffsetX = (92/2) + 16;
+    public float gemOffsetY = 92*3;//(92/2) + 16;
+    public Integer border = 8;
     //UI elements
     private UI.Control.Button nextButton;
     private UI.Control.ProgressBar progressBar;
@@ -62,15 +62,11 @@ public class Board extends Entity {
         font.x = GameView.metrics.widthPixels / 2;
         font.y = GameView.metrics.heightPixels / 2;
         stages = Stage.getStageList(loadJSONFromAsset("levels.json"));
+
+        //App settings
         settings = this.context.getSharedPreferences(APP_STATES, 0);
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inPreferredConfig = Bitmap.Config.RGB_565;
-        options.inScaled = false;
-        this.border = 8 + (GameView.is16x9 ? 4 : 0);
-        loadTexture(R.drawable.bg_color);
-        //bg = BitmapFactory.decodeResource(context.getResources(), GameView.is16x9 ? R.drawable.bg16x9 : R.drawable.bg_color, options);
-        //bg = BitmapFactory.decodeResource(context.getResources(), R.drawable.bg_color, options);
-        gemOffsetX = border * (int)GameView.scale;
+
+        gemOffsetX = (GameView.metrics.widthPixels - (92*7)) / 2;
         gemOffsetY = (126*(int)GameView.scale);
         addControls();
         //UI.hide();
@@ -82,8 +78,8 @@ public class Board extends Entity {
 
     public void addControls(){
         nextButton = new UI.Control.Button("next","Next",
-                (float)gemOffsetX + (GameView.scaledDefaultSide * 6),
-                (float)gemOffsetY + (GameView.scaledDefaultSide * 8) + (20 * GameView.scale) ,0,0);
+                gemOffsetX + (GameView.scaledDefaultSide * 6),
+                gemOffsetY + (GameView.scaledDefaultSide * 8) + (20 * GameView.scale) ,0,0);
         UI.addControl(nextButton);
         nextButton.addUIListener(new UI.Control.Button.UIListener() {
             @Override
@@ -91,9 +87,10 @@ public class Board extends Entity {
                 nextStage();
             }
         });
+        //if(nextButton != null) return;
         nextButton.visible = false;
         progressBar = new UI.Control.ProgressBar();
-        progressBar.setX((float)gemOffsetX);
+        progressBar.setX(gemOffsetX);
         progressBar.setY(gemOffsetY + (GameView.scaledDefaultSide * 8f) + (4*GameView.scale));
         progressBar.width = GameView.scaledDefaultSide * 8;
         progressBar.height = GameView.scaledDefaultSide / 4;
@@ -310,7 +307,7 @@ public class Board extends Entity {
             if (!loaded){
                 loaded = true;
                 String boardState = settings.getString(BOARD_STATE,"");
-                if(boardState != null && boardState.length() > 0)
+                if(boardState != null && boardState.length() > 0 && false)
                     confirm.visible = true;
                 else {
                     loadStage(0);
@@ -347,7 +344,8 @@ public class Board extends Entity {
         UI.update();
     }
 
-    void draw(GL10 gl) {
+    @Override
+    public void draw() {
         //Render.clearScreen();
         //Render.clearScreen(bg);//Render.clearScreen(Render.cached.get(TYPE.FONT) == null ?  bg: Render.cached.get(TYPE.FONT));//Render.clearScreen(bg);//Render.clearScreen();
         //texture.draw(gl, x, y, width, height, 0, true);
@@ -360,7 +358,7 @@ public class Board extends Entity {
         for (Integer i = 0; i < rowsCount; i++) {
             for (Integer k = 0; k < colsCount; k++) {
                 Gem entity = (Gem) entities[i][k];
-                if (entity != null) entity.draw(gl);
+                if (entity != null) entity.draw();
             }
         }
     }

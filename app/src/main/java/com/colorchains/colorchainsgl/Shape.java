@@ -31,7 +31,8 @@ public class Shape implements Comparable<Shape> {
     float color[] = {1.0f, 1.0f, 1.0f, 1.0f};
     private int vertexCount;
     private short[] drawOrder;
-    public float width,height = 0;
+    private float width = 0;
+    private float height = 0;
     public float scale = 1;
     float stepScale = 0.05f;
     public float x = 0;
@@ -41,10 +42,11 @@ public class Shape implements Comparable<Shape> {
     public float minScale;
     public float maxScale;
     public float scaleStep = 0.025f;
-    public float offSetX = (92/2) + 16;
-    public float offSetY = 92*3;//(92/2) + 16;
+    public float offSetX = 0;
+    public float offSetY = 0;
     public boolean doScale = false;
     public boolean rotate = false;
+    public boolean useStaticVBO = false;
     public String id;
     public List<Integer> programs = new ArrayList<>();
 
@@ -56,8 +58,8 @@ public class Shape implements Comparable<Shape> {
     public Shape(float[] coords, short[] drawOrder , String vertexShaderCode, String fragmentShaderCode, Integer resourceId){
         if(resourceId != -1) {
             mProgram = setupImage(resourceId, vertexShaderCode, fragmentShaderCode, GLES20.GL_LINEAR /*GLES20.GL_NEAREST*/);
+            init(coords, drawOrder);
         }
-        init(coords, drawOrder);
     }
 
     private void init(float[] coords, short[] drawOrder ){
@@ -165,7 +167,7 @@ public class Shape implements Comparable<Shape> {
             int color =  GLES20.glGetUniformLocation(mProgram, "color");
             GLES20.glUniform4f(color, colour1, colour2, colour3, 1);
             int resolution = GLES20.glGetUniformLocation(mProgram, "resolution");
-            GLES20.glUniform2f(resolution, this.width, this.height);
+            GLES20.glUniform2f(resolution, this.getWidth(), this.getHeight());
             int time = GLES20.glGetUniformLocation(mProgram, "time");
             GLES20.glUniform1f(time, this.time);
             /********** teste *************/
@@ -199,8 +201,8 @@ public class Shape implements Comparable<Shape> {
         if(doScale) {
             if (scale <= minScale || scale >= maxScale) scaleStep = scaleStep * -1;
             scale += scaleStep;
-            Matrix.scaleM(this.mMVPMatrix, 0, width * scale, height * scale, 1);
-        } else Matrix.scaleM(this.mMVPMatrix, 0, width, height, 1);
+            Matrix.scaleM(this.mMVPMatrix, 0, getWidth() * scale, getHeight() * scale, 1);
+        } else Matrix.scaleM(this.mMVPMatrix, 0, getWidth(), this.getHeight(), 1);
 
         // Create a rotation transformation for the triangle
         if(rotate){
@@ -288,13 +290,25 @@ public class Shape implements Comparable<Shape> {
         switch (resourceId){
             case R.drawable.greengem:
             case R.drawable.redgem:
-            case R.drawable.orangegem:
+            case R.drawable.yellowgem:
+            case R.drawable.purplegem:
             case R.drawable.bluegem:
+            case R.drawable.whitegem:
+            case R.drawable.orangegem:
+            case R.drawable.cyangem:
                 uvs = new float[] {
                         0.1f    , 0.0f    ,// top right     0|//0.0f, 1.0f,// top left      0|0.1f    , 0.0f    ,// top right     0
                         0.0f    , 0.0f    ,// top left      1|//0.0f, 0.0f,// bottom left   1|0.0f    , 0.0f    ,// top left      1
                         0.0f    , 0.33333f,// bottom left   2|//1.0f, 0.0f,// bottom right  2|0.0f    , 0.33333f,// bottom left   2
                         0.1f    , 0.33333f // bottom right  3|//1.0f, 1.0f // top right     3|0.1f    , 0.33333f // bottom right  3
+                };
+                break;
+            case R.drawable.button:
+                uvs = new float[] {
+                        0.0f    , 0.0f    ,// top left      0|//0.0f, 1.0f,// top left      0
+                        0.0f    , 1.0f    ,// bottom left   1|//0.0f, 0.0f,// bottom left   1
+                        0.5f    , 1.0f    ,// bottom right  2|//1.0f, 0.0f,// bottom right  2
+                        0.5f    , 0.0f     // top right     3|//1.0f, 1.0f // top right     3
                 };
                 break;
             default:
@@ -309,8 +323,8 @@ public class Shape implements Comparable<Shape> {
         setUVBuffer(uvs);
 
         if(textures.containsKey(resourceId)) {
-            this.width = textures.get(resourceId).width;
-            this.height = textures.get(resourceId).height;
+            this.setWidth(textures.get(resourceId).width);
+            this.setHeight(textures.get(resourceId).height);
             this.setResourceId(resourceId);
             return textures.get(resourceId).program;
         }
@@ -321,13 +335,13 @@ public class Shape implements Comparable<Shape> {
         opts.inScaled = false;
         Bitmap bmp = BitmapFactory.decodeResource(GameView.context.getResources(), resourceId, opts);
 
-        this.width = bmp.getWidth();
-        this.height = bmp.getHeight();
+        this.setWidth(bmp.getWidth());
+        this.setHeight(bmp.getHeight());
 
         // Generate Textures, if more needed, alter these numbers.
         int[] textureNames = new int[1];
         GLES20.glGenTextures(1, textureNames, 0);
-        textures.put(resourceId, new TextureInfo(textureNames[0], this.width, this.height));
+        textures.put(resourceId, new TextureInfo(textureNames[0], bmp.getWidth(), bmp.getHeight()));
         this.setResourceId(resourceId);
 
         bindTexture(resourceId);
@@ -383,6 +397,22 @@ public class Shape implements Comparable<Shape> {
         // Bind texture to textureNames
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textures.get(resourceId).textureId);
+    }
+
+    public float getWidth() {
+        return width;
+    }
+
+    public void setWidth(float width) {
+        this.width = width;
+    }
+
+    public float getHeight() {
+        return height;
+    }
+
+    public void setHeight(float height) {
+        this.height = height;
     }
 
     public class TextureInfo{

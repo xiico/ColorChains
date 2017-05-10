@@ -1,23 +1,21 @@
 package com.colorchains.colorchainsgl;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.opengl.Matrix;
 import android.graphics.RectF;
 import android.opengl.GLES20;
-import android.os.SystemClock;
 import android.view.MotionEvent;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.microedition.khronos.opengles.GL10;
+
+import static com.colorchains.colorchainsgl.GameView.GLRenderer.changeProgram;
 
 /**
  * Created by francisco.cnmarao on 17/04/2017.
@@ -116,26 +114,33 @@ public class UI {
         static class Button extends Control implements UIListener {
             private List<UI.Control.UIListener> listeners = new ArrayList<>();
             private final String text;
-            public static Integer defaultWidth = 76;
-            public static Integer defaultHeight = 38;
             private Font font;
             public Button(String id, String text, Float x, Float y, Integer cx, Integer cy) {
                 super(id, TYPE.BUTTON, x, y, cx, cy);
-                cacheWidth = defaultWidth;
-                cacheHeight = defaultHeight;
-                this.width = cacheWidth;
-                this.height = cacheHeight;
+                cacheWidth = Math.round(super.getWidth() / 2);
+                cacheHeight = (int) super.getHeight();
                 this.text = text;
-                loadTexture(R.drawable.button);
                 font = new Font(R.drawable.oldskol, 2.0f);
-                font.text = text;
-                font.x = this.getX() + (cacheWidth / 2);
-                font.y = this.getY() + (cacheHeight / 2);
+                font.setText(text);
+                font.x = this.getX() /*+ (cacheWidth / 2)*/;
+                font.y = this.getY() /*+ (cacheHeight / 2)*/;
             }
+
             @Override
-            public void draw(GL10 gl)
+            public float getWidth(){
+                return  cacheWidth;
+            }
+
+            @Override
+            public float getHeight(){
+                return  cacheHeight;
+            }
+
+            @Override
+            public void draw()
             {
-                super.draw(gl);
+                super.draw();
+                changeProgram(font.mProgram, font.vertexBuffer);
                 font.draw();
             }
 
@@ -177,7 +182,8 @@ public class UI {
                 _value = value;
             }
 
-            public void draw(GL10 gl) {
+            @Override
+            public void draw() {
                 /*int color = Render.paint.getColor();
                 Render.paint.setColor(bgColor);
                 Render.canvas.drawRect(x, y, x + width, y + height, Render.paint);
@@ -201,13 +207,14 @@ public class UI {
 
             public Confirm(String id, String text, Float x, Float y) {
                 super(id, TYPE.CONFIRM, x, y, GameView.scaledDefaultSide * 3, GameView.scaledDefaultSide * 2);
-                this.width = GameView.scaledDefaultSide * 3;
-                this.height = GameView.scaledDefaultSide * 2;
+                this.setWidth(GameView.scaledDefaultSide * 3);
+                this.setHeight(GameView.scaledDefaultSide * 2);
+                this.setWidth(this.getWidth() + 1);
                 this.text = text;
-                this.width = GameView.metrics.widthPixels - (GameView.scaledDefaultSide * 2);
-                okButton = new Button("okButton","OK", this.getX() + (this.width / 2f) - (Button.defaultWidth * 1.5f), this.getY() + (this.height * .4f), 0, 0);
+                this.setWidth(GameView.metrics.widthPixels - (GameView.scaledDefaultSide * 2));
+                okButton = new Button("okButton","OK", this.getX() + (this.getWidth() / 2f) - (getWidth() * 1.5f), this.getY() + (this.getHeight() * .4f), 0, 0);
                 okButton.addUIListener(this);
-                cancelButton = new Button("cancelButton","Cancel", this.getX() + (this.width / 2f) +  (Button.defaultWidth * .5f), this.getY() + (this.height * .4f), 0, 0);
+                cancelButton = new Button("cancelButton","Cancel", this.getX() + (this.getWidth() / 2f) +  (getWidth() * .5f), this.getY() + (this.getHeight() * .4f), 0, 0);
                 cancelButton.addUIListener(this);
                 this.controls.add(okButton);
                 this.controls.add(cancelButton);
@@ -260,7 +267,6 @@ public class UI {
             super(id, TYPE.INFOBOX, x, y, 0, 0);
             font = new Font(R.drawable.oldskol, 2.0f);
             fontBig = new Font(R.drawable.oldskol, 2.0f);
-            loadTexture(R.drawable.infobox);
         }
 
         public void setScore(Integer score){
@@ -276,9 +282,9 @@ public class UI {
         }
 
         @Override
-        public void draw(GL10 gl)
+        public void draw()
         {
-            super.draw(gl);
+            /*super.draw();
             fontBig.text = score.toString();
             fontBig.x = this.getX() + 224;
             fontBig.y = this.getY() + 64;
@@ -290,19 +296,20 @@ public class UI {
             fontBig.text = puzzleScore.toString();
             fontBig.x = this.getX() + 224;
             fontBig.y = this.getY() + 168;
-            fontBig.draw();
+            fontBig.draw();*/
         }
     }
 
     public static class Title extends Control{
         public Title() {
             super("title", TYPE.TITLE, 0f, 0f, 0, 0);
+            setOffSetX(0);
+            setOffSetY(0);
         }
 
         @Override
         public void draw(GL10 gl)
         {
-            /*Render.draw(this.image, Math.round(this.x), Math.round(this.y));*/
             super.draw();
         }
     }
@@ -318,8 +325,8 @@ public class UI {
         FontSize fontSize = FontSize.Normal;
         float r = 1;
         float angle = 0;
-        HorizontalAlignment hAlign = HorizontalAlignment.LEFT;
-        VerticalAlignment vAlign = VerticalAlignment.BOTTOM;
+        HorizontalAlignment hAlign = HorizontalAlignment.CENTER;
+        VerticalAlignment vAlign = VerticalAlignment.MIDDLE;
         float valgn = 0;
         float halgn = 0;
         private String text = "";
@@ -352,15 +359,16 @@ public class UI {
 
         public Font(Integer resourceId, float scale) {
             super(fontCoords,drawOrder,  vs_Image/*vs_Text*/ , fs_Image/*fs_Text*/, resourceId, GLES20.GL_NEAREST);
-            fontWidth = Math.round(width / 10)/* *Math.round(scale)*/;
-            fontHeight = Math.round(height / 10)/* *Math.round(scale)*/;
+            fontWidth = Math.round(getWidth() / 10)/* *Math.round(scale)*/;
+            fontHeight = Math.round(getHeight() / 10)/* *Math.round(scale)*/;
             fontWidthGl = (1 / 10f)/* *scale*/;
             fontHeightGl = (1 / 10f)/* *scale*/;
             this.scale = scale;
-            width = fontWidth*scale;
-            height = fontHeight*scale;
+            setWidth(fontWidth*scale);
+            setHeight(fontHeight*scale);
             offSetX = 0;
             offSetY = 0;
+            useStaticVBO = true;
             if(uvMap == null) buildTextureMap();
         }
         public void buildTextureMap(){
@@ -422,8 +430,9 @@ public class UI {
                 font.draw(gl);*/
                 String lineText = lines[l];
                 _getCharCodes(lineText);
-                if(hAlign == HorizontalAlignment.CENTER) halgn = -(lineText.length() / 2f);
-                else if(hAlign == HorizontalAlignment.RIGHT) halgn = -(lineText.length());
+                if(hAlign == HorizontalAlignment.LEFT) halgn = 0.5f;
+                else if(hAlign == HorizontalAlignment.RIGHT) halgn = -(lineText.length()-0.5f);
+                else halgn = -(lineText.length() == 1 ? 0 : (lineText.length() / 2f)-0.5f);
                 if(vAlign == VerticalAlignment.TOP) valgn = (1 / 2f);
                 else if(vAlign == VerticalAlignment.BOTTOM) valgn = -(1/2f);
 
@@ -451,7 +460,7 @@ public class UI {
                     vertexData[(lastVerIndex) + (i*12)+11] =  0.0f;  //z
 
                     if(this.rotate || this.doScale) {
-                        transformationMatrix = Shape.doTransformations(0, 0, 1f, 1f, 0);
+                        transformationMatrix = Shape.doTransformations(4f, 2f, 4f, 4f, -60);
                         float[] result = new float[4];
                         for (int j = 0; j < 12; j += 3) {
                             float[] data = new float[]{vertexData[(lastVerIndex) + (i * 12) + j + 0],

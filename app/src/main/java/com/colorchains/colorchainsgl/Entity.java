@@ -12,13 +12,11 @@ import javax.microedition.khronos.opengles.GL10;
  */
 
 public abstract class Entity extends Shape {
-    public Integer width = 10;
-    public Integer height = 10;
     public Integer cacheWidth = 10;
     public Integer cacheHeight = 10;
     public String id;
-    private Float x;
-    private Float y;
+//    private Float x;
+//    private Float y;
     float ratio = 1;
     public final TYPE type;
     public Integer cacheX;
@@ -57,11 +55,11 @@ public abstract class Entity extends Shape {
     }
 
     public float getX() {
-        return x * GameView.w / GameView.screenW;
+        return x;
     }
 
     public float getY() {
-        return y * GameView.h / GameView.screenH;
+        return y;
     }
 
     static float squareCoords[] = {
@@ -99,8 +97,8 @@ public abstract class Entity extends Shape {
         this.y = y;
         this.cacheX = cx;
         this.cacheY = cy;
-        this.width = GameView.scaledDefaultSide;
-        this.height = GameView.scaledDefaultSide;
+//        this.width = GameView.scaledDefaultSide;
+//        this.height = GameView.scaledDefaultSide;
     }
 
     public static int getGemSprites(TYPE type){
@@ -132,16 +130,6 @@ public abstract class Entity extends Shape {
             default:
                 return -1;
         }
-    }
-
-    protected void loadTexture(Integer resourceId) {
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inScaled = false;
-        Bitmap bmp = BitmapFactory.decodeResource(GameView.context.getResources(), resourceId, options);//
-        //texture = GameView.renderer.loadTexture(this.type, bmp);
-        if(textureMap == null) buildTextureMap();
-        this.cacheWidth = bmp.getWidth() / 10;
-        this.cacheHeight = bmp.getHeight() / 3;
     }
 
     void draw(GL10 gl){

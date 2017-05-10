@@ -1,13 +1,13 @@
 {"stages":[
     {"id":"level0", "tiles":[
-"MWMPMMMM",
-"MWMMMCMM",
-"MWWMMMMM",
-"MMMMMMMY",
-"OMMMMMMY",
-"MMMGGMMM",
-"MMMGGMRM",
-"BMMMMMRM"],
+"RRRRRRRR",
+"RRRRRRRR",
+"RRRRRRRR",
+"RRRRRRRR",
+"RRRRRRRR",
+"RRRRRRRR",
+"RRRRRRRR",
+"RRRRRRRR"],
         "customProperties": [], "targetScore": 100, "score": 0, "sets":[1,2,3,4,5,6,7,8]},
     {"id":"level1", "tiles":[
 "MMMMMMMM",

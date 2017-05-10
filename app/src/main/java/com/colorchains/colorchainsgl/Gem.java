@@ -20,6 +20,8 @@ public class Gem extends Entity {
     public Gem (String id, TYPE type, Float x, Float y, Integer cx, Integer cy, Board board) {
         super(id, type, x, y, cx, cy);
         this.board = board;
+        setWidth(getWidth() / 10);
+        setHeight(getHeight() / 3);
         /*Bitmap resizedBitmap = null;
         if (Render.cached.get(type) == null) {
             Bitmap bmp = BitmapFactory.decodeResource(board.context.getResources(), getGemSprites());//
@@ -29,7 +31,7 @@ public class Gem extends Entity {
             resizedBitmap = Render.cached.get(type);
         }*/
         /***************/
-        loadTexture(R.drawable.oldskol);
+
         /***************/
         this.addAnimation("idle", 0, 0, new Integer[]{0}, 0.5f, false);
         this.addAnimation("vanish", 0, GameView.scaledDefaultSide * 1, new Integer[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, 0.3f, false);
