@@ -122,8 +122,8 @@ public class UI {
                 this.text = text;
                 font = new Font(R.drawable.oldskol, 2.0f);
                 font.setText(text);
-                font.x = this.getX() /*+ (cacheWidth / 2)*/;
-                font.y = this.getY() /*+ (cacheHeight / 2)*/;
+                font.setX(this.getX() /*+ (cacheWidth / 2)*/);
+                font.setY(this.getY() /*+ (cacheHeight / 2)*/);
             }
 
             @Override
@@ -388,7 +388,7 @@ public class UI {
             }
         }
         public float getX() {
-            return x;
+            return super.getX();
         }
         public FloatBuffer vertexBuffer;
         @Override
@@ -486,7 +486,7 @@ public class UI {
             setDrawListBuffer(drawOrderFinal);
         }
         public float getY() {
-            return y;
+            return super.getY();
         }
 
         private void _getCharCodes(String text){

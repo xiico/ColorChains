@@ -16,6 +16,8 @@ public class Gem extends Entity {
     public Point moveTo;
     public Board board;
     public Animation curAnimation;
+    public static Integer gemProgram = 0;
+    public boolean selected = false;
 
     public Gem (String id, TYPE type, Float x, Float y, Integer cx, Integer cy, Board board) {
         super(id, type, x, y, cx, cy);
@@ -36,6 +38,19 @@ public class Gem extends Entity {
         this.addAnimation("idle", 0, 0, new Integer[]{0}, 0.5f, false);
         this.addAnimation("vanish", 0, GameView.scaledDefaultSide * 1, new Integer[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, 0.3f, false);
         this.addAnimation("appear", 0, GameView.scaledDefaultSide * 2, new Integer[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, 0.5f, false);//0.5
+    }
+
+    private GemType _gemType;
+    public GemType getGemType() {
+        return _gemType;
+    }
+    public void setGemType(GemType gemType) {
+        _gemType = gemType;
+    }
+
+    public Gem(String id, GemType gemType, Float x, Float y, Integer cx, Integer cy, Board board) {
+        super(id, TYPE.GEM, x, y, cx, cy);
+        setGemType(gemType);
     }
 
     public Integer getRow(){
@@ -75,6 +90,21 @@ public class Gem extends Entity {
             default:
                 return -1;
         }
+    }
+
+    public enum GemType {
+        blue(0),
+        cyan(10),
+        orange(20),
+        green(30),
+        purple(40),
+        red(50),
+        white(60),
+        yellow(70);
+
+        private final int id;
+        GemType(int id) { this.id = id; }
+        public int getValue() { return id; }
     }
 
     public static int getGemSprites(TYPE type){

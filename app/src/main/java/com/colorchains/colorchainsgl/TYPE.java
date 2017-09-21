@@ -5,6 +5,7 @@ package com.colorchains.colorchainsgl;
  */
 
 public enum TYPE {
+    GEM,
     GREENGEM,
     REDGEM ,
     YELLOWGEM,

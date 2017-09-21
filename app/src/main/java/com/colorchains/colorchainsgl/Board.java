@@ -37,8 +37,8 @@ public class Board extends Entity {
     public boolean levelComplete;
     public Entity selectedGem;
     private boolean _ready = false;
-    public float gemOffsetX = (92/2) + 16;
-    public float gemOffsetY = 92*3;//(92/2) + 16;
+    public float gemOffsetX = /*(92/2) +*/ 16;
+    public float gemOffsetY = 252;//92*3;//(92/2) + 16;
     public Integer border = 8;
     //UI elements
     private UI.Control.Button nextButton;
@@ -59,15 +59,18 @@ public class Board extends Entity {
         this.context = context;
         font = new UI.Font(R.drawable.oldskol, 2.0f);
         font.setText("Loading");
-        font.x = GameView.metrics.widthPixels / 2;
-        font.y = GameView.metrics.heightPixels / 2;
+        font.setX(GameView.metrics.widthPixels / 2);
+        font.setY(GameView.metrics.heightPixels / 2);
         stages = Stage.getStageList(loadJSONFromAsset("levels.json"));
 
         //App settings
         settings = this.context.getSharedPreferences(APP_STATES, 0);
 
-        gemOffsetX = (GameView.metrics.widthPixels - (92*7)) / 2;
-        gemOffsetY = (126*(int)GameView.scale);
+//        gemOffsetX = 16;//(GameView.metrics.widthPixels - (92*7)) / 2;
+//        gemOffsetY = 252;//(126*(int)GameView.scale);
+        this.border = 8 + (GameView.is16x9 ? 4 : 0);
+        gemOffsetX = (border * (int)GameView.scale) + (92/2);
+        gemOffsetY = (126*(int)GameView.scale) + (92/2);
         addControls();
         //UI.hide();
     }
@@ -358,7 +361,7 @@ public class Board extends Entity {
         for (Integer i = 0; i < rowsCount; i++) {
             for (Integer k = 0; k < colsCount; k++) {
                 Gem entity = (Gem) entities[i][k];
-                if (entity != null) entity.draw();
+                if (entity != null && !entity.selected) entity.draw();
             }
         }
     }
@@ -461,7 +464,7 @@ public class Board extends Entity {
         Integer posX = parseInt(gem.id.split("-")[1]), posY = parseInt(gem.id.split("-")[0]);
         chain.elements.remove(chain.elements.indexOf(gem));
         List<Gem> elements = new ArrayList<>();
-        List<Gem> cPoints = new ArrayList<>();
+        List<Gem> cPoints;
         elements.addAll(chain.chained);
         elements.addAll(chain.elements);
         //Gem[] elements = chain.elements.concat(chain.chained),

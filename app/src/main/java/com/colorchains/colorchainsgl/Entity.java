@@ -46,21 +46,24 @@ public abstract class Entity extends Shape {
                 return null;
         }
     }
-
-    public void setX(float x){
-        super.x = x;
-    }
-    public void setY(float y){
-        super.y = y;
-    }
-
-    public float getX() {
-        return x;
-    }
-
+    @Override
     public float getY() {
-        return y;
+        return super.getY();
     }
+    @Override
+    public void setY(float y){
+        super.setY(y);
+    }
+
+    @Override
+    public float getX() {
+        return super.getX();
+    }
+    @Override
+    public void setX(float x){
+        super.setX(x);
+    }
+
 
     static float squareCoords[] = {
             -0.5f,  0.5f, 0.0f,  // top left      0
@@ -93,8 +96,8 @@ public abstract class Entity extends Shape {
         super(squareCoords, drawOrder,vs_Image, fs_Image, getGemSprites(type));
         this.type = type;
         this.id = id;
-        this.x = x;
-        this.y = y;
+        this.setX(x);
+        this.setY(y);
         this.cacheX = cx;
         this.cacheY = cy;
 //        this.width = GameView.scaledDefaultSide;

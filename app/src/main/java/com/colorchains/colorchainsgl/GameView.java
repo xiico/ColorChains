@@ -108,10 +108,10 @@ public class GameView extends GLSurfaceView {
     }
 
     public void touchStart(MotionEvent evt){
-        /*if(renderer.backGround.index + 1 < renderer.backGround.programs.size()){
+        if(renderer.backGround.index + 1 < renderer.backGround.programs.size()){
             renderer.backGround.index++;
         } else  renderer.backGround.index = 0;
-        renderer.backGround.mProgram = renderer.backGround.programs.get(renderer.backGround.index);*/
+        renderer.backGround.mProgram = renderer.backGround.programs.get(renderer.backGround.index);
         if(GameView.paused) GameView.paused = false;
         if(GameView.disableTouch) return;
         UI.checkUITouch(evt);
@@ -129,13 +129,16 @@ public class GameView extends GLSurfaceView {
         float rawY = evt.getRawY();
         Integer row = (int)Math.floor((rawY - board.gemOffsetY) / GameView.scaledDefaultSide);
         Integer col = (int)Math.floor((rawX - board.gemOffsetX) / GameView.scaledDefaultSide);
+        Log.d("DEBUG","row: " + row +",col: " + col + ",rawX: " + rawX + ",rawY: " + rawY + ", gemOffsetY: " + board.gemOffsetY + ", gemOffsetX: " + board.gemOffsetX + ", ds: " + GameView.scaledDefaultSide);
         if(!board.ready() || row >= board.entities.length || col >= board.entities[0].length || row < 0 || col < 0) return;
         Gem entity = (Gem)board.entities[row][col];
         board.selectedGem = entity;
+        //entity.selected = true;
         /*if(((Gem)board.selectedGem).curAnimation != null) ((Gem)board.selectedGem).curAnimation.play();*/
     }
 
     public void touchEnd(MotionEvent evt) {
+        //if(evt != null) return;
         if(GameView.disableTouch) return;
         if (board.levelComplete) return;
         if (!GameView.started) return;
@@ -158,13 +161,13 @@ public class GameView extends GLSurfaceView {
         }
         Gem entity = (Gem)board.entities[row][col];
         if (entity == null || !entity.getClass().getName().endsWith("Gem") || (diffCol == 0 && diffRow == 0)) return;
-        // entity.selected = !entity.selected;
+        //entity.selected = true;
         ((Gem)board.selectedGem).moveTo = new Point();
         ((Gem)board.selectedGem).moveTo.y = row;
         ((Gem)board.selectedGem).moveTo.x = col;
         entity.moveTo = new Point();
         entity.moveTo.y = ((Gem)board.selectedGem).getRow();
-        entity.moveTo. x = ((Gem)board.selectedGem).getCol();
+        entity.moveTo.x = ((Gem)board.selectedGem).getCol();
         board.clearChains = true;
     }
 
@@ -183,7 +186,6 @@ public class GameView extends GLSurfaceView {
         public static Integer curTexture = -1;
         private BackGround backGround;
         public UI.Title title;
-        public Gem redGem;
         /******* fields GL2 **********/
         @Override
         public void onSurfaceCreated(GL10 gl, EGLConfig config) {
@@ -240,10 +242,8 @@ public class GameView extends GLSurfaceView {
 
             font = new UI.Font(R.drawable.oldskol, 2.0f);
             font.setText("Hey you!");
-            font.x = 32;
-            font.y = 32;
-
-            redGem = new Gem("redGem", TYPE.REDGEM, 384f, 120f,0,0, null);
+            font.setX(32);
+            font.setY(32);
 
             backGround = new BackGround();
             backGround.setX(width/2f);
@@ -273,7 +273,6 @@ public class GameView extends GLSurfaceView {
             backGround.draw();
             //Shape.bindTexture(title.getResourceId());
             //title.draw();
-            redGem.draw();
             /********** end onDrawFrame GL2 ****************************/
             board.update();
             board.draw();

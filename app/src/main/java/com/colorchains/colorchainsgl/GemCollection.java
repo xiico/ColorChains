@@ -1,4 +1,4 @@
-package com.colorchains.opengles_sv;
+package com.colorchains.colorchainsgl;
 
 import android.opengl.GLES20;
 
@@ -53,8 +53,8 @@ public class GemCollection extends Shape{
         super(fontCoords,drawOrder,  vs_Gem/*vs_Text*/ , fs_Gem/*fs_Text*/, resourceId, GLES20.GL_LINEAR);
         gemWidthGl = (1 / 10f)/* *scale*/;//(1 / 10f)
         gemHeightGl = (1 / 8f)/* *scale*/;//(1 / 8f)
-        width = 92;//92
-        height = 92;//92
+//        width = 92;//92
+//        height = 92;//92
     }
     public void buildTextureMap(){
         uvMap = new float[80][8];
@@ -100,23 +100,24 @@ public class GemCollection extends Shape{
         short[] drawOrderFinal = new short[gems.size() * 6];
         float[] vertexData = new float[gems.size() * 12];
         for (int i = 0; i < gems.size(); i++) {
+            Gem gem = gems.get(i);
             for (int j = 0; j < 8; j++) {
-                uvData[(i * 8) + j] = uvMap[gems.get(i).getGemType().getValue() + gems.get(i).getCurFrame()][j];
+                uvData[(i * 8) + j] = uvMap[gem.getGemType().getValue() + gem.curAnimation.curFrame.intValue()][j];
             }
             for (int j = 0; j < 6; j++) {
                 drawOrderFinal[(i * 6) + j] = (short) (drawOrder[j] + (((i) * 4)));
             }
-            vertexData[(i * 12) + 0] = -0.5f + (gems.get(i).x / width);   //x
-            vertexData[(i * 12) + 1] = 0.5f + (gems.get(i).y / height);  //y
+            vertexData[(i * 12) + 0] = -0.5f + (gem.getX() / gem.getWidth());   //x
+            vertexData[(i * 12) + 1] =  0.5f + (gem.getY() / gem.getHeight());  //y
             vertexData[(i * 12) + 2] = 0.0f;  //z
-            vertexData[(i * 12) + 3] = -0.5f + (gems.get(i).x / width);   //x
-            vertexData[(i * 12) + 4] = -0.5f + (gems.get(i).y / height);  //y
+            vertexData[(i * 12) + 3] = -0.5f + (gem.getX() / gem.getWidth());   //x
+            vertexData[(i * 12) + 4] = -0.5f + (gem.getY() / gem.getHeight());  //y
             vertexData[(i * 12) + 5] = 0.0f;  //z
-            vertexData[(i * 12) + 6] = 0.5f + (gems.get(i).x / width);   //x
-            vertexData[(i * 12) + 7] = -0.5f + (gems.get(i).y / height);  //y
+            vertexData[(i * 12) + 6] =  0.5f + (gem.getX() / gem.getWidth());   //x
+            vertexData[(i * 12) + 7] = -0.5f + (gem.getY() / gem.getHeight());  //y
             vertexData[(i * 12) + 8] = 0.0f;  //z
-            vertexData[(i * 12) + 9] = 0.5f + (gems.get(i).x / width);   //x
-            vertexData[(i * 12) + 10] = 0.5f + (gems.get(i).y / height);  //y
+            vertexData[(i * 12) + 9] =  0.5f + (gem.getX() / gem.getWidth());   //x
+            vertexData[(i * 12) + 10] = 0.5f + (gem.getY() / gem.getHeight());  //y
             vertexData[(i * 12) + 11] = 0.0f;  //z
         }
         setVertexBuffer(vertexData);
@@ -126,7 +127,7 @@ public class GemCollection extends Shape{
 
     public void update(){
         for (Gem gem: gems ) {
-            gem.Update();
+            gem.update();
         }
         setBuffers();
     }

@@ -35,8 +35,8 @@ public class Shape implements Comparable<Shape> {
     private float height = 0;
     public float scale = 1;
     float stepScale = 0.05f;
-    public float x = 0;
-    public float y = 0;
+    private float x = 0;
+    private float y = 0;
     public static HashMap<Integer,TextureInfo> textures = new HashMap<>();
     public float angularSpeed = 0.25f;
     public float minScale;
@@ -60,6 +60,22 @@ public class Shape implements Comparable<Shape> {
             mProgram = setupImage(resourceId, vertexShaderCode, fragmentShaderCode, GLES20.GL_LINEAR /*GLES20.GL_NEAREST*/);
             init(coords, drawOrder);
         }
+    }
+
+    public float getY() {
+        return y;
+    }
+
+    public void setY(float y){
+        this.y = y;
+    }
+
+    public float getX() {
+        return x;
+    }
+
+    public void setX(float x){
+        this.x = x;
     }
 
     private void init(float[] coords, short[] drawOrder ){
@@ -139,7 +155,7 @@ public class Shape implements Comparable<Shape> {
     public void draw() { // pass in the calculated transformation matrix
     //public void draw() { // pass in the calculated transformation matrix
         if(GameView.GLRenderer.curProgram != this.mProgram) GameView.GLRenderer.changeProgram(this.mProgram, Shape.vertexBuffer);
-        if(GameView.GLRenderer.curTexture != this.getResourceId()) Shape.bindTexture(this.getResourceId());
+        if(GameView.GLRenderer.curTexture.intValue() != this.getResourceId().intValue()) Shape.bindTexture(this.getResourceId());
         mvpMatrix = this.doTransformations();
         /**************old was inside shape *********/
 
