@@ -196,7 +196,7 @@ public class Gem extends Entity {
                 this.setY((float)this.moveTo.y * GameView.scaledDefaultSide);
                 if (board.entities[this.moveTo.y][this.moveTo.x] != this) {
                     Integer lastRow = parseInt(this.id.split("-")[0]), lastCol = parseInt(this.id.split("-")[1]);
-                    Gem obj = (Gem) board.entities[this.moveTo.y][this.moveTo.x];
+                    Gem obj = board.entities[this.moveTo.y][this.moveTo.x];
                     //obj.draw(false);
                     obj.id = String.valueOf(lastRow + "-" + lastCol);
                     board.entities[lastRow][lastCol] = obj;
@@ -204,6 +204,7 @@ public class Gem extends Entity {
                     board.entities[this.moveTo.y][this.moveTo.x] = this;
                 }
                 this.movingSpeed = Math.abs(this.movingSpeed);
+                if(!board.selectedGem.equals(this)) board.parseBoard = true;
                 return this.moveTo = null;
             }
         }

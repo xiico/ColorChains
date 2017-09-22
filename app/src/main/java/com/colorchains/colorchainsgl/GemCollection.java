@@ -123,6 +123,7 @@ public class GemCollection extends Shape{
 
     public void draw() {
         setBuffers();
+        GameView.GLRenderer.changeProgram(mProgram, vertexBuffer);
         super.draw();
     }
 }

@@ -164,9 +164,9 @@ public class GameView extends GLSurfaceView {
         Gem entity = (Gem)board.entities[row][col];
         if (entity == null || !entity.getClass().getName().endsWith("Gem") || (diffCol == 0 && diffRow == 0)) return;
         /****** Test *****/
-        entity.color[0] = 0.0f;
-        entity.color[1] = 0.0f;
-        entity.color[2] = 0.0f;
+        entity.color[0] = 1.0f;
+        entity.color[1] = 1.0f;
+        entity.color[2] = 1.0f;
         /**** End Test ***/
         ((Gem)board.selectedGem).moveTo = new Point();
         ((Gem)board.selectedGem).moveTo.y = row;
@@ -274,8 +274,8 @@ public class GameView extends GLSurfaceView {
             // Redraw background color
             GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
 
-            changeProgram(backGround.mProgram, Shape.vertexBuffer);
-            Shape.bindTexture(backGround.getResourceId());
+            //changeProgram(backGround.mProgram, Shape.vertexBuffer);
+            //Shape.bindTexture(backGround.getResourceId());
             backGround.draw();
             //Shape.bindTexture(title.getResourceId());
             //title.draw();
@@ -283,8 +283,8 @@ public class GameView extends GLSurfaceView {
 
             board.update();
             if(board.gemCol != null) {
-                changeProgram(board.gemCol.mProgram, board.gemCol.vertexBuffer);
-                Shape.bindTexture(board.gemCol.getResourceId());
+                //changeProgram(board.gemCol.mProgram, board.gemCol.vertexBuffer);
+                //Shape.bindTexture(board.gemCol.getResourceId());
                 board.draw();
             }
 

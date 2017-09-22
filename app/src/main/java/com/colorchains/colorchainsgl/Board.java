@@ -55,6 +55,7 @@ public class Board extends Entity {
     private String loadResult = "";
     private UI.Font font;
     public GemCollection gemCol;
+    public boolean parseBoard = false;
 
     public Board(Context context)  throws JSONException {
         super("board", TYPE.BOARD,0f,0f,1280,768);
@@ -335,7 +336,7 @@ public class Board extends Entity {
         GameView.disableTouch = false;
         for (Integer i = 0; i < rowsCount; i++) {
             for (Integer k = 0; k < colsCount; k++) {
-                Gem entity = (Gem) entities[i][k];
+                Gem entity = entities[i][k];
                 if(entity == null) continue;
                 entity.update();
                 if(entity.moveTo != null) GameView.disableTouch = true;
