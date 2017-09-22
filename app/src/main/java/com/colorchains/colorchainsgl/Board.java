@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.util.Log;
 
 import org.json.JSONException;
 
@@ -27,7 +28,7 @@ public class Board extends Entity {
     public Stage curStage;
     public Integer rowsCount = 0;
     public Integer colsCount = 0;
-    public Entity[][] entities;
+    public Gem[][] entities;
     private boolean randomEntities = true;
     private List<Entity> marioBuffer = new ArrayList<>();
     public List<Chain> chains;
@@ -53,6 +54,7 @@ public class Board extends Entity {
     private Integer stageIndex;
     private String loadResult = "";
     private UI.Font font;
+    public GemCollection gemCol;
 
     public Board(Context context)  throws JSONException {
         super("board", TYPE.BOARD,0f,0f,1280,768);
@@ -69,8 +71,9 @@ public class Board extends Entity {
 //        gemOffsetX = 16;//(GameView.metrics.widthPixels - (92*7)) / 2;
 //        gemOffsetY = 252;//(126*(int)GameView.scale);
         this.border = 8 + (GameView.is16x9 ? 4 : 0);
-        gemOffsetX = (border * (int)GameView.scale) + (92/2);
-        gemOffsetY = (126*(int)GameView.scale) + (92/2);
+        gemOffsetX = (border * (int)GameView.scale);
+        gemOffsetY = (126*(int)GameView.scale);
+        Log.d("Board","border: " + this.border +",gemOffsetX: " + gemOffsetX + ",gemOffsetY: " + gemOffsetY);
         addControls();
         //UI.hide();
     }
@@ -136,7 +139,7 @@ public class Board extends Entity {
         String[] rows = stage.tiles;
         rowsCount = rows.length;
         colsCount = rows[0].length();
-        entities = new Entity[rowsCount][colsCount];
+        entities = new Gem[rowsCount][colsCount];
         String row;
         for (int i = 0; i < rowsCount; i++) {
             row = rows[i];
@@ -252,7 +255,7 @@ public class Board extends Entity {
     //</editor-fold>
 
     private void addEntity(String row, TYPE type, int i, int k, Integer cx, Integer cy, Integer idx) {
-        this.entities[i][k] = Entity.create(i + "-" + k, type, (float)GameView.scaledDefaultSide * k, (float)GameView.scaledDefaultSide * i, cx, cy, this);
+        this.entities[i][k] = (Gem)Entity.create(i + "-" + k, type, (float)GameView.scaledDefaultSide * k, (float)GameView.scaledDefaultSide * i, cx, cy, this);
         if(this.entities[i][k] == null) return;
         this.entities[i][k].setOffSetX(gemOffsetX);
         this.entities[i][k].setOffSetY(gemOffsetY);
@@ -358,12 +361,16 @@ public class Board extends Entity {
         }
         ((UI.InfoBox) UI.findControlById("infoBox")).visible = true;
         //Render.draw(bg, 0, 0, false);
-        for (Integer i = 0; i < rowsCount; i++) {
-            for (Integer k = 0; k < colsCount; k++) {
-                Gem entity = (Gem) entities[i][k];
-                if (entity != null && !entity.selected) entity.draw();
-            }
-        }
+        /********** Use GemCollection **********/
+//        for (Integer i = 0; i < rowsCount; i++) {
+//            for (Integer k = 0; k < colsCount; k++) {
+//                Gem entity = /*(Gem) */entities[i][k];
+//                if (entity != null && !entity.selected) entity.draw();
+//            }
+//        }
+
+        this.gemCol.draw();
+        /********** Use GemCollection **********/
     }
 
     private void nextStage(){
@@ -598,6 +605,12 @@ public class Board extends Entity {
         this.curStage = stages.get(index);
         this.stageIndex = index;
         this.createEntities(this.curStage);
+        /******* GemCollection *********/
+        this.gemCol = new GemCollection(R.drawable.atlas, entities);
+        this.gemCol.offSetX = gemOffsetX;
+        this.gemCol.offSetY = gemOffsetY;
+        this.gemCol.buildTextureMap();
+        /******* GemCollection *********/
     }
 
     public void clearGems(){

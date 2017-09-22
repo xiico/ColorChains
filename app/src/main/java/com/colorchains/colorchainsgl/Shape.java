@@ -173,22 +173,23 @@ public class Shape implements Comparable<Shape> {
         /************ effect *************/
         if(getResourceId() == R.drawable.bg_color) {
             /********** set colors *************/
-            colour1 += (0.01666f / 8);
-            if(colour1 > 1) colour1 = 0;
-            colour2 += (0.01666f / 16);
-            if(colour2 > 1) colour2 = 0;
-            colour3 += (0.01666f / 32);
-            if(colour3 > 1) colour3 = 0;
+//            colour1 += (0.01666f / 8);
+//            if(colour1 > 1) colour1 = 0;
+//            colour2 += (0.01666f / 16);
+//            if(colour2 > 1) colour2 = 0;
+//            colour3 += (0.01666f / 32);
+//            if(colour3 > 1) colour3 = 0;
 
             int color =  GLES20.glGetUniformLocation(mProgram, "color");
-            GLES20.glUniform4f(color, colour1, colour2, colour3, 1);
+            //GLES20.glUniform4f(color, colour1, colour2, colour3, 1);
+            GLES20.glUniform4f(color, 1f, 1f, 1f, 1);
             int resolution = GLES20.glGetUniformLocation(mProgram, "resolution");
             GLES20.glUniform2f(resolution, this.getWidth(), this.getHeight());
             int time = GLES20.glGetUniformLocation(mProgram, "time");
             GLES20.glUniform1f(time, this.time);
-            /********** teste *************/
+            /********** test *************/
 
-        } else if (getResourceId() == R.drawable.oldskol){
+        } else if (getResourceId() == R.drawable.oldskol || getResourceId() == R.drawable.atlas){
             int color =  GLES20.glGetUniformLocation(mProgram, "color");
             GLES20.glUniform4f(color, this.color[0], this.color[1], this.color[2], this.color[3]);
         }
@@ -213,7 +214,7 @@ public class Shape implements Comparable<Shape> {
         Matrix.multiplyMM(this.mMVPMatrix, 0, GameView.GLRenderer.mProjectionMatrix, 0, GameView.GLRenderer.mViewMatrix, 0);
 
         // Calculate translation and scale
-        Matrix.translateM(this.mMVPMatrix, 0, x + offSetX, y + offSetY,0);
+        Matrix.translateM(this.mMVPMatrix, 0, getX() + offSetX, getY() + offSetY,0);
         if(doScale) {
             if (scale <= minScale || scale >= maxScale) scaleStep = scaleStep * -1;
             scale += scaleStep;

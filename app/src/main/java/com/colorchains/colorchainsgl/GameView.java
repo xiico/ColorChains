@@ -127,9 +127,9 @@ public class GameView extends GLSurfaceView {
         }
         float rawX = evt.getRawX();
         float rawY = evt.getRawY();
-        Integer row = (int)Math.floor((rawY - board.gemOffsetY) / GameView.scaledDefaultSide);
-        Integer col = (int)Math.floor((rawX - board.gemOffsetX) / GameView.scaledDefaultSide);
-        Log.d("DEBUG","row: " + row +",col: " + col + ",rawX: " + rawX + ",rawY: " + rawY + ", gemOffsetY: " + board.gemOffsetY + ", gemOffsetX: " + board.gemOffsetX + ", ds: " + GameView.scaledDefaultSide);
+        Integer row = (int)Math.floor((rawY - board.gemOffsetY /*+ ((defaultSide *2)/2)*/) / GameView.scaledDefaultSide);
+        Integer col = (int)Math.floor((rawX - board.gemOffsetX /*+ ((defaultSide *2)/2)*/) / GameView.scaledDefaultSide);
+        Log.d("TOUCH_START","row: " + row +",col: " + col + ",rawX: " + rawX + ",rawY: " + rawY + ", gemOffsetY: " + board.gemOffsetY + ", gemOffsetX: " + board.gemOffsetX + ", ds: " + GameView.scaledDefaultSide);
         if(!board.ready() || row >= board.entities.length || col >= board.entities[0].length || row < 0 || col < 0) return;
         Gem entity = (Gem)board.entities[row][col];
         board.selectedGem = entity;
@@ -138,14 +138,16 @@ public class GameView extends GLSurfaceView {
     }
 
     public void touchEnd(MotionEvent evt) {
-        //if(evt != null) return;
         if(GameView.disableTouch) return;
         if (board.levelComplete) return;
         if (!GameView.started) return;
         float rawX = evt.getRawX();
         float rawY = evt.getRawY();
-        Integer row = (int)Math.floor((rawY - board.gemOffsetY) / GameView.scaledDefaultSide);
-        Integer col = (int)Math.floor((rawX - board.gemOffsetX) / GameView.scaledDefaultSide);
+        Integer row = (int)Math.floor((rawY - board.gemOffsetY /*+ ((defaultSide *2)/2)*/) / GameView.scaledDefaultSide);
+        Integer col = (int)Math.floor((rawX - board.gemOffsetX /*+ ((defaultSide *2)/2)*/) / GameView.scaledDefaultSide);
+        Log.d("TOUCH_END","row: " + row +",col: " + col + ",rawX: " + rawX + ",rawY: " + rawY + ", gemOffsetY: " + board.gemOffsetY + ", gemOffsetX: " + board.gemOffsetX + ", ds: " + GameView.scaledDefaultSide);
+        if(board.selectedGem != null) Log.d("selectedGem: " + ((Gem)board.selectedGem).id,"getRow(): " + ((Gem)board.selectedGem).getRow() + ", getCol(): " + ((Gem)board.selectedGem).getCol());
+        //if(evt != null) return;
         if(!board.ready() || row >= board.entities.length || col >= board.entities[0].length || row < 0 || col < 0) return;
         if (board.selectedGem == null || !board.selectedGem.getClass().getName().endsWith("Gem")) return;
         float diffRow = Math.abs(row - ((Gem)board.selectedGem).getRow());
@@ -161,7 +163,11 @@ public class GameView extends GLSurfaceView {
         }
         Gem entity = (Gem)board.entities[row][col];
         if (entity == null || !entity.getClass().getName().endsWith("Gem") || (diffCol == 0 && diffRow == 0)) return;
-        //entity.selected = true;
+        /****** Test *****/
+        entity.color[0] = 0.0f;
+        entity.color[1] = 0.0f;
+        entity.color[2] = 0.0f;
+        /**** End Test ***/
         ((Gem)board.selectedGem).moveTo = new Point();
         ((Gem)board.selectedGem).moveTo.y = row;
         ((Gem)board.selectedGem).moveTo.x = col;
@@ -268,14 +274,20 @@ public class GameView extends GLSurfaceView {
             // Redraw background color
             GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
 
-            //changeProgram(backGround.mProgram, Shape.vertexBuffer);
-            //Shape.bindTexture(backGround.getResourceId());
+            changeProgram(backGround.mProgram, Shape.vertexBuffer);
+            Shape.bindTexture(backGround.getResourceId());
             backGround.draw();
             //Shape.bindTexture(title.getResourceId());
             //title.draw();
             /********** end onDrawFrame GL2 ****************************/
+
             board.update();
-            board.draw();
+            if(board.gemCol != null) {
+                changeProgram(board.gemCol.mProgram, board.gemCol.vertexBuffer);
+                Shape.bindTexture(board.gemCol.getResourceId());
+                board.draw();
+            }
+
             if(GameView.showFPS) {
                 changeProgram(font.mProgram, font.vertexBuffer);
                 //Shape.bindTexture(font.getResourceId());

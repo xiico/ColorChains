@@ -46,24 +46,6 @@ public abstract class Entity extends Shape {
                 return null;
         }
     }
-    @Override
-    public float getY() {
-        return super.getY();
-    }
-    @Override
-    public void setY(float y){
-        super.setY(y);
-    }
-
-    @Override
-    public float getX() {
-        return super.getX();
-    }
-    @Override
-    public void setX(float x){
-        super.setX(x);
-    }
-
 
     static float squareCoords[] = {
             -0.5f,  0.5f, 0.0f,  // top left      0
@@ -145,8 +127,9 @@ public abstract class Entity extends Shape {
         super.draw();
     }
 
-    void addAnimation(String id, Integer x, Integer y, Integer[] frames, Float duration,Boolean loop){
+    Animation addAnimation(String id, Integer x, Integer y, Integer[] frames, Float duration,Boolean loop){
         this.animations.put(id,new Animation(id, x, y, frames, duration, loop, this));
+        return this.animations.get(id);
     }
 
     public void buildTextureMap(){

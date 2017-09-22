@@ -13,11 +13,8 @@ import java.util.List;
  */
 
 public class GemCollection extends Shape{
-    float defaultWidth = 10, defaultHeight = 10;//92
-    public List<Gem> gems = new ArrayList<>();
+    public Gem[][] gems;
     float gemWidthGl, gemHeightGl;
-//    float valgn = 0;
-//    float halgn = 0;
     private String text = "";
     static float fontCoords[] = {
             -0.5f,  0.5f, 0.0f,  // top left      0
@@ -49,19 +46,18 @@ public class GemCollection extends Shape{
                     "  gl_FragColor = texture2D( s_texture, v_texCoord ) * vec4(color.r,color.g,color.b,color.a);\n" +
                     "}";
 
-    public GemCollection(Integer resourceId) {
+    public GemCollection(Integer resourceId, Gem[][] gems) {
         super(fontCoords,drawOrder,  vs_Gem/*vs_Text*/ , fs_Gem/*fs_Text*/, resourceId, GLES20.GL_LINEAR);
         gemWidthGl = (1 / 10f)/* *scale*/;//(1 / 10f)
         gemHeightGl = (1 / 8f)/* *scale*/;//(1 / 8f)
-//        width = 92;//92
-//        height = 92;//92
+        this.setWidth(92);//92
+        this.setHeight(92);//92
+        this.gems = gems;
     }
     public void buildTextureMap(){
         uvMap = new float[80][8];
         for (int i = 0; i < 80; i++) {
             int hPos = i;
-//            float u = 0;//(hPos * defaultWidth) % (defaultWidth * 8);
-//            float v = (hPos * fontHeightGl);
             float u = (hPos * gemWidthGl) % (gemWidthGl * 10);
             float v = (((int)Math.floor((hPos * gemWidthGl) / (gemWidthGl * 10)) * gemHeightGl));
             uvMap[i][0] = u;
@@ -95,29 +91,29 @@ public class GemCollection extends Shape{
     }
 
     public void setBuffers() {
-        float[] uvData = new float[gems.size() * 8];
+        float[] uvData = new float[gems.length * gems[0].length * 8];
         short[] drawOrder = {0, 1, 2, 0, 2, 3};
-        short[] drawOrderFinal = new short[gems.size() * 6];
-        float[] vertexData = new float[gems.size() * 12];
-        for (int i = 0; i < gems.size(); i++) {
-            Gem gem = gems.get(i);
+        short[] drawOrderFinal = new short[gems.length * gems[0].length * 6];
+        float[] vertexData = new float[gems.length * gems[0].length * 12];
+        for (int i = 0; i < (gems.length * gems[0].length); i++) {
+            int row = (int)Math.floor(i / 8), col = i % 8;
             for (int j = 0; j < 8; j++) {
-                uvData[(i * 8) + j] = uvMap[gem.getGemType().getValue() + gem.curAnimation.curFrame.intValue()][j];
+                uvData[(i * 8) + j] = uvMap[gems[row][col].getGemType().getValue() + gems[row][col].curAnimation.curFrame.intValue()][j];
             }
             for (int j = 0; j < 6; j++) {
                 drawOrderFinal[(i * 6) + j] = (short) (drawOrder[j] + (((i) * 4)));
             }
-            vertexData[(i * 12) + 0] = -0.5f + (gem.getX() / gem.getWidth());   //x
-            vertexData[(i * 12) + 1] =  0.5f + (gem.getY() / gem.getHeight());  //y
+            vertexData[(i * 12) + 0] = -0.5f + (gems[row][col].getX() / gems[row][col].getWidth());   //x
+            vertexData[(i * 12) + 1] = 0.5f + (gems[row][col].getY() / gems[row][col].getHeight());  //y
             vertexData[(i * 12) + 2] = 0.0f;  //z
-            vertexData[(i * 12) + 3] = -0.5f + (gem.getX() / gem.getWidth());   //x
-            vertexData[(i * 12) + 4] = -0.5f + (gem.getY() / gem.getHeight());  //y
+            vertexData[(i * 12) + 3] = -0.5f + (gems[row][col].getX() / gems[row][col].getWidth());   //x
+            vertexData[(i * 12) + 4] = -0.5f + (gems[row][col].getY() / gems[row][col].getHeight());  //y
             vertexData[(i * 12) + 5] = 0.0f;  //z
-            vertexData[(i * 12) + 6] =  0.5f + (gem.getX() / gem.getWidth());   //x
-            vertexData[(i * 12) + 7] = -0.5f + (gem.getY() / gem.getHeight());  //y
+            vertexData[(i * 12) + 6] = 0.5f + (gems[row][col].getX() / gems[row][col].getWidth());   //x
+            vertexData[(i * 12) + 7] = -0.5f + (gems[row][col].getY() / gems[row][col].getHeight());  //y
             vertexData[(i * 12) + 8] = 0.0f;  //z
-            vertexData[(i * 12) + 9] =  0.5f + (gem.getX() / gem.getWidth());   //x
-            vertexData[(i * 12) + 10] = 0.5f + (gem.getY() / gem.getHeight());  //y
+            vertexData[(i * 12) + 9] = 0.5f + (gems[row][col].getX() / gems[row][col].getWidth());   //x
+            vertexData[(i * 12) + 10] = 0.5f + (gems[row][col].getY() / gems[row][col].getHeight());  //y
             vertexData[(i * 12) + 11] = 0.0f;  //z
         }
         setVertexBuffer(vertexData);
@@ -125,14 +121,8 @@ public class GemCollection extends Shape{
         setDrawListBuffer(drawOrderFinal);
     }
 
-    public void update(){
-        for (Gem gem: gems ) {
-            gem.update();
-        }
-        setBuffers();
-    }
-
     public void draw() {
+        setBuffers();
         super.draw();
     }
 }
