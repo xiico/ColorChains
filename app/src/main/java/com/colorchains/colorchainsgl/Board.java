@@ -55,6 +55,7 @@ public class Board extends Entity {
     private String loadResult = "";
     private UI.Font font;
     public GemCollection gemCol;
+    public GemCollection marioCol;
     public boolean parseBoard = false;
 
     public Board(Context context)  throws JSONException {
@@ -263,6 +264,7 @@ public class Board extends Entity {
         if (this.entities[i][k] == null) return;
         //if (this.entities[i][k].setYs) this.entities[i][k].setYs(null, null);
         if (this.entities[i][k].type == TYPE.MARIO) this.marioBuffer.add(this.entities[i][k]);
+        if(((Gem)this.entities[i][k]).id.equals("3-5")) this.entities[i][k].doScale = true;
     }
 
     private TYPE getEntity(String type) {
@@ -610,7 +612,8 @@ public class Board extends Entity {
         this.gemCol = new GemCollection(R.drawable.atlas, entities);
         this.gemCol.offSetX = gemOffsetX;
         this.gemCol.offSetY = gemOffsetY;
-        this.gemCol.buildTextureMap();
+        this.gemCol.buildTextureMap(80,10,8);
+        //this.marioCol.buildTextureMap(100,10,10);
         /******* GemCollection *********/
     }
 

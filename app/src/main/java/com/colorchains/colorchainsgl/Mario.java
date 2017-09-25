@@ -24,8 +24,8 @@ public class Mario extends Gem {
     public static Bitmap marioSeed;
     public static HashMap<String,RectF[]> tileHistory = new HashMap<>();
     public static Point[] cachePosition = new Point[]{new Point(GameView.defaultSide / 2 , 0), new Point(GameView.defaultSide / 2 , GameView.defaultSide / 2 ), new Point(0, GameView.defaultSide / 2 ), new Point(0, 0)};
-    public static UI.Font font;
     static Canvas canvas;
+    public static Bitmap marioTexture;
     static HashMap<String, Integer> marioCache = new HashMap<>();
 
     public Mario(String id, TYPE type, Float x, Float y, Integer cx, Integer cy, Board board) {
@@ -35,7 +35,6 @@ public class Mario extends Gem {
         this.cacheHeight = GameView.scaledDefaultSide;
         this.setWidth(this.cacheWidth);
         this.setHeight(this.cacheHeight);
-        font = new UI.Font(R.drawable.oldskol, 2.0f);
     }
 
     public synchronized static boolean RenderTiles(Board board)
@@ -49,6 +48,7 @@ public class Mario extends Gem {
             Mario.renderSubTile(canvas, resizedBitmap, key);
         }
         //Render.cache(TYPE.MARIO, bmp2);
+        marioTexture = bmp2;
         //board.bg = bmp2;
         return true;
     }

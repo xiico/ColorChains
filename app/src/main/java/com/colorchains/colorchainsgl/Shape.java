@@ -39,8 +39,8 @@ public class Shape implements Comparable<Shape> {
     private float y = 0;
     public static HashMap<Integer,TextureInfo> textures = new HashMap<>();
     public float angularSpeed = 0.25f;
-    public float minScale;
-    public float maxScale;
+    public float minScale = 0.75f;
+    public float maxScale = 1.25f;
     public float scaleStep = 0.025f;
     public float offSetX = 0;
     public float offSetY = 0;
@@ -239,7 +239,7 @@ public class Shape implements Comparable<Shape> {
     }
 
 
-    public static float[] doTransformations(float x, float y, float scaleX, float scaleY, float angle){
+    public static float[] doTransformations(float x, float y, float scaleX, float scaleY, float angle, float direction){
         float[] scratch = new float[16];
         float[] transformation = new float[16];
         float[] mRotationMatrix = new float[16];
@@ -260,7 +260,7 @@ public class Shape implements Comparable<Shape> {
         /***************** End move to Shape ****************************/
         Matrix.translateM(transformation, 0, x, y ,0);
         Matrix.scaleM(transformation, 0, scaleX, scaleY, 1);
-        Matrix.setRotateM(mRotationMatrix, 0, angle, 0, 0, -1.0f);
+        Matrix.setRotateM(mRotationMatrix, 0, angle, 0, 0, direction);
         //return mMVPMatrix;
 //        Matrix.multiplyMM(scratch, 0, new float[]{1,0,0,0,
 //                                                  0,1,0,0,

@@ -460,7 +460,7 @@ public class UI {
                     vertexData[(lastVerIndex) + (i*12)+11] =  0.0f;  //z
 
                     if(this.rotate || this.doScale) {
-                        transformationMatrix = Shape.doTransformations(4f, 2f, 4f, 4f, -60);
+                        transformationMatrix = Shape.doTransformations(4f, 2f, 4f, 4f, -60, -1);
                         float[] result = new float[4];
                         for (int j = 0; j < 12; j += 3) {
                             float[] data = new float[]{vertexData[(lastVerIndex) + (i * 12) + j + 0],

@@ -1,6 +1,8 @@
 package com.colorchains.colorchainsgl;
 
 import android.opengl.GLES20;
+import android.opengl.Matrix;
+import android.os.SystemClock;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -23,6 +25,8 @@ public class GemCollection extends Shape{
             0.5f,  0.5f, 0.0f }; // top right     3
     private static short drawOrder[] = {0, 1, 2, 0, 2, 3}; // order to draw vertices
     private static float[][] uvMap;//textureMap
+    public boolean checkMario = false;
+    private float[] transformationMatrix = new float[16];
     public static final String vs_Gem =
             "uniform mat4 uMVPMatrix;" +
                     "attribute vec4 vPosition;" +
@@ -54,12 +58,12 @@ public class GemCollection extends Shape{
         this.setHeight(92);//92
         this.gems = gems;
     }
-    public void buildTextureMap(){
-        uvMap = new float[80][8];
-        for (int i = 0; i < 80; i++) {
+    public void buildTextureMap(Integer totalItems, Integer width, Integer height){
+        uvMap = new float[totalItems][height];
+        for (int i = 0; i < totalItems; i++) {
             int hPos = i;
-            float u = (hPos * gemWidthGl) % (gemWidthGl * 10);
-            float v = (((int)Math.floor((hPos * gemWidthGl) / (gemWidthGl * 10)) * gemHeightGl));
+            float u = (hPos * gemWidthGl) % (gemWidthGl * width);
+            float v = (((int)Math.floor((hPos * gemWidthGl) / (gemWidthGl * width)) * gemHeightGl));
             uvMap[i][0] = u;
             uvMap[i][1] = v +  gemHeightGl;
             uvMap[i][2] = u;
@@ -97,24 +101,69 @@ public class GemCollection extends Shape{
         float[] vertexData = new float[gems.length * gems[0].length * 12];
         for (int i = 0; i < (gems.length * gems[0].length); i++) {
             int row = (int)Math.floor(i / 8), col = i % 8;
+            Gem gem = gems[row][col];
+            float posX = (gem.getX() / gem.getWidth()), posY = (gem.getY() / gem.getHeight());
+            Integer uvIndex;
+            if(checkMario) {
+                uvIndex = gem.index;
+                if(gem.type != TYPE.MARIO) continue;
+                else if(gem.type == TYPE.MARIO) continue;
+            } else uvIndex = gem.getGemType().getValue() + gem.curAnimation.curFrame.intValue();
+
             for (int j = 0; j < 8; j++) {
-                uvData[(i * 8) + j] = uvMap[gems[row][col].getGemType().getValue() + gems[row][col].curAnimation.curFrame.intValue()][j];
+                uvData[(i * 8) + j] = uvMap[uvIndex][j];
             }
             for (int j = 0; j < 6; j++) {
-                drawOrderFinal[(i * 6) + j] = (short) (drawOrder[j] + (((i) * 4)));
+                drawOrderFinal[(i * 6) + j] = (short) (drawOrder[j] + (i * 4));
             }
-            vertexData[(i * 12) + 0] = -0.5f + (gems[row][col].getX() / gems[row][col].getWidth());   //x
-            vertexData[(i * 12) + 1] = 0.5f + (gems[row][col].getY() / gems[row][col].getHeight());  //y
-            vertexData[(i * 12) + 2] = 0.0f;  //z
-            vertexData[(i * 12) + 3] = -0.5f + (gems[row][col].getX() / gems[row][col].getWidth());   //x
-            vertexData[(i * 12) + 4] = -0.5f + (gems[row][col].getY() / gems[row][col].getHeight());  //y
-            vertexData[(i * 12) + 5] = 0.0f;  //z
-            vertexData[(i * 12) + 6] = 0.5f + (gems[row][col].getX() / gems[row][col].getWidth());   //x
-            vertexData[(i * 12) + 7] = -0.5f + (gems[row][col].getY() / gems[row][col].getHeight());  //y
-            vertexData[(i * 12) + 8] = 0.0f;  //z
-            vertexData[(i * 12) + 9] = 0.5f + (gems[row][col].getX() / gems[row][col].getWidth());   //x
-            vertexData[(i * 12) + 10] = 0.5f + (gems[row][col].getY() / gems[row][col].getHeight());  //y
-            vertexData[(i * 12) + 11] = 0.0f;  //z
+
+            /******************** test transformations **************************/
+            if(gem.rotate || gem.doScale) {
+                vertexData[(i * 12) + 0] = -0.5f;   //x
+                vertexData[(i * 12) + 1] = 0.5f;  //y
+                vertexData[(i * 12) + 2] = 0.0f;  //z
+                vertexData[(i * 12) + 3] = -0.5f;   //x
+                vertexData[(i * 12) + 4] = -0.5f;  //y
+                vertexData[(i * 12) + 5] = 0.0f;  //z
+                vertexData[(i * 12) + 6] = 0.5f;   //x
+                vertexData[(i * 12) + 7] = -0.5f;  //y
+                vertexData[(i * 12) + 8] = 0.0f;  //z
+                vertexData[(i * 12) + 9] = 0.5f;   //x
+                vertexData[(i * 12) + 10] = 0.5f;  //y
+                vertexData[(i * 12) + 11] = 0.0f;  //z
+                /*** roatation ***/
+                long time = SystemClock.uptimeMillis() % 16000L;
+                float angle = 0.72f * ((int) time) * this.angularSpeed;
+                /*** roatation ***/
+                if (scale <= minScale || scale >= maxScale) scaleStep = scaleStep * -1;
+                scale += scaleStep;
+                transformationMatrix = Shape.doTransformations(0, 0, scale, scale, angle, 1);
+                float[] result = new float[4];
+                for (int j = 0; j < 12; j += 3) {
+                    float[] data = new float[]{vertexData[(i * 12) + j + 0],
+                            vertexData[(i * 12) + j + 1],
+                            vertexData[(i * 12) + j + 2],
+                            1};
+                    Matrix.multiplyMV(result, 0, transformationMatrix, 0, data, 0);
+                    vertexData[(i * 12) + j + 0] = result[0] + posX;
+                    vertexData[(i * 12) + j + 1] = result[1] + posY;
+                    vertexData[(i * 12) + j + 2] = result[2];
+                }
+            } else {
+                vertexData[(i * 12) + 0] = -0.5f + posX;   //x
+                vertexData[(i * 12) + 1] = 0.5f + posY;  //y
+                vertexData[(i * 12) + 2] = 0.0f;  //z
+                vertexData[(i * 12) + 3] = -0.5f + posX;   //x
+                vertexData[(i * 12) + 4] = -0.5f + posY;  //y
+                vertexData[(i * 12) + 5] = 0.0f;  //z
+                vertexData[(i * 12) + 6] = 0.5f + posX;   //x
+                vertexData[(i * 12) + 7] = -0.5f + posY;  //y
+                vertexData[(i * 12) + 8] = 0.0f;  //z
+                vertexData[(i * 12) + 9] = 0.5f + posX;   //x
+                vertexData[(i * 12) + 10] = 0.5f + posY;  //y
+                vertexData[(i * 12) + 11] = 0.0f;  //z
+            }
+            /******************** test transformations **************************/
         }
         setVertexBuffer(vertexData);
         setUVBuffer(uvData);

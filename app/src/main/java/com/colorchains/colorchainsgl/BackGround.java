@@ -538,7 +538,7 @@ public class BackGround extends Entity {
                     "}";
     private static final String colorTunnel =
             "#ifdef GL_ES\n" +
-                    "precision mediump float;\n" +
+                    "precision highp float;\n" +
                     "#endif\n" +
                     "\n" +
                     "#extension GL_OES_standard_derivatives : enable\n" +
@@ -586,22 +586,21 @@ public class BackGround extends Entity {
                     "\tfloat focus = 0.5;\n" +
                     "\tvec3 rd = normalize(cs * p.x + cu * p.y + cf * focus);\n" +
                     "\tvec3 rp = cp;\n" +
-                    "\tfor (int i = 0; i < 32; ++i) {\n" +
+                    "\tfor (int i = 0; i < 64; ++i) {\n" +
                     "\t\tfloat d = map(rp);\n" +
                     "\t\tif (d < 0.001)\n" +
                     "\t\t\tbreak;\n" +
                     "\t\trp += rd * d;\n" +
                     "\t}\n" +
                     "\tfloat a = (atan(rp.z, rp.x)) * 16.0 / PI;\n" +
-                    "\tfloat div = 1.;///pow(2.,3.+floor(sin(time*3.)*2.));\n" +
-                    "\tfloat ai = floor(a*div);\n" +
-                    "\tfloat af = fract(a*div);\n" +
-                    "\tfloat d = (rp.y + 2.5 * time) * 10.0;\n" +
-                    "\tfloat di = floor(d*div);\n" +
-                    "\tfloat df = fract(d*div);\n" +
+                    "\tfloat ai = floor(a);\n" +
+                    "\tfloat af = fract(a);\n" +
+                    "\tfloat d = (rp.y + 0.5 * time) * 10.0;\n" +
+                    "\tfloat di = floor(d);\n" +
+                    "\tfloat df = fract(d);\n" +
                     "\tfloat v = 32.0 * af * (1.0 - af) * df * (1.0 - df) * exp(-rp.y * 0.8);\n" +
                     "\tgl_FragColor = vec4(hsv(noise(vec2(ai, di) * 0.01), 1.0, v), 1.0);\n" +
-                    "}\n";
+                    "}";
     static float squareCoords[] = {
             -0.5f,  0.5f, 0.0f,  // top left      0
             -0.5f, -0.5f, 0.0f,  // bottom left   1

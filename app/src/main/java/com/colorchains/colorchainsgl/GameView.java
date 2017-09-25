@@ -21,6 +21,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.util.HashMap;
+import java.util.Random;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -48,6 +49,7 @@ public class GameView extends GLSurfaceView {
     public static boolean is16x9;
     public static float scale;
     private FloatBuffer vertexBuffer;
+    public static boolean cicleBG = false;
     static Board board;
     public GameView(Context context) {
         super(context);
@@ -108,9 +110,11 @@ public class GameView extends GLSurfaceView {
     }
 
     public void touchStart(MotionEvent evt){
-        if(renderer.backGround.index + 1 < renderer.backGround.programs.size()){
-            renderer.backGround.index++;
-        } else  renderer.backGround.index = 0;
+        if (cicleBG) {
+            if (renderer.backGround.index + 1 < renderer.backGround.programs.size()) {
+                renderer.backGround.index++;
+            } else renderer.backGround.index = 0;
+        }
         renderer.backGround.mProgram = renderer.backGround.programs.get(renderer.backGround.index);
         if(GameView.paused) GameView.paused = false;
         if(GameView.disableTouch) return;
@@ -258,7 +262,12 @@ public class GameView extends GLSurfaceView {
             backGround.setOffSetY(0);
             backGround.doScale = false;
             backGround.rotate = false;
-            backGround.index = 0;
+            int randint = 0;
+            if(!GameView.cicleBG) {
+                Random r = new Random();
+                randint = Math.abs(r.nextInt()) % backGround.programs.size();
+            }
+            backGround.index = randint;
 
             /******* end onSurfaceChanged GL2 **********/
             w = metrics.widthPixels;//600
