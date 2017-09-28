@@ -107,7 +107,7 @@ public class UI {
             super(id, type, x, y, cx, cy);
         }
 
-        public static interface UIListener{
+        public interface UIListener{
             void clicked(Object args);
         }
 

@@ -105,7 +105,7 @@ public abstract class Entity extends Shape {
             case CYANGEM:
                 return R.drawable.cyangem;
             case MARIO:
-                return R.drawable.mario_tiles_46;
+                return -1;//R.drawable.mario_tiles_46;
             case BACKGROUND:
                 return R.drawable.bg_color;
             case TITLE:

@@ -50,6 +50,7 @@ public class Mario extends Gem {
         //Render.cache(TYPE.MARIO, bmp2);
         marioTexture = bmp2;
         //board.bg = bmp2;
+        //textures.remove(Gem.getGemSprites(TYPE.MARIO));
         return true;
     }
 

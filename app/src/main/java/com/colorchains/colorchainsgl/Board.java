@@ -2,10 +2,7 @@ package com.colorchains.colorchainsgl;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.util.Log;
 
 import org.json.JSONException;
 
@@ -16,8 +13,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import javax.microedition.khronos.opengles.GL10;
-
+import static com.colorchains.colorchainsgl.GameView.GLRenderer.updateMarioTexture;
 import static java.lang.Integer.parseInt;
 
 /**
@@ -34,10 +30,10 @@ public class Board extends Entity {
     public List<Chain> chains;
     Context context;
     public List<Stage> stages;
-    public boolean loaded = false;
+    public volatile boolean loaded = false;
     public boolean levelComplete;
     public Entity selectedGem;
-    private boolean _ready = false;
+    //static volatile boolean _ready = false;
     public float gemOffsetX = /*(92/2) +*/ 16;
     public float gemOffsetY = 252;//92*3;//(92/2) + 16;
     public Integer border = 8;
@@ -75,7 +71,7 @@ public class Board extends Entity {
         this.border = 8 + (GameView.is16x9 ? 4 : 0);
         gemOffsetX = (border * (int)GameView.scale);
         gemOffsetY = (126*(int)GameView.scale);
-        Log.d("Board","border: " + this.border +",gemOffsetX: " + gemOffsetX + ",gemOffsetY: " + gemOffsetY);
+        //Log.d("Board","border: " + this.border +",gemOffsetX: " + gemOffsetX + ",gemOffsetY: " + gemOffsetY);
         addControls();
         //UI.hide();
     }
@@ -177,14 +173,16 @@ public class Board extends Entity {
     private void loadLevelCompleted() {
         while (this.marioBuffer.size() > 0) {
             ((Mario)this.marioBuffer.get(this.marioBuffer.size() - 1)).setSubTiles(false);
-            if (Mario.marioCache.get(((Mario)this.marioBuffer.get(this.marioBuffer.size() - 1)).tileSet) == null) Mario.marioCache.put(((Mario)this.marioBuffer.get(this.marioBuffer.size() - 1)).tileSet, (Mario.marioCache.size()) * GameView.scaledDefaultSide);
+            if (Mario.marioCache.get(((Mario)this.marioBuffer.get(this.marioBuffer.size() - 1)).tileSet) == null) {
+                Mario.marioCache.put(((Mario)this.marioBuffer.get(this.marioBuffer.size() - 1)).tileSet, (Mario.marioCache.size()) * GameView.scaledDefaultSide);
+            }
             this.marioBuffer.get(this.marioBuffer.size() - 1).cacheX = Mario.marioCache.get(((Mario)this.marioBuffer.get(this.marioBuffer.size() - 1)).tileSet) % (GameView.scaledDefaultSide * 10);
             this.marioBuffer.get(this.marioBuffer.size() - 1).cacheY = (int)Math.floor(Mario.marioCache.get(((Mario)this.marioBuffer.get(this.marioBuffer.size() - 1)).tileSet) / (GameView.scaledDefaultSide * 10)) * GameView.scaledDefaultSide;
             this.marioBuffer.remove(this.marioBuffer.size() - 1);
         }
         //this.stages = window['levelStages'];
         if (this.curStage == null) this.setCurStage(0);
-        this._ready =  Mario.RenderTiles(this);
+        Mario.RenderTiles(this);
         progressBar.visible = true;
     }
     public void setCurStage(int index){
@@ -334,18 +332,17 @@ public class Board extends Entity {
                 confirm.visible = false;
             }
         }
-        if(!this.ready()) return;
+        if(!GameView.GLRenderer._boardReady) return;
         GameView.disableTouch = false;
         for (Integer i = 0; i < rowsCount; i++) {
             for (Integer k = 0; k < colsCount; k++) {
                 Gem entity = entities[i][k];
                 if(entity == null) continue;
-                entity.update();
                 if(entity.moveTo != null) GameView.disableTouch = true;
+                entity.update();
                 if (entity.getClass().equals(Gem.class) && chains == null) entity.checked = false;
             }
         }
-        this.parseBoard();
         if(this.levelComplete){
             nextButton.visible = true;
         }
@@ -358,7 +355,7 @@ public class Board extends Entity {
         //Render.clearScreen();
         //Render.clearScreen(bg);//Render.clearScreen(Render.cached.get(TYPE.FONT) == null ?  bg: Render.cached.get(TYPE.FONT));//Render.clearScreen(bg);//Render.clearScreen();
         //texture.draw(gl, x, y, width, height, 0, true);
-        if (!this.ready()) {
+        if (!GameView.GLRenderer._boardReady) {
             if (this.curStage != null) font.draw();
             return;
         }
@@ -372,12 +369,13 @@ public class Board extends Entity {
 //            }
 //        }
 
+        this.marioCol.draw();
         this.gemCol.draw();
         /********** Use GemCollection **********/
     }
 
     private void nextStage(){
-        this._ready = false;
+        GameView.GLRenderer._boardReady = false;
         if (this.curStage == null) this.setCurStage(0);
         this.curStage.score += this.calculateScore();
         if (this.curStage.score >= this.curStage.targetScore) {
@@ -385,6 +383,7 @@ public class Board extends Entity {
             //this.createEntities(this.curStage);
             loadStage(stageIndex);
             ((UI.InfoBox)UI.findControlById("infoBox")).setTargetScore(curStage.targetScore);
+            updateMarioTexture = true;
         } else {
             reloadStage();
         }
@@ -395,7 +394,7 @@ public class Board extends Entity {
         progressBar.visible = true;
     }
 
-    private boolean parseBoard(){
+    public boolean parseBoard(){
         if (chains == null && (selectedGem == null || ((Gem)selectedGem).moveTo == null )) {
             this.chains = new ArrayList<>();
             this.findChainTypes();
@@ -596,25 +595,35 @@ public class Board extends Entity {
         return curStage.toJsonString(ents);
     }
 
-    public boolean ready(){
-        return this._ready;
-    }
+//    public boolean ready(){
+//        return GameView.GLRenderer._boardReady;
+//    }
     public void updateStageProgress(){
         if(curStage == null) return;
         //fg.Game.drawLoading(10, fg.System.canvas.height - 122, fg.System.canvas.width - 20, 10, this.currentLevel.curStage.score / this.currentLevel.curStage.targetScore);
     }
     public void loadStage(Integer index){
-        this._ready = false;
+        GameView.GLRenderer._boardReady = false;
         this.curStage = stages.get(index);
         this.stageIndex = index;
         this.createEntities(this.curStage);
         /******* GemCollection *********/
-        this.gemCol = new GemCollection(R.drawable.atlas, entities);
+        BuildGemsCollections();
+        /******* GemCollection *********/
+    }
+
+    private void BuildGemsCollections() {
+        this.gemCol = new GemCollection(R.drawable.atlas, entities, false);
         this.gemCol.offSetX = gemOffsetX;
         this.gemCol.offSetY = gemOffsetY;
         this.gemCol.buildTextureMap(80,10,8);
-        //this.marioCol.buildTextureMap(100,10,10);
-        /******* GemCollection *********/
+
+        this.marioCol = new GemCollection(-1/*R.drawable.mario_tiles_46*/, entities, true);
+        this.marioCol.offSetX = gemOffsetX;
+        this.marioCol.offSetY = gemOffsetY;
+        //this.marioCol.buildTextureMap(80,10,8);
+        this.marioCol.buildTextureMap(100,10,10);
+        GameView.GLRenderer._boardReady = true;
     }
 
     public void clearGems(){
@@ -628,18 +637,20 @@ public class Board extends Entity {
     }
 
     public void reloadStage(){
-        this._ready = false;
+        GameView.GLRenderer._boardReady = false;
         Integer curScore = curStage != null ? curStage.score : 0;
         clearGems();
         this.curStage = stages.get(stageIndex);
         curStage.score = curScore;
         this.createEntities(this.curStage);
+        BuildGemsCollections();
     }
 
     public void loadStage(Stage stage, Integer index){
-        this._ready = false;
+        GameView.GLRenderer._boardReady = false;
         this.curStage = stage;
         this.stageIndex = index;
         this.createEntities(this.curStage);
+        BuildGemsCollections();
     }
 }

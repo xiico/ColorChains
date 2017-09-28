@@ -47,6 +47,7 @@ public class Shape implements Comparable<Shape> {
     public boolean doScale = false;
     public boolean rotate = false;
     public boolean useStaticVBO = false;
+    public float maxTimer = (float) (2*Math.PI);
     public String id;
     public List<Integer> programs = new ArrayList<>();
 
@@ -147,9 +148,9 @@ public class Shape implements Comparable<Shape> {
     //private int mColorHandle;
     public final float[] mMVPMatrix = new float[16];
     private float[] mRotationMatrix = new float[16];
-    private float colour1 = 0;
-    private float colour2 = 0;
-    private float colour3 = 0;
+//    private float colour1 = 0;
+//    private float colour2 = 0;
+//    private float colour3 = 0;
     private float time = 0;
     float[] mvpMatrix;
     public void draw() { // pass in the calculated transformation matrix
@@ -166,7 +167,7 @@ public class Shape implements Comparable<Shape> {
         Shape.setUpUVBuffer(uvBuffer, mProgram);
         /*********** end Texture Coordinates *********/
 
-        if(this.time > 2*Math.PI) this.time = 0;
+        if(this.time > maxTimer) this.time = 0;
         this.time += 0.01666/2;
 
 
@@ -179,7 +180,6 @@ public class Shape implements Comparable<Shape> {
 //            if(colour2 > 1) colour2 = 0;
 //            colour3 += (0.01666f / 32);
 //            if(colour3 > 1) colour3 = 0;
-
             int color =  GLES20.glGetUniformLocation(mProgram, "color");
             //GLES20.glUniform4f(color, colour1, colour2, colour3, 1);
             GLES20.glUniform4f(color, 1f, 1f, 1f, 1);
@@ -189,7 +189,7 @@ public class Shape implements Comparable<Shape> {
             GLES20.glUniform1f(time, this.time);
             /********** test *************/
 
-        } else if (getResourceId() == R.drawable.oldskol || getResourceId() == R.drawable.atlas){
+        } else if (getResourceId() == R.drawable.oldskol || (this instanceof GemCollection)){
             int color =  GLES20.glGetUniformLocation(mProgram, "color");
             GLES20.glUniform4f(color, this.color[0], this.color[1], this.color[2], this.color[3]);
         }
@@ -301,6 +301,7 @@ public class Shape implements Comparable<Shape> {
     public float uvs[];
     public ShortBuffer drawListBuffer;
     public FloatBuffer uvBuffer;
+
     public Integer setupImage(Integer resourceId, String vertexShaderCode, String fragmentShaderCode, Integer filtering)
     {
         // Create our UV coordinates.
@@ -347,10 +348,15 @@ public class Shape implements Comparable<Shape> {
         }
 
 
+
         // Retrieve our image from resources.
         BitmapFactory.Options opts = new BitmapFactory.Options();
         opts.inScaled = false;
-        Bitmap bmp = BitmapFactory.decodeResource(GameView.context.getResources(), resourceId, opts);
+        Bitmap bmp;
+        if((this instanceof GemCollection) && ((GemCollection)this).checkMario)
+            bmp = Mario.marioTexture;
+        else
+            bmp = BitmapFactory.decodeResource(GameView.context.getResources(), resourceId, opts);
 
         this.setWidth(bmp.getWidth());
         this.setHeight(bmp.getHeight());

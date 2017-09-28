@@ -101,7 +101,7 @@ public class Gem extends Entity {
     }
 
     public Integer getRow(){
-        Log.d(this.type + " Row","movingSpeed: " + this.movingSpeed + ", return: " + ((this.getY() + (GameView.scaledDefaultSide / 2)) / GameView.scaledDefaultSide)+ ", getY: " +this.getY());
+        //Log.d(this.type + " Row","movingSpeed: " + this.movingSpeed + ", return: " + ((this.getY() + (GameView.scaledDefaultSide / 2)) / GameView.scaledDefaultSide)+ ", getY: " +this.getY());
         if(this.movingSpeed > 0)
             return (int) Math.floor((super.getY() /*- (GameView.scaledDefaultSide / 2)*/) / GameView.scaledDefaultSide);
         else
@@ -109,7 +109,7 @@ public class Gem extends Entity {
     }
 
     public Integer getCol(){
-        Log.d(this.type + " Col","movingSpeed: " + this.movingSpeed + ", return: " + ((this.getX() + (GameView.scaledDefaultSide / 2)) / GameView.scaledDefaultSide) + ", getX: " +this.getX());
+        //Log.d(this.type + " Col","movingSpeed: " + this.movingSpeed + ", return: " + ((this.getX() + (GameView.scaledDefaultSide / 2)) / GameView.scaledDefaultSide) + ", getX: " +this.getX());
         if(this.movingSpeed > 0)
             return (int) Math.floor((super.getX() /*- (GameView.scaledDefaultSide / 2)*/) / GameView.scaledDefaultSide);
         else

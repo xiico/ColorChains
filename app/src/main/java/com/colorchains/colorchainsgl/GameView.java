@@ -41,7 +41,7 @@ public class GameView extends GLSurfaceView {
     //private final UI.Title title;
     // A boolean which we will set and unset
     // when the game is running- or not.
-    volatile boolean playing;
+    public static volatile boolean playing;
     public static volatile GLRenderer renderer;
     public static Context context;
     public static Integer defaultSide = 46;//46
@@ -133,8 +133,8 @@ public class GameView extends GLSurfaceView {
         float rawY = evt.getRawY();
         Integer row = (int)Math.floor((rawY - board.gemOffsetY /*+ ((defaultSide *2)/2)*/) / GameView.scaledDefaultSide);
         Integer col = (int)Math.floor((rawX - board.gemOffsetX /*+ ((defaultSide *2)/2)*/) / GameView.scaledDefaultSide);
-        Log.d("TOUCH_START","row: " + row +",col: " + col + ",rawX: " + rawX + ",rawY: " + rawY + ", gemOffsetY: " + board.gemOffsetY + ", gemOffsetX: " + board.gemOffsetX + ", ds: " + GameView.scaledDefaultSide);
-        if(!board.ready() || row >= board.entities.length || col >= board.entities[0].length || row < 0 || col < 0) return;
+        //Log.d("TOUCH_START","row: " + row +",col: " + col + ",rawX: " + rawX + ",rawY: " + rawY + ", gemOffsetY: " + board.gemOffsetY + ", gemOffsetX: " + board.gemOffsetX + ", ds: " + GameView.scaledDefaultSide);
+        if(!GameView.GLRenderer._boardReady || row >= board.entities.length || col >= board.entities[0].length || row < 0 || col < 0) return;
         Gem entity = (Gem)board.entities[row][col];
         board.selectedGem = entity;
         //entity.selected = true;
@@ -149,10 +149,10 @@ public class GameView extends GLSurfaceView {
         float rawY = evt.getRawY();
         Integer row = (int)Math.floor((rawY - board.gemOffsetY /*+ ((defaultSide *2)/2)*/) / GameView.scaledDefaultSide);
         Integer col = (int)Math.floor((rawX - board.gemOffsetX /*+ ((defaultSide *2)/2)*/) / GameView.scaledDefaultSide);
-        Log.d("TOUCH_END","row: " + row +",col: " + col + ",rawX: " + rawX + ",rawY: " + rawY + ", gemOffsetY: " + board.gemOffsetY + ", gemOffsetX: " + board.gemOffsetX + ", ds: " + GameView.scaledDefaultSide);
-        if(board.selectedGem != null) Log.d("selectedGem: " + ((Gem)board.selectedGem).id,"getRow(): " + ((Gem)board.selectedGem).getRow() + ", getCol(): " + ((Gem)board.selectedGem).getCol());
+        //Log.d("TOUCH_END","row: " + row +",col: " + col + ",rawX: " + rawX + ",rawY: " + rawY + ", gemOffsetY: " + board.gemOffsetY + ", gemOffsetX: " + board.gemOffsetX + ", ds: " + GameView.scaledDefaultSide);
+        //if(board.selectedGem != null) Log.d("selectedGem: " + ((Gem)board.selectedGem).id,"getRow(): " + ((Gem)board.selectedGem).getRow() + ", getCol(): " + ((Gem)board.selectedGem).getCol());
         //if(evt != null) return;
-        if(!board.ready() || row >= board.entities.length || col >= board.entities[0].length || row < 0 || col < 0) return;
+        if(!GameView.GLRenderer._boardReady || row >= board.entities.length || col >= board.entities[0].length || row < 0 || col < 0) return;
         if (board.selectedGem == null || !board.selectedGem.getClass().getName().endsWith("Gem")) return;
         float diffRow = Math.abs(row - ((Gem)board.selectedGem).getRow());
         float diffCol = Math.abs(col - ((Gem)board.selectedGem).getCol());
@@ -196,6 +196,8 @@ public class GameView extends GLSurfaceView {
         public static Integer curTexture = -1;
         private BackGround backGround;
         public UI.Title title;
+        public static volatile boolean _boardReady = false;
+        public static volatile boolean updateMarioTexture = false;
         /******* fields GL2 **********/
         @Override
         public void onSurfaceCreated(GL10 gl, EGLConfig config) {
@@ -239,41 +241,43 @@ public class GameView extends GLSurfaceView {
             // Set the camera position (View matrix)
             Matrix.setLookAtM(mViewMatrix, 0, 0f, 0f, 1f, 0f, 0f, 0f, 0f, 1.0f, 0.0f);
 
-            setUpEnvironment();
-            /*title = new UI.Title();
-            title.setX((metrics.widthPixels / 2) - (title.width / 2f));
-            title.setY(scaledDefaultSide * 4f);*/
+            if(board == null) {
+                setUpEnvironment();
+                /*title = new UI.Title();
+                title.setX((metrics.widthPixels / 2) - (title.width / 2f));
+                title.setY(scaledDefaultSide * 4f);*/
 
 
-            title = new UI.Title();
-            title.setX(width / 2);
-            title.setY(height / 2);
-            UI.addControl(title);
+                title = new UI.Title();
+                title.setX(width / 2);
+                title.setY(height / 2);
+                UI.addControl(title);
 
-            font = new UI.Font(R.drawable.oldskol, 2.0f);
-            font.setText("Hey you!");
-            font.setX(32);
-            font.setY(32);
+                font = new UI.Font(R.drawable.oldskol, 2.0f);
+                font.setText("Hey you!");
+                font.setX(32);
+                font.setY(32);
 
-            backGround = new BackGround();
-            backGround.setX(width/2f);
-            backGround.setY(height/2f);
-            backGround.setOffSetX(0);
-            backGround.setOffSetY(0);
-            backGround.doScale = false;
-            backGround.rotate = false;
-            int randint = 0;
-            if(!GameView.cicleBG) {
-                Random r = new Random();
-                randint = Math.abs(r.nextInt()) % backGround.programs.size();
+                backGround = new BackGround();
+                backGround.setX(width / 2f);
+                backGround.setY(height / 2f);
+                backGround.setOffSetX(0);
+                backGround.setOffSetY(0);
+                backGround.doScale = false;
+                backGround.rotate = false;
+                int randint = 0;
+                if (!GameView.cicleBG) {
+                    Random r = new Random();
+                    randint = Math.abs(r.nextInt()) % backGround.programs.size();
+                }
+                backGround.index = 0;//randint;
+
+                /******* end onSurfaceChanged GL2 **********/
+                w = metrics.widthPixels;//600
+                h = height * w / width;
+                screenH = height;
+                screenW = width;
             }
-            backGround.index = randint;
-
-            /******* end onSurfaceChanged GL2 **********/
-            w = metrics.widthPixels;//600
-            h = height * w / width;
-            screenH = height;
-            screenW = width;
         }
 
         @Override
@@ -282,7 +286,6 @@ public class GameView extends GLSurfaceView {
             /********** onDrawFrame GL2 ****************************/
             // Redraw background color
             GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
-
             //changeProgram(backGround.mProgram, Shape.vertexBuffer);
             //Shape.bindTexture(backGround.getResourceId());
             backGround.draw();
@@ -291,13 +294,20 @@ public class GameView extends GLSurfaceView {
             /********** end onDrawFrame GL2 ****************************/
 
             board.update();
-            if(board.gemCol != null) {
-                //changeProgram(board.gemCol.mProgram, board.gemCol.vertexBuffer);
-                //Shape.bindTexture(board.gemCol.getResourceId());
-                board.draw();
+            if (GameView.GLRenderer._boardReady) {
+                if(updateMarioTexture) {
+                    updateTexture(R.drawable.mario_tiles_46,Mario.marioTexture);
+                    updateMarioTexture = false;
+                }
+                if (board.gemCol != null) {
+                    //changeProgram(board.gemCol.mProgram, board.gemCol.vertexBuffer);
+                    //Shape.bindTexture(board.gemCol.getResourceId());
+                    board.draw();
+                    if (!GameView.disableTouch) board.parseBoard();
+                }
             }
 
-            if(GameView.showFPS) {
+            if (GameView.showFPS) {
                 changeProgram(font.mProgram, font.vertexBuffer);
                 //Shape.bindTexture(font.getResourceId());
                 // Display the current fps on the screen
@@ -317,6 +327,11 @@ public class GameView extends GLSurfaceView {
             GLES20.glCompileShader(shader);
 
             return shader;
+        }
+
+        public void updateTexture(Integer textureId, Bitmap bmp){
+            Shape.bindTexture(textureId);
+            GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bmp, 0);
         }
 
         public static void changeProgram(Integer program, FloatBuffer vertexBuffer){

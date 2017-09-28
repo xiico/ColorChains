@@ -33,7 +33,7 @@ public class Timer {
             }
         }
 
-        Timer.deltaTime = timeInterval;//Math.min(Timer.currentTime - Timer.lastTime, 60);//Timer.timeInterval;//Math.floor((Math.max(this.currentTime - this.lastTime, 15) <= 30 ? this.currentTime - this.lastTime : 30) / 2) * 2;//16
+        Timer.deltaTime = Math.min(Timer.currentTime - Timer.lastTime, 60);//Timer.timeInterval;//Math.floor((Math.max(this.currentTime - this.lastTime, 15) <= 30 ? this.currentTime - this.lastTime : 30) / 2) * 2;//16
         Timer.lastTime = Timer.currentTime;
         Timer.ticks++;
     }
