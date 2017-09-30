@@ -212,9 +212,9 @@ public class UI {
                 this.setWidth(this.getWidth() + 1);
                 this.text = text;
                 this.setWidth(GameView.metrics.widthPixels - (GameView.scaledDefaultSide * 2));
-                okButton = new Button("okButton","OK", this.getX() + (this.getWidth() / 2f) - (getWidth() * 1.5f), this.getY() + (this.getHeight() * .4f), 0, 0);
+                okButton = new Button("okButton","OK", this.getX() + (this.getWidth() / 2f) - 152f /*- (152f * 1.5f)*/, this.getY() + (this.getHeight() * .4f), 0, 0);
                 okButton.addUIListener(this);
-                cancelButton = new Button("cancelButton","Cancel", this.getX() + (this.getWidth() / 2f) +  (getWidth() * .5f), this.getY() + (this.getHeight() * .4f), 0, 0);
+                cancelButton = new Button("cancelButton","Cancel", this.getX() + (this.getWidth() / 2f) + 152f /*+  (152f * .5f)*/, this.getY() + (this.getHeight() * .4f), 0, 0);
                 cancelButton.addUIListener(this);
                 this.controls.add(okButton);
                 this.controls.add(cancelButton);
@@ -234,7 +234,7 @@ public class UI {
             }
 
             @Override
-            public void draw(GL10 gl)
+            public void draw()
             {
                 /*int color = Render.paint.getColor();
                 Render.paint.setColor(bgColor);
@@ -251,6 +251,13 @@ public class UI {
                     font.text = lines[i];
                     font.draw(gl);
                 }*/
+                font.setX(this.getX() + (this.getWidth() / 2));
+                font.setY(this.getY() + (this.getHeight() / 2) - GameView.scaledDefaultSide);
+                font.setText(this.text);
+                changeProgram(font.mProgram, font.vertexBuffer);
+                font.draw();
+                okButton.draw();
+                cancelButton.draw();
             }
         }
     }

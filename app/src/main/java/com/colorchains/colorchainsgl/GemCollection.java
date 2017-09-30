@@ -60,8 +60,8 @@ public class GemCollection extends Shape{
             //if(textures.containsKey(R.drawable.mario_tiles_46)) updateTexture(R.drawable.mario_tiles_46,Mario.marioTexture);
             mProgram = setupImage(R.drawable.mario_tiles_46, vs_Gem, fs_Gem, GLES20.GL_NEAREST /*GLES20.GL_NEAREST*/);
         }
-        this.setWidth(92);//92
-        this.setHeight(92);//92
+        this.setWidth(GameView.scaledDefaultSide);//92
+        this.setHeight(GameView.scaledDefaultSide);//92
         this.gems = gems;
     }
     public void buildTextureMap(Integer totalItems, Integer width, Integer height){

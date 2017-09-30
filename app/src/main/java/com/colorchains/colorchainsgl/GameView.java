@@ -49,7 +49,7 @@ public class GameView extends GLSurfaceView {
     public static boolean is16x9;
     public static float scale;
     private FloatBuffer vertexBuffer;
-    public static boolean cicleBG = false;
+    public static boolean cicleBG = true;
     static Board board;
     public GameView(Context context) {
         super(context);
@@ -110,12 +110,16 @@ public class GameView extends GLSurfaceView {
     }
 
     public void touchStart(MotionEvent evt){
-        if (cicleBG) {
-            if (renderer.backGround.index + 1 < renderer.backGround.programs.size()) {
-                renderer.backGround.index++;
-            } else renderer.backGround.index = 0;
+
+        /************/
+        if (GameView.cicleBG) {
+            if (GameView.renderer.backGround.index + 1 < GameView.renderer.backGround.programs.size()) {
+                GameView.renderer.backGround.index++;
+            } else GameView.renderer.backGround.index = 0;
         }
-        renderer.backGround.mProgram = renderer.backGround.programs.get(renderer.backGround.index);
+        GameView.renderer.backGround.mProgram = GameView.renderer.backGround.programs.get(GameView.renderer.backGround.index);
+        /***********/
+
         if(GameView.paused) GameView.paused = false;
         if(GameView.disableTouch) return;
         UI.checkUITouch(evt);
@@ -194,7 +198,7 @@ public class GameView extends GLSurfaceView {
         public static final float[] mViewMatrix = new float[16];
         public static Integer curProgram = -1;
         public static Integer curTexture = -1;
-        private BackGround backGround;
+        public BackGround backGround;
         public UI.Title title;
         public static volatile boolean _boardReady = false;
         public static volatile boolean updateMarioTexture = false;

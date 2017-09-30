@@ -18,7 +18,7 @@
 "MM    MM",
 "MMMMMMMM",
 "MMMMMMMM"],
-    "customProperties": [], "targetScore": 1000, "score": 0, "sets":[], "defaultTargetScore": 1000},
+    "customProperties": [], "targetScore": 100, "score": 0, "sets":[], "defaultTargetScore": 1000},
     {"id":"level2", "tiles":[
 "MMMMMMMM",
 "MMM  MMM",
@@ -28,7 +28,7 @@
 "MM    MM",
 "MMM  MMM",
 "MMMMMMMM"],
-    "customProperties": [], "targetScore": 2000, "score": 0, "sets":[]},
+    "customProperties": [], "targetScore": 100, "score": 0, "sets":[], "defaultTargetScore": 2000},
     {"id":"level3", "tiles":[
 "MM MMMMM",
 "MM  MMMM",
@@ -38,7 +38,7 @@
 "      MM",
 "MMMM  MM",
 "MMMMM MM"],
-    "customProperties": [], "targetScore": 3000, "score": 0, "sets":[]},
+    "customProperties": [], "targetScore": 100, "score": 0, "sets":[], "defaultTargetScore": 3000},
     {"id":"level4", "tiles":[
 "        ",
 " MM  MM ",
@@ -48,7 +48,7 @@
 " M    M ",
 " MM  MM ",
 "        "],
-    "customProperties": [], "targetScore": 4000, "score": 0, "sets":[]},
+    "customProperties": [], "targetScore": 100, "score": 0, "sets":[], "defaultTargetScore": 4000},
     {"id":"level5", "tiles":[
 "M      M",
 "MMM  MMM",
@@ -58,7 +58,7 @@
 "MM    MM",
 "        ",
 "        "],
-    "customProperties": [], "targetScore": 5000, "score": 0, "sets":[]},
+    "customProperties": [], "targetScore": 100, "score": 0, "sets":[], "defaultTargetScore": 5000},
     {"id":"level6", "tiles":[
 "MMMMMMMM",
 "   MM   ",
@@ -68,7 +68,7 @@
 "   MM   ",
 "   MM   ",
 "MMMMMMMM"],
-        "customProperties": [], "targetScore": 5000, "score": 0, "sets":[]},
+        "customProperties": [], "targetScore": 100, "score": 0, "sets":[], "defaultTargetScore": 5000},
     {"id":"level7", "tiles":[
         "MMMMMMMM",
         "        ",
@@ -78,7 +78,7 @@
         "        ",
         "M      M",
         "MMMMMMMM"],
-        "customProperties": [], "targetScore": 5000, "score": 0, "sets":[]},
+        "customProperties": [], "targetScore": 100, "score": 0, "sets":[], "defaultTargetScore": 5000},
     {"id":"level8", "tiles":[
         "M      M",
         "        ",
@@ -88,7 +88,7 @@
         "        ",
         "M      M",
         "MMMMMMMM"],
-        "customProperties": [], "targetScore": 5000, "score": 0, "sets":[]},
+        "customProperties": [], "targetScore": 100, "score": 0, "sets":[], "defaultTargetScore": 5000},
     {"id":"level20", "tiles":[
 "WWWMMPMM",
 "BGWMMPMM",
@@ -98,5 +98,5 @@
 "BMCRCYYM",
 "BMCCCYOO",
 "BBBMMMOO"],
-        "customProperties": [], "targetScore": 5000, "score": 0, "sets":[]}
+        "customProperties": [], "targetScore": 100, "score": 0, "sets":[], "defaultTargetScore": 5000}
 ]}

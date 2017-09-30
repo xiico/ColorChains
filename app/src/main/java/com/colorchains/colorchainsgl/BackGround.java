@@ -621,10 +621,10 @@ public class BackGround extends Entity {
         if(programs.size() == 0)
         {
             programs.add(Shape.createProgram(vs_Image, fs_Image, -1));
-            programs.add(Shape.createProgram(vs_Image, fs_Image_effect, -1));
-            programs.add(Shape.createProgram(vs_Image, effect, -1));
+            //programs.add(Shape.createProgram(vs_Image, fs_Image_effect, -1));
+            //programs.add(Shape.createProgram(vs_Image, effect, -1));
             programs.add(Shape.createProgram(vs_Image, effect3, -1));
-            programs.add(Shape.createProgram(vs_Image, effect2, -1));
+            //programs.add(Shape.createProgram(vs_Image, effect2, -1));
             programs.add(Shape.createProgram(vs_Image, swirl, -1));
             programs.add(Shape.createProgram(vs_Image, balls, -1));
             programs.add(Shape.createProgram(vs_Image, river, -1));

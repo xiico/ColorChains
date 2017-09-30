@@ -24,8 +24,8 @@ public class Gem extends Entity {
         super(id, type, x, y, cx, cy);
         this.board = board;
         setGemType();
-        setWidth(getWidth() / 10);
-        setHeight(getHeight() / 3);
+        setWidth(GameView.scaledDefaultSide);//setWidth(getWidth() / 10);
+        setHeight(GameView.scaledDefaultSide);//setHeight(getHeight() / 3);
         /*Bitmap resizedBitmap = null;
         if (Render.cached.get(type) == null) {
             Bitmap bmp = BitmapFactory.decodeResource(board.context.getResources(), getGemSprites());//

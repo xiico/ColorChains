@@ -262,7 +262,7 @@ public class Board extends Entity {
         if (this.entities[i][k] == null) return;
         //if (this.entities[i][k].setYs) this.entities[i][k].setYs(null, null);
         if (this.entities[i][k].type == TYPE.MARIO) this.marioBuffer.add(this.entities[i][k]);
-        if(((Gem)this.entities[i][k]).id.equals("3-5")) this.entities[i][k].doScale = true;
+        if((this.entities[i][k]).id.equals("3-5")) this.entities[i][k].doScale = true;
     }
 
     private TYPE getEntity(String type) {
@@ -314,7 +314,7 @@ public class Board extends Entity {
             if (!loaded){
                 loaded = true;
                 String boardState = settings.getString(BOARD_STATE,"");
-                if(boardState != null && boardState.length() > 0 && false)
+                if(boardState != null && boardState.length() > 0)
                     confirm.visible = true;
                 else {
                     loadStage(0);
@@ -379,6 +379,14 @@ public class Board extends Entity {
         if (this.curStage == null) this.setCurStage(0);
         this.curStage.score += this.calculateScore();
         if (this.curStage.score >= this.curStage.targetScore) {
+
+            if (GameView.cicleBG) {
+                if (GameView.renderer.backGround.index + 1 < GameView.renderer.backGround.programs.size()) {
+                    GameView.renderer.backGround.index++;
+                } else GameView.renderer.backGround.index = 0;
+            }
+            GameView.renderer.backGround.mProgram = GameView.renderer.backGround.programs.get(GameView.renderer.backGround.index);
+
             this.setCurStage(++stageIndex);
             //this.createEntities(this.curStage);
             loadStage(stageIndex);
