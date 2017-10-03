@@ -87,7 +87,7 @@ public class UI {
         if(ctrl.controls.size()  == 0) {
             float rawX = evt.getRawX();
             float rawY = evt.getRawY();
-            RectF ctrlRect = new RectF(ctrl.getX(), ctrl.getY(), ctrl.getX() + ctrl.cacheWidth, ctrl.getY() + ctrl.cacheHeight);
+            RectF ctrlRect = new RectF(ctrl.getX() - (ctrl.getWidth() / 2), ctrl.getY() - (ctrl.getHeight() / 2) , ctrl.getX() + ctrl.cacheWidth, ctrl.getY() + ctrl.cacheHeight);
             RectF touchRect = new RectF(rawX, rawY, rawX + 1, rawY + 1);
             if (touchRect.intersect(ctrlRect) && ctrl.visible) {
                 ((Control.UIListener) ctrl).clicked(ctrl);
@@ -140,7 +140,7 @@ public class UI {
             public void draw()
             {
                 super.draw();
-                changeProgram(font.mProgram, font.vertexBuffer);
+                changeProgram(font.mProgram.getProgramId(), font.vertexBuffer);
                 font.draw();
             }
 
@@ -162,34 +162,66 @@ public class UI {
 
         static class ProgressBar extends Control {
             private float _value = 0f;
+            private float tempValue = 0f;
             //Background
             public int bgColor = Color.parseColor("#000000");
             //Foreground
             public int fgColor= Color.parseColor("#FFFFFF");
-            public float width = 50;
-            public float height = 10;
             public float border = 2;
+            private static String fragmentShader =
+                    "precision mediump float;\n" +
+                    "varying vec2 v_texCoord;\n" +
+                    "uniform vec4 color;\n" +
+                    "uniform vec2 resolution;\n" +
+                    "uniform sampler2D s_texture;\n" +
+                    "uniform float value;\n" +
+                    "void main() {\n" +
+                    "  vec2 pos = gl_FragCoord.xy / resolution.xy;\n" +
+                    "  vec3 bar = vec3(1. - step(value, pos.x));\n" +
+                    "  vec4 tex = texture2D( s_texture, v_texCoord );\n" +
+                    "  gl_FragColor = vec4(vec3((1. - tex.a) * bar.r),1.);\n" +
+                    "}";
             public ProgressBar(String id,  Float x, Float y, float width, float height, int bgColor, int fgColor) {
                 super(id, TYPE.PROGRESSBAR, x, y, 0, 0);
                 this.bgColor = bgColor;
                 this.fgColor = fgColor;
             }
-
             public ProgressBar(){
                 super("pb", TYPE.PROGRESSBAR, 0f, 0f, 50, 10);
+                this.mProgram = Shape.createProgram(vs_Image, fragmentShader, -1);
+                this.mProgram.setTimeLimit(100);
+                this.mProgram.setTimeStep(.16f);
             }
             public void setValue(float value){
-                _value = value;
+                tempValue = value;
+                //_value = value;
+            }
+
+            public void reset(){
+                tempValue = 0;
+                _value = 0;
+            }
+
+            public float getValue(){
+                if(tempValue > _value) _value += 0.01f;
+                if(tempValue < _value) _value -= 0.01f;
+                if(Math.abs(tempValue - _value) <= 0.01) _value = tempValue;
+                return _value;
+            }
+
+            @Override
+            public float getX() {
+                return super.getX() + getWidth() / 2;
+            }
+
+            @Override
+            public float getY() {
+                return super.getY() + getHeight() / 2;
             }
 
             @Override
             public void draw() {
-                /*int color = Render.paint.getColor();
-                Render.paint.setColor(bgColor);
-                Render.canvas.drawRect(x, y, x + width, y + height, Render.paint);
-                Render.paint.setColor(fgColor);
-                Render.canvas.drawRect(x + (border * (int)GameView.scale), y + (border * (int)GameView.scale), (x + (border * (int)GameView.scale)) + (width * Math.min(_value, 1)) - (border * (int)GameView.scale * 2), (y + (border * (int)GameView.scale)) + height - (border * (int)GameView.scale * 2), Render.paint);
-                Render.paint.setColor(color);*/
+                super.draw();
             }
         }
 
@@ -236,25 +268,10 @@ public class UI {
             @Override
             public void draw()
             {
-                /*int color = Render.paint.getColor();
-                Render.paint.setColor(bgColor);
-                Render.canvas.drawRect(x, y, x + width, y + height, Render.paint);
-                Render.paint.setColor(fgColor);
-                Render.canvas.drawRect(x + (border * (int)GameView.scale), y + (border * (int)GameView.scale), (x + (border * (int)GameView.scale)) + (width) - (border * (int)GameView.scale * 2), (y + (border * (int)GameView.scale)) + height - (border * (int)GameView.scale * 2), Render.paint);
-                Render.paint.setColor(color);
-                okButton.draw(true);
-                cancelButton.draw(true);
-                String lines[] = this.text.split("\\r?\\n");
-                for (int i = 0; i < lines.length; i++) {
-                    font.x = this.x + (width / 2);
-                    font.y = this.y + (height * .2f) + (i * font.fontHeight);
-                    font.text = lines[i];
-                    font.draw(gl);
-                }*/
                 font.setX(this.getX() + (this.getWidth() / 2));
                 font.setY(this.getY() + (this.getHeight() / 2) - GameView.scaledDefaultSide);
                 font.setText(this.text);
-                changeProgram(font.mProgram, font.vertexBuffer);
+                changeProgram(font.mProgram.getProgramId(), font.vertexBuffer);
                 font.draw();
                 okButton.draw();
                 cancelButton.draw();
@@ -273,7 +290,8 @@ public class UI {
         public InfoBox(String id, Float x, Float y) {
             super(id, TYPE.INFOBOX, x, y, 0, 0);
             font = new Font(R.drawable.oldskol, 2.0f);
-            fontBig = new Font(R.drawable.oldskol, 2.0f);
+            fontBig = new Font(R.drawable.oldskol, 4.0f);
+            fontBig.hAlign = Font.HorizontalAlignment.RIGHT;
         }
 
         public void setScore(Integer score){
@@ -289,21 +307,34 @@ public class UI {
         }
 
         @Override
+        public float getX(){
+            return super.getX() + this.getWidth() / 2;
+        }
+
+        @Override
+        public float getY(){
+            return super.getY() + this.getHeight() / 2;
+        }
+
+        @Override
         public void draw()
         {
-            /*super.draw();
-            fontBig.text = score.toString();
-            fontBig.x = this.getX() + 224;
-            fontBig.y = this.getY() + 64;
+            super.draw();
+            fontBig.setX(this.getX() - (this.getWidth() / 2) + 220);
+            fontBig.setY(this.getY() - (this.getHeight() / 2) + 48);
+            fontBig.setText(score.toString());
+            changeProgram(fontBig.mProgram.getProgramId(), fontBig.vertexBuffer);
             fontBig.draw();
-            fontBig.text = targetScore.toString();
-            fontBig.x = this.getX() + 224;
-            fontBig.y = this.getY() + 116;
+            fontBig.setText( targetScore.toString());
+            fontBig.setX(this.getX() - (this.getWidth() / 2)  + 220);
+            fontBig.setY(this.getY() - (this.getHeight() / 2) + 100);
+            changeProgram(fontBig.mProgram.getProgramId(), fontBig.vertexBuffer);
             fontBig.draw();
-            fontBig.text = puzzleScore.toString();
-            fontBig.x = this.getX() + 224;
-            fontBig.y = this.getY() + 168;
-            fontBig.draw();*/
+            fontBig.setText( puzzleScore.toString());
+            fontBig.setX(this.getX() - (this.getWidth() / 2) + 220);
+            fontBig.setY(this.getY() - (this.getHeight() / 2)+ 152);
+            changeProgram(fontBig.mProgram.getProgramId(), fontBig.vertexBuffer);
+            fontBig.draw();
         }
     }
 
@@ -320,6 +351,61 @@ public class UI {
             super.draw();
         }
     }
+
+    public static class LevelCompleted extends Control{
+        private final Font font;
+        private String text;
+        private boolean loadNextLevel = false;
+        private ProgressBar _pb;
+
+        public boolean canLoadNextLevel() {
+            return loadNextLevel;
+        }
+
+        public String getText() {
+            return text;
+        }
+
+        @Override
+        public float getWidth(){
+            return  cacheWidth;
+        }
+
+        @Override
+        public float getHeight(){
+            return  cacheHeight;
+        }
+
+        public void setText(String text) {
+            this.text = text;
+        }
+
+        public LevelCompleted(ProgressBar pb) {
+            super("levelcomplete", TYPE.LEVELCOMPLETE, 0f, 0f, 0, 0);
+            setOffSetX(0);
+            setOffSetY(0);
+            setText("Level\nCompleted!");
+            cacheWidth = (int) super.getWidth();
+            cacheHeight = (int) super.getHeight();
+            font = new Font(R.drawable.oldskol, 8.0f);
+            this.setX(GameView.metrics.widthPixels / 2);
+            this.setY(GameView.metrics.heightPixels / 2);
+            font.setText(text);
+            font.setX(this.getX());
+            font.setY(this.getY());
+            _pb = pb;
+            this.visible = false;
+        }
+
+        @Override
+        public void draw() {
+            loadNextLevel = _pb._value >= 1f;
+            super.draw();
+            changeProgram(font.mProgram.getProgramId(), font.vertexBuffer);
+            font.draw();
+        }
+    }
+
     public static class Font extends Shape{
         String fontImagePath;
         int fontHeight = 40;
@@ -430,11 +516,6 @@ public class UI {
             Integer lastDOFIndex = 0;
             Integer lastDOIndex = 0;
             for (int l = 0; l < lines.length; l++) {
-                /*
-                font.x = this.x + (width / 2);
-                font.y = this.y + (height * .2f) + (i * font.fontHeight);
-                font.text = lines[i];
-                font.draw(gl);*/
                 String lineText = lines[l];
                 _getCharCodes(lineText);
                 if(hAlign == HorizontalAlignment.LEFT) halgn = 0.5f;

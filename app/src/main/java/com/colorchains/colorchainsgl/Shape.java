@@ -22,10 +22,11 @@ import java.util.List;
 public class Shape implements Comparable<Shape> {
     // Use to access and set the view transformation
     private int mMVPMatrixHandle;
-    public int mProgram;
+    public ProgramInfo mProgram;
     public static FloatBuffer vertexBuffer;
     // number of coordinates per vertex in this array
     public static final int COORDS_PER_VERTEX = 3;
+    private static float pixelWidth, pixelHeight;
     float[] coords;
     // Set color with red, green, blue and alpha (opacity) values
     float color[] = {1.0f, 1.0f, 1.0f, 1.0f};
@@ -47,9 +48,8 @@ public class Shape implements Comparable<Shape> {
     public boolean doScale = false;
     public boolean rotate = false;
     public boolean useStaticVBO = false;
-    public float maxTimer = (float) (2*Math.PI);
     public String id;
-    public List<Integer> programs = new ArrayList<>();
+    public List<ProgramInfo> programs = new ArrayList<>();
 
     public Shape(float[] coords, short[] drawOrder , String vertexShaderCode, String fragmentShaderCode, Integer resourceId, Integer filtering){
         mProgram = setupImage(resourceId, vertexShaderCode, fragmentShaderCode, filtering);
@@ -59,8 +59,22 @@ public class Shape implements Comparable<Shape> {
     public Shape(float[] coords, short[] drawOrder , String vertexShaderCode, String fragmentShaderCode, Integer resourceId){
         if(resourceId != -1) {
             mProgram = setupImage(resourceId, vertexShaderCode, fragmentShaderCode, GLES20.GL_LINEAR /*GLES20.GL_NEAREST*/);
-            init(coords, drawOrder);
         }
+        init(coords, drawOrder);
+    }
+
+
+    public static float getPixelWidth() {
+        return pixelWidth;
+    }
+    public static float getPixelHeight() {
+        return pixelHeight;
+    }
+    public static void setPixelWidth(float pixelWidth) {
+        Shape.pixelWidth = pixelWidth;
+    }
+    public static void setPixelHeight(float pixelHeight) {
+        Shape.pixelHeight = pixelHeight;
     }
 
     public float getY() {
@@ -116,7 +130,7 @@ public class Shape implements Comparable<Shape> {
         this.drawOrder = drawOrder;
     }
 
-    public static Integer createProgram(String vertexShaderCode, String fragmentShaderCode, Integer resourceId){
+    public static ProgramInfo createProgram(String vertexShaderCode, String fragmentShaderCode, Integer resourceId){
 
         int vertexShader = GameView.GLRenderer.loadShader(GLES20.GL_VERTEX_SHADER,
                 vertexShaderCode);
@@ -136,11 +150,11 @@ public class Shape implements Comparable<Shape> {
         GLES20.glLinkProgram(program);
 
         if(resourceId > 0) {
-            textures.get(resourceId).program = program;
+            textures.get(resourceId).program = new ProgramInfo(program, fragmentShaderCode);
             //programs.add(program);
         }
 
-        return program;
+        return new ProgramInfo(program, fragmentShaderCode);
     }
 
     private int mPositionHandle;
@@ -153,44 +167,53 @@ public class Shape implements Comparable<Shape> {
 //    private float colour3 = 0;
     private float time = 0;
     float[] mvpMatrix;
+
     public void draw() { // pass in the calculated transformation matrix
-    //public void draw() { // pass in the calculated transformation matrix
-        if(GameView.GLRenderer.curProgram != this.mProgram) GameView.GLRenderer.changeProgram(this.mProgram, Shape.vertexBuffer);
-        if(GameView.GLRenderer.curTexture.intValue() != this.getResourceId().intValue()) Shape.bindTexture(this.getResourceId());
+        //public void draw() { // pass in the calculated transformation matrix
+        if (GameView.GLRenderer.curProgram != this.mProgram.getProgramId())
+            GameView.GLRenderer.changeProgram(this.mProgram.getProgramId(), Shape.vertexBuffer);
+        if (GameView.GLRenderer.curTexture.intValue() != this.getResourceId().intValue())
+            Shape.bindTexture(this.getResourceId());
+
         mvpMatrix = this.doTransformations();
+
         /**************old was inside shape *********/
 
         // get handle to shape's transformation matrix
-        mMVPMatrixHandle = GLES20.glGetUniformLocation(mProgram, "uMVPMatrix");
+        mMVPMatrixHandle = GLES20.glGetUniformLocation(mProgram.getProgramId(), "uMVPMatrix");
+        if (uvBuffer != null) {
+            /*********** Texture Coordinates *********/
+            Shape.setUpUVBuffer(uvBuffer, mProgram.getProgramId());
+            /*********** end Texture Coordinates *********/
+        }
 
-        /*********** Texture Coordinates *********/
-        Shape.setUpUVBuffer(uvBuffer, mProgram);
-        /*********** end Texture Coordinates *********/
-
-        if(this.time > maxTimer) this.time = 0;
-        this.time += 0.01666/2;
+        if (this.time > this.mProgram.getTimeLimit()) this.time = 0;
+        this.time += this.mProgram.getTimeStep();
 
 
         /************ effect *************/
-        if(getResourceId() == R.drawable.bg_color) {
-            /********** set colors *************/
-//            colour1 += (0.01666f / 8);
-//            if(colour1 > 1) colour1 = 0;
-//            colour2 += (0.01666f / 16);
-//            if(colour2 > 1) colour2 = 0;
-//            colour3 += (0.01666f / 32);
-//            if(colour3 > 1) colour3 = 0;
-            int color =  GLES20.glGetUniformLocation(mProgram, "color");
-            //GLES20.glUniform4f(color, colour1, colour2, colour3, 1);
-            GLES20.glUniform4f(color, 1f, 1f, 1f, 1);
-            int resolution = GLES20.glGetUniformLocation(mProgram, "resolution");
-            GLES20.glUniform2f(resolution, this.getWidth(), this.getHeight());
-            int time = GLES20.glGetUniformLocation(mProgram, "time");
-            GLES20.glUniform1f(time, this.time);
-            /********** test *************/
+        if (getResourceId() == R.drawable.bg_color || getResourceId() == R.drawable.progress) {
+            if(getResourceId() == R.drawable.progress){
+                int resolution = GLES20.glGetUniformLocation(mProgram.getProgramId(), "resolution");
+                GLES20.glUniform2f(resolution, this.getWidth(), this.getHeight());
+                int color = GLES20.glGetUniformLocation(mProgram.getProgramId(), "color");
+                GLES20.glUniform4f(color, this.color[0], this.color[1], this.color[2], this.color[3]);
+                int value = GLES20.glGetUniformLocation(mProgram.getProgramId(), "value");
+                GLES20.glUniform1f(value, ((UI.Control.ProgressBar)this).getValue());
+            } else {
+                int color = GLES20.glGetUniformLocation(mProgram.getProgramId(), "color");
+                //GLES20.glUniform4f(color, colour1, colour2, colour3, 1);
+                GLES20.glUniform4f(color, 1f, 1f, 1f, 1);
+                int resolution = GLES20.glGetUniformLocation(mProgram.getProgramId(), "resolution");
+                GLES20.glUniform2f(resolution, this.getWidth(), this.getHeight());
+                int time = GLES20.glGetUniformLocation(mProgram.getProgramId(), "time");
+                GLES20.glUniform1f(time, this.time);
+                /********** test *************/
+            }
 
-        } else if (getResourceId() == R.drawable.oldskol || (this instanceof GemCollection)){
-            int color =  GLES20.glGetUniformLocation(mProgram, "color");
+
+        } else if (getResourceId() == R.drawable.oldskol || (this instanceof GemCollection)) {
+            int color = GLES20.glGetUniformLocation(mProgram.getProgramId(), "color");
             GLES20.glUniform4f(color, this.color[0], this.color[1], this.color[2], this.color[3]);
         }
         /************ effect **********/
@@ -219,7 +242,7 @@ public class Shape implements Comparable<Shape> {
             if (scale <= minScale || scale >= maxScale) scaleStep = scaleStep * -1;
             scale += scaleStep;
             Matrix.scaleM(this.mMVPMatrix, 0, getWidth() * scale, getHeight() * scale, 1);
-        } else Matrix.scaleM(this.mMVPMatrix, 0, getWidth(), this.getHeight(), 1);
+        } else Matrix.scaleM(this.mMVPMatrix, 0, this.getWidth(), this.getHeight(), 1);
 
         // Create a rotation transformation for the triangle
         if(rotate){
@@ -302,7 +325,7 @@ public class Shape implements Comparable<Shape> {
     public ShortBuffer drawListBuffer;
     public FloatBuffer uvBuffer;
 
-    public Integer setupImage(Integer resourceId, String vertexShaderCode, String fragmentShaderCode, Integer filtering)
+    public ProgramInfo setupImage(Integer resourceId, String vertexShaderCode, String fragmentShaderCode, Integer filtering)
     {
         // Create our UV coordinates.
         switch (resourceId){
@@ -442,7 +465,7 @@ public class Shape implements Comparable<Shape> {
         public Integer textureId = 0;
         public float width = 0;
         public float height = 0;
-        public Integer program = -1;
+        public ProgramInfo program;
 
         public TextureInfo(){}
         public TextureInfo(Integer textureId, float width, float height){

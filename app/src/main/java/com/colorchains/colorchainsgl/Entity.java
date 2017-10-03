@@ -112,6 +112,12 @@ public abstract class Entity extends Shape {
                 return R.drawable.title;
             case BUTTON:
                 return R.drawable.button;
+            case PROGRESSBAR:
+                return R.drawable.progress;
+            case INFOBOX:
+                return R.drawable.infobox;
+            case LEVELCOMPLETE:
+                return R.drawable.levelcomplete;
             default:
                 return -1;
         }

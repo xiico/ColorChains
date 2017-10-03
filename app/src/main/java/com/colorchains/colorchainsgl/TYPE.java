@@ -25,5 +25,6 @@ public enum TYPE {
     INFOBOX,
     IMAGE,
     BACKGROUND,
-    TITLE
+    TITLE,
+    LEVELCOMPLETE
 }

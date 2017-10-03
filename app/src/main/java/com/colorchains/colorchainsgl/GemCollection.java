@@ -147,7 +147,7 @@ public class GemCollection extends Shape{
                 for (int j = 0; j < 12; j += 3) {
                     float[] data = new float[]{vertexData[(i * 12) + j + 0],
                             vertexData[(i * 12) + j + 1],
-                            vertexData[(i * 12) + j + 2],
+                            0/*vertexData[(i * 12) + j + 2]*/,
                             1};
                     Matrix.multiplyMV(result, 0, transformationMatrix, 0, data, 0);
                     vertexData[(i * 12) + j + 0] = result[0] + posX;
@@ -174,7 +174,7 @@ public class GemCollection extends Shape{
 
     public void draw() {
         setBuffers();
-        GameView.GLRenderer.changeProgram(mProgram, vertexBuffer);
+        GameView.GLRenderer.changeProgram(mProgram.getProgramId(), vertexBuffer);
         super.draw();
     }
 }

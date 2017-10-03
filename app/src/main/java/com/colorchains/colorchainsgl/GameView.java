@@ -2,23 +2,17 @@ package com.colorchains.colorchainsgl;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Point;
-import android.opengl.GLES10;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLUtils;
 import android.opengl.Matrix;
-import android.os.SystemClock;
-import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.util.DisplayMetrics;
 
 import org.json.JSONException;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.util.HashMap;
 import java.util.Random;
@@ -49,7 +43,7 @@ public class GameView extends GLSurfaceView {
     public static boolean is16x9;
     public static float scale;
     private FloatBuffer vertexBuffer;
-    public static boolean cicleBG = true;
+    public static boolean cycleBG = false;
     static Board board;
     public GameView(Context context) {
         super(context);
@@ -112,7 +106,7 @@ public class GameView extends GLSurfaceView {
     public void touchStart(MotionEvent evt){
 
         /************/
-        if (GameView.cicleBG) {
+        if (GameView.cycleBG) {
             if (GameView.renderer.backGround.index + 1 < GameView.renderer.backGround.programs.size()) {
                 GameView.renderer.backGround.index++;
             } else GameView.renderer.backGround.index = 0;
@@ -218,19 +212,15 @@ public class GameView extends GLSurfaceView {
             //font.doScale = true;
         }
 
-        private void setUpEnvironment(){
+        private void setUpEnvironment(int width, int height){
             GameView.is16x9 = metrics.heightPixels / (float)metrics.widthPixels >= 1.6f;
             scale = Math.round(metrics.widthPixels / 360f);
             GameView.defaultSide = GameView.is16x9 ? 42 : (metrics.widthPixels < 800 ? 46 : 48);
             GameView.scaledDefaultSide = GameView.defaultSide * (int)scale;
-            /********************/
-            try {
-                board = new Board(context);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            Shape.setPixelWidth(1 / width);
+            Shape.setPixelHeight(1 / height);
         }
-
+        private boolean testProgram = false;
         @Override
         public void onSurfaceChanged(GL10 gl, int width, int height) {
             /******* onSurfaceChanged GL2 **********/
@@ -244,43 +234,56 @@ public class GameView extends GLSurfaceView {
             Matrix.orthoM(mProjectionMatrix, 0, left, right, bottom, top, near, far);
             // Set the camera position (View matrix)
             Matrix.setLookAtM(mViewMatrix, 0, 0f, 0f, 1f, 0f, 0f, 0f, 0f, 1.0f, 0.0f);
-
             if(board == null) {
-                setUpEnvironment();
-                /*title = new UI.Title();
-                title.setX((metrics.widthPixels / 2) - (title.width / 2f));
-                title.setY(scaledDefaultSide * 4f);*/
+                setUpEnvironment(width, height);
+                /********************/
+                if(!testProgram) {
+                    title = new UI.Title();
+                    title.setX(width / 2);
+                    title.setY(height / 2);
+                    UI.addControl(title);
 
+                    try {
+                        board = new Board(context);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    font = new UI.Font(R.drawable.oldskol, 2.0f);
+                    font.setText("Hey you!");
+                    font.setX(32);
+                    font.setY(32);
 
-                title = new UI.Title();
-                title.setX(width / 2);
-                title.setY(height / 2);
-                UI.addControl(title);
+                    backGround = new BackGround();
+                    backGround.setX(width / 2f);
+                    backGround.setY(height / 2f);
+                    backGround.setOffSetX(0);
+                    backGround.setOffSetY(0);
+                    backGround.doScale = false;
+                    backGround.rotate = false;
+                    int randint = 0;
+                    if (!GameView.cycleBG) {
+                        Random r = new Random();
+                        randint = Math.abs(r.nextInt()) % backGround.programs.size();
+                    }
+                    backGround.index = 0;//randint;
 
-                font = new UI.Font(R.drawable.oldskol, 2.0f);
-                font.setText("Hey you!");
-                font.setX(32);
-                font.setY(32);
-
-                backGround = new BackGround();
-                backGround.setX(width / 2f);
-                backGround.setY(height / 2f);
-                backGround.setOffSetX(0);
-                backGround.setOffSetY(0);
-                backGround.doScale = false;
-                backGround.rotate = false;
-                int randint = 0;
-                if (!GameView.cicleBG) {
-                    Random r = new Random();
-                    randint = Math.abs(r.nextInt()) % backGround.programs.size();
+                    /******* end onSurfaceChanged GL2 **********/
+                    w = metrics.widthPixels;//600
+                    h = height * w / width;
+                    screenH = height;
+                    screenW = width;
+                } else {
+                    UI.Control.ProgressBar progressBar = new UI.Control.ProgressBar();
+//                    progressBar.setX(16f);
+//                    progressBar.setY(252f + (GameView.scaledDefaultSide * 8f) + (4*GameView.scale));
+                    progressBar.setX(GameView.metrics.widthPixels / 2);
+                    progressBar.setY(GameView.metrics.heightPixels / 2);
+                    progressBar.setWidth(GameView.scaledDefaultSide * 8);
+                    progressBar.setHeight(GameView.scaledDefaultSide / 4);
+                    progressBar.bgColor = Color.parseColor("#000000");
+                    progressBar.fgColor = Color.parseColor("#FFFFFF");
+                    UI.addControl(progressBar);
                 }
-                backGround.index = 0;//randint;
-
-                /******* end onSurfaceChanged GL2 **********/
-                w = metrics.widthPixels;//600
-                h = height * w / width;
-                screenH = height;
-                screenW = width;
             }
         }
 
@@ -290,34 +293,33 @@ public class GameView extends GLSurfaceView {
             /********** onDrawFrame GL2 ****************************/
             // Redraw background color
             GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
-            //changeProgram(backGround.mProgram, Shape.vertexBuffer);
-            //Shape.bindTexture(backGround.getResourceId());
-            backGround.draw();
-            //Shape.bindTexture(title.getResourceId());
-            //title.draw();
-            /********** end onDrawFrame GL2 ****************************/
 
-            board.update();
-            if (GameView.GLRenderer._boardReady) {
-                if(updateMarioTexture) {
-                    updateTexture(R.drawable.mario_tiles_46,Mario.marioTexture);
-                    updateMarioTexture = false;
+            if(!testProgram) {
+                backGround.draw();
+                /********** end onDrawFrame GL2 ****************************/
+                board.update();
+                if (GameView.GLRenderer._boardReady) {
+                    if (updateMarioTexture) {
+                        updateTexture(R.drawable.mario_tiles_46, Mario.marioTexture);
+                        updateMarioTexture = false;
+                    }
+                    if (board.gemCol != null) {
+                        //changeProgram(board.gemCol.mProgram, board.gemCol.vertexBuffer);
+                        //Shape.bindTexture(board.gemCol.getResourceId());
+                        board.draw();
+                        if (!GameView.disableTouch) board.parseBoard();
+                    }
                 }
-                if (board.gemCol != null) {
-                    //changeProgram(board.gemCol.mProgram, board.gemCol.vertexBuffer);
-                    //Shape.bindTexture(board.gemCol.getResourceId());
-                    board.draw();
-                    if (!GameView.disableTouch) board.parseBoard();
+
+                if (GameView.showFPS) {
+                    changeProgram(font.mProgram.getProgramId(), font.vertexBuffer);
+                    //Shape.bindTexture(font.getResourceId());
+                    // Display the current fps on the screen
+                    font.setText(String.valueOf(Timer.fps));
+                    font.draw();
                 }
             }
 
-            if (GameView.showFPS) {
-                changeProgram(font.mProgram, font.vertexBuffer);
-                //Shape.bindTexture(font.getResourceId());
-                // Display the current fps on the screen
-                font.setText(String.valueOf(Timer.fps));
-                font.draw();
-            }
             UI.draw();
 
         }

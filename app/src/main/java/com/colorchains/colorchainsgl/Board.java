@@ -41,6 +41,7 @@ public class Board extends Entity {
     private UI.Control.Button nextButton;
     private UI.Control.ProgressBar progressBar;
     private UI.Control.Confirm confirm;
+    private UI.LevelCompleted levelCompleted;
 
     public boolean clearChains = false;
     private static final String APP_STATES = "appStates";
@@ -82,8 +83,8 @@ public class Board extends Entity {
 
     public void addControls(){
         nextButton = new UI.Control.Button("next","Next",
-                gemOffsetX + (GameView.scaledDefaultSide * 6),
-                gemOffsetY + (GameView.scaledDefaultSide * 8) + (20 * GameView.scale) ,0,0);
+                gemOffsetX + (GameView.scaledDefaultSide * 7) + (this.getWidth() / 2),
+                gemOffsetY + (GameView.scaledDefaultSide * 8.5f) + (20 * GameView.scale) ,0,0);
         UI.addControl(nextButton);
         nextButton.addUIListener(new UI.Control.Button.UIListener() {
             @Override
@@ -96,10 +97,12 @@ public class Board extends Entity {
         progressBar = new UI.Control.ProgressBar();
         progressBar.setX(gemOffsetX);
         progressBar.setY(gemOffsetY + (GameView.scaledDefaultSide * 8f) + (4*GameView.scale));
-        progressBar.width = GameView.scaledDefaultSide * 8;
-        progressBar.height = GameView.scaledDefaultSide / 4;
+        progressBar.setWidth(GameView.scaledDefaultSide * 8);
+        progressBar.setHeight(GameView.scaledDefaultSide / 4);
+
         progressBar.bgColor = Color.parseColor("#000000");
         progressBar.fgColor = Color.parseColor("#FFFFFF");
+        progressBar.color = new float[]{.25f,.25f,.25f,1};
         UI.addControl(progressBar);
         progressBar.visible = false;
 
@@ -118,7 +121,13 @@ public class Board extends Entity {
         infoBox.setX((GameView.metrics.widthPixels / 2f) - (infoBox.width / 2));
         infoBox.visible = false;
         UI.addControl(infoBox);
+
+        levelCompleted = new UI.LevelCompleted(progressBar);
+        levelCompleted.setX(GameView.metrics.widthPixels / 2);
+        levelCompleted.setY(GameView.metrics.heightPixels / 2);
+        UI.addControl(levelCompleted);
     }
+
     public int calculateScore(){
         Float score = 0f;
         if (chains.size() == 0) return 0;
@@ -332,21 +341,29 @@ public class Board extends Entity {
                 confirm.visible = false;
             }
         }
-        if(!GameView.GLRenderer._boardReady) return;
-        GameView.disableTouch = false;
-        for (Integer i = 0; i < rowsCount; i++) {
-            for (Integer k = 0; k < colsCount; k++) {
-                Gem entity = entities[i][k];
-                if(entity == null) continue;
-                if(entity.moveTo != null) GameView.disableTouch = true;
-                entity.update();
-                if (entity.getClass().equals(Gem.class) && chains == null) entity.checked = false;
+        if(GameView.GLRenderer._boardReady) {
+            GameView.disableTouch = false;
+            for (Integer i = 0; i < rowsCount; i++) {
+                for (Integer k = 0; k < colsCount; k++) {
+                    Gem entity = entities[i][k];
+                    if (entity == null) continue;
+                    if (entity.moveTo != null) GameView.disableTouch = true;
+                    entity.update();
+                    if (entity.getClass().equals(Gem.class) && chains == null)
+                        entity.checked = false;
+                }
             }
+            progressBar.setValue(curStage.score / (float)curStage.targetScore);
         }
         if(this.levelComplete){
-            nextButton.visible = true;
+            //GameView.GLRenderer._boardReady = false;
+            this.curStage.score = this.calculateScore();
+            progressBar.setValue(curStage.score / (float)curStage.targetScore);
+            showLevelCompleted = true;
+            levelCompleted.visible = true;
+            nextButton.visible = levelCompleted.canLoadNextLevel();
+            //progressBar.visible = false;
         }
-        progressBar.setValue(curStage.score / (float)curStage.targetScore);
         UI.update();
     }
 
@@ -355,6 +372,14 @@ public class Board extends Entity {
         //Render.clearScreen();
         //Render.clearScreen(bg);//Render.clearScreen(Render.cached.get(TYPE.FONT) == null ?  bg: Render.cached.get(TYPE.FONT));//Render.clearScreen(bg);//Render.clearScreen();
         //texture.draw(gl, x, y, width, height, 0, true);
+
+//        if(showLevelCompleted){
+//            if(levelCompleted.canLoadNextLevel()){
+//                //levelCompleted.visible = false;
+//                //loadNextLevel();
+//            }
+//        }
+
         if (!GameView.GLRenderer._boardReady) {
             if (this.curStage != null) font.draw();
             return;
@@ -374,24 +399,17 @@ public class Board extends Entity {
         /********** Use GemCollection **********/
     }
 
+    private boolean showLevelCompleted = false;
     private void nextStage(){
         GameView.GLRenderer._boardReady = false;
         if (this.curStage == null) this.setCurStage(0);
-        this.curStage.score += this.calculateScore();
+        //this.curStage.score += this.calculateScore();
         if (this.curStage.score >= this.curStage.targetScore) {
-
-            if (GameView.cicleBG) {
-                if (GameView.renderer.backGround.index + 1 < GameView.renderer.backGround.programs.size()) {
-                    GameView.renderer.backGround.index++;
-                } else GameView.renderer.backGround.index = 0;
-            }
-            GameView.renderer.backGround.mProgram = GameView.renderer.backGround.programs.get(GameView.renderer.backGround.index);
-
-            this.setCurStage(++stageIndex);
-            //this.createEntities(this.curStage);
-            loadStage(stageIndex);
-            ((UI.InfoBox)UI.findControlById("infoBox")).setTargetScore(curStage.targetScore);
-            updateMarioTexture = true;
+            //progressBar.setValue(curStage.score / (float)curStage.targetScore);
+            this.levelComplete = false;
+            loadNextLevel();
+            //showLevelCompleted = true;
+            //levelCompleted.visible = true;
         } else {
             reloadStage();
         }
@@ -399,7 +417,23 @@ public class Board extends Entity {
         this.selectedGem = null;
         this.chains = null;
         nextButton.visible = false;
-        progressBar.visible = true;
+        levelCompleted.visible = false;
+    }
+
+    private void loadNextLevel() {
+        progressBar.reset();
+        if (GameView.cycleBG) {
+            if (GameView.renderer.backGround.index + 1 < GameView.renderer.backGround.programs.size()) {
+                GameView.renderer.backGround.index++;
+            } else GameView.renderer.backGround.index = 0;
+        }
+        GameView.renderer.backGround.mProgram = GameView.renderer.backGround.programs.get(GameView.renderer.backGround.index);
+
+        this.setCurStage(++stageIndex);
+        //this.createEntities(this.curStage);
+        loadStage(stageIndex);
+        ((UI.InfoBox)UI.findControlById("infoBox")).setTargetScore(curStage.targetScore);
+        updateMarioTexture = true;
     }
 
     public boolean parseBoard(){
