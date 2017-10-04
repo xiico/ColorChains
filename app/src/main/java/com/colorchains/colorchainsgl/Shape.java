@@ -192,7 +192,7 @@ public class Shape implements Comparable<Shape> {
 
 
         /************ effect *************/
-        if (getResourceId() == R.drawable.bg_color || getResourceId() == R.drawable.progress) {
+        if (getResourceId() == R.drawable.bg_color || getResourceId() == R.drawable.progress || getResourceId() == R.drawable.levelcomplete) {
             if(getResourceId() == R.drawable.progress){
                 int resolution = GLES20.glGetUniformLocation(mProgram.getProgramId(), "resolution");
                 GLES20.glUniform2f(resolution, this.getWidth(), this.getHeight());

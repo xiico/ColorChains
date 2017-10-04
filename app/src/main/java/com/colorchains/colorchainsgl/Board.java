@@ -50,7 +50,7 @@ public class Board extends Entity {
     public SharedPreferences settings;
     private Integer stageIndex;
     private String loadResult = "";
-    private UI.Font font;
+    private UI.Font loading;
     public GemCollection gemCol;
     public GemCollection marioCol;
     public boolean parseBoard = false;
@@ -58,10 +58,10 @@ public class Board extends Entity {
     public Board(Context context)  throws JSONException {
         super("board", TYPE.BOARD,0f,0f,1280,768);
         this.context = context;
-        font = new UI.Font(R.drawable.oldskol, 2.0f);
-        font.setText("Loading");
-        font.setX(GameView.metrics.widthPixels / 2);
-        font.setY(GameView.metrics.heightPixels / 2);
+        loading = new UI.Font(R.drawable.oldskol, 2.0f);
+        loading.setText("Loading");
+        loading.setX(GameView.metrics.widthPixels / 2);
+        loading.setY(GameView.metrics.heightPixels / 2);
         stages = Stage.getStageList(loadJSONFromAsset("levels.json"));
 
         //App settings
@@ -355,17 +355,19 @@ public class Board extends Entity {
             }
             progressBar.setValue(curStage.score / (float)curStage.targetScore);
         }
-        if(this.levelComplete){
+        if(this.levelComplete && checkComplete){
             //GameView.GLRenderer._boardReady = false;
-            this.curStage.score = this.calculateScore();
+            this.curStage.score += this.calculateScore();
             progressBar.setValue(curStage.score / (float)curStage.targetScore);
-            showLevelCompleted = true;
-            levelCompleted.visible = true;
-            nextButton.visible = levelCompleted.canLoadNextLevel();
+            if(curStage.score >= (float)curStage.targetScore) levelCompleted.visible = true;
+            //nextButton.visible = true;
             //progressBar.visible = false;
-        }
+            checkComplete = false;
+            ((UI.InfoBox)UI.findControlById("infoBox")).transferScore();
+        } else nextButton.visible = this.levelComplete && levelCompleted.canLoadNextLevel();
         UI.update();
     }
+    private boolean checkComplete = true;
 
     @Override
     public void draw() {
@@ -381,7 +383,10 @@ public class Board extends Entity {
 //        }
 
         if (!GameView.GLRenderer._boardReady) {
-            if (this.curStage != null) font.draw();
+            if (this.curStage != null) {
+                GameView.GLRenderer.changeProgram(loading.mProgram.getProgramId(), loading.vertexBuffer);
+                loading.draw();
+            }
             return;
         }
         ((UI.InfoBox) UI.findControlById("infoBox")).visible = true;
@@ -411,6 +416,7 @@ public class Board extends Entity {
             //showLevelCompleted = true;
             //levelCompleted.visible = true;
         } else {
+            //this.curStage.score += this.calculateScore();
             reloadStage();
         }
         this.levelComplete = false;
@@ -418,6 +424,7 @@ public class Board extends Entity {
         this.chains = null;
         nextButton.visible = false;
         levelCompleted.visible = false;
+        checkComplete = true;
     }
 
     private void loadNextLevel() {
@@ -655,12 +662,12 @@ public class Board extends Entity {
     }
 
     private void BuildGemsCollections() {
-        this.gemCol = new GemCollection(R.drawable.atlas, entities, false);
+        this.gemCol = new GemCollection(R.drawable.atlas, this, false);
         this.gemCol.offSetX = gemOffsetX;
         this.gemCol.offSetY = gemOffsetY;
         this.gemCol.buildTextureMap(80,10,8);
 
-        this.marioCol = new GemCollection(-1/*R.drawable.mario_tiles_46*/, entities, true);
+        this.marioCol = new GemCollection(-1/*R.drawable.mario_tiles_46*/, this, true);
         this.marioCol.offSetX = gemOffsetX;
         this.marioCol.offSetY = gemOffsetY;
         //this.marioCol.buildTextureMap(80,10,8);

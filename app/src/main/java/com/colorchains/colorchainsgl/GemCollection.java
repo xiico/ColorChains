@@ -15,7 +15,7 @@ import java.util.List;
  */
 
 public class GemCollection extends Shape{
-    public Gem[][] gems;
+    //public Gem[][] gems;
     float gemWidthGl, gemHeightGl;
     private String text = "";
     static float fontCoords[] = {
@@ -49,8 +49,8 @@ public class GemCollection extends Shape{
                     "void main() {" +
                     "  gl_FragColor = texture2D( s_texture, v_texCoord ) * vec4(color.r,color.g,color.b,color.a);\n" +
                     "}";
-
-    public GemCollection(Integer resourceId, Gem[][] gems, boolean checkMario) {
+    Board board;
+    public GemCollection(Integer resourceId, /*Gem[][] gems*/Board board, boolean checkMario) {
         super(fontCoords, drawOrder, vs_Gem/*vs_Text*/, fs_Gem/*fs_Text*/, resourceId/*, GLES20.GL_LINEAR*/);
         this.checkMario = checkMario;
         gemWidthGl = (1 / 10f)/* *scale*/;//(1 / 10f)
@@ -62,7 +62,7 @@ public class GemCollection extends Shape{
         }
         this.setWidth(GameView.scaledDefaultSide);//92
         this.setHeight(GameView.scaledDefaultSide);//92
-        this.gems = gems;
+        this.board = board;
     }
     public void buildTextureMap(Integer totalItems, Integer width, Integer height){
         uvMap = new float[totalItems][8];
@@ -101,78 +101,89 @@ public class GemCollection extends Shape{
     }
 
     public boolean setBuffers() {
-        float[] uvData = new float[gems.length * gems[0].length * 8];
-        short[] drawOrder = {0, 1, 2, 0, 2, 3};
-        short[] drawOrderFinal = new short[gems.length * gems[0].length * 6];
-        float[] vertexData = new float[gems.length * gems[0].length * 12];
-        for (int i = 0; i < (gems.length * gems[0].length); i++) {
-            int row = (int)Math.floor(i / 8), col = i % 8;
-            Gem gem = gems[row][col];
-            //if(gem == null) return false;
-            float posX = (gem.getX() / gem.getWidth()), posY = (gem.getY() / gem.getHeight());
-            Integer uvIndex;
-            if(gem.type == TYPE.MARIO) {
-                if(!checkMario) continue;
-                uvIndex = (int)(Mario.marioCache.get(((Mario) gem).tileSet) / gem.getWidth());
-            } else {
-                if(checkMario) continue;
-                uvIndex = gem.getGemType().getValue() + gem.curAnimation.curFrame.intValue();
-            }
-
-            for (int j = 0; j < 8; j++) {
-                uvData[(i * 8) + j] = uvMap[uvIndex][j];
-            }
-            for (int j = 0; j < 6; j++) {
-                drawOrderFinal[(i * 6) + j] = (short) (drawOrder[j] + (i * 4));
-            }
-
-            /******************** test transformations **************************/
-            if(gem.rotate || gem.doScale) {
-                vertexData[(i * 12) + 0] = -0.5f;   //x
-                vertexData[(i * 12) + 1] = 0.5f;  //y
-                vertexData[(i * 12) + 3] = -0.5f;   //x
-                vertexData[(i * 12) + 4] = -0.5f;  //y
-                vertexData[(i * 12) + 6] = 0.5f;   //x
-                vertexData[(i * 12) + 7] = -0.5f;  //y
-                vertexData[(i * 12) + 9] = 0.5f;   //x
-                vertexData[(i * 12) + 10] = 0.5f;  //y
-                /*** roatation ***/
-                long time = SystemClock.uptimeMillis() % 16000L;
-                float angle = 0.72f * ((int) time) * this.angularSpeed;
-                /*** roatation ***/
-                if (scale <= minScale || scale >= maxScale) scaleStep = scaleStep * -1;
-                scale += scaleStep;
-                transformationMatrix = Shape.doTransformations(0, 0, scale, scale, angle, 1);
-                float[] result = new float[4];
-                for (int j = 0; j < 12; j += 3) {
-                    float[] data = new float[]{vertexData[(i * 12) + j + 0],
-                            vertexData[(i * 12) + j + 1],
-                            0/*vertexData[(i * 12) + j + 2]*/,
-                            1};
-                    Matrix.multiplyMV(result, 0, transformationMatrix, 0, data, 0);
-                    vertexData[(i * 12) + j + 0] = result[0] + posX;
-                    vertexData[(i * 12) + j + 1] = result[1] + posY;
+        try {
+            Gem[][] gems = board.entities;
+            float[] uvData = new float[gems.length * gems[0].length * 8];
+            short[] drawOrder = {0, 1, 2, 0, 2, 3};
+            short[] drawOrderFinal = new short[gems.length * gems[0].length * 6];
+            float[] vertexData = new float[gems.length * gems[0].length * 12];
+            for (int i = 0; i < (gems.length * gems[0].length); i++) {
+                int row = (int)Math.floor(i / 8), col = i % 8;
+                Gem gem = gems[row][col];
+                //if(gem == null) return false;
+                float posX = (gem.getX() / gem.getWidth()), posY = (gem.getY() / gem.getHeight());
+                Integer uvIndex;
+                if(gem.type == TYPE.MARIO) {
+                    if(!checkMario) continue;
+                    uvIndex = (int)(Mario.marioCache.get(((Mario) gem).tileSet) / gem.getWidth());
+                } else {
+                    if(checkMario) continue;
+                    uvIndex = gem.getGemType().getValue() + gem.curAnimation.curFrame.intValue();
                 }
-            } else {
-                vertexData[(i * 12) + 0] = -0.5f + posX;   //x
-                vertexData[(i * 12) + 1] = 0.5f + posY;  //y
-                vertexData[(i * 12) + 3] = -0.5f + posX;   //x
-                vertexData[(i * 12) + 4] = -0.5f + posY;  //y
-                vertexData[(i * 12) + 6] = 0.5f + posX;   //x
-                vertexData[(i * 12) + 7] = -0.5f + posY;  //y
-                vertexData[(i * 12) + 9] = 0.5f + posX;   //x
-                vertexData[(i * 12) + 10] = 0.5f + posY;  //y
+
+                for (int j = 0; j < 8; j++) {
+                    uvData[(i * 8) + j] = uvMap[uvIndex][j];
+                }
+                for (int j = 0; j < 6; j++) {
+                    drawOrderFinal[(i * 6) + j] = (short) (drawOrder[j] + (i * 4));
+                }
+
+                /******************** test transformations **************************/
+                if(gem.rotate || gem.doScale) {
+                    vertexData[(i * 12) + 0] = -0.5f;   //x
+                    vertexData[(i * 12) + 1] = 0.5f;  //y
+                    vertexData[(i * 12) + 3] = -0.5f;   //x
+                    vertexData[(i * 12) + 4] = -0.5f;  //y
+                    vertexData[(i * 12) + 6] = 0.5f;   //x
+                    vertexData[(i * 12) + 7] = -0.5f;  //y
+                    vertexData[(i * 12) + 9] = 0.5f;   //x
+                    vertexData[(i * 12) + 10] = 0.5f;  //y
+                    /*** roatation ***/
+                    long time = SystemClock.uptimeMillis() % 16000L;
+                    float angle = 0.72f * ((int) time) * this.angularSpeed;
+                    /*** roatation ***/
+                    if (scale <= minScale || scale >= maxScale) scaleStep = scaleStep * -1;
+                    scale += scaleStep;
+                    transformationMatrix = Shape.doTransformations(0, 0, scale, scale, angle, 1);
+                    float[] result = new float[4];
+                    for (int j = 0; j < 12; j += 3) {
+                        float[] data = new float[]{vertexData[(i * 12) + j + 0],
+                                vertexData[(i * 12) + j + 1],
+                                0/*vertexData[(i * 12) + j + 2]*/,
+                                1};
+                        Matrix.multiplyMV(result, 0, transformationMatrix, 0, data, 0);
+                        vertexData[(i * 12) + j + 0] = result[0] + posX;
+                        vertexData[(i * 12) + j + 1] = result[1] + posY;
+                    }
+                } else {
+                    vertexData[(i * 12) + 0] = -0.5f + posX;   //x
+                    vertexData[(i * 12) + 1] = 0.5f + posY;  //y
+                    vertexData[(i * 12) + 3] = -0.5f + posX;   //x
+                    vertexData[(i * 12) + 4] = -0.5f + posY;  //y
+                    vertexData[(i * 12) + 6] = 0.5f + posX;   //x
+                    vertexData[(i * 12) + 7] = -0.5f + posY;  //y
+                    vertexData[(i * 12) + 9] = 0.5f + posX;   //x
+                    vertexData[(i * 12) + 10] = 0.5f + posY;  //y
+                }
+                /******************** test transformations **************************/
             }
-            /******************** test transformations **************************/
+            setVertexBuffer(vertexData);
+            setUVBuffer(uvData);
+            setDrawListBuffer(drawOrderFinal);
+        } catch (Exception e) {
+            e.printStackTrace();
+            if(e.getClass().equals(java.lang.NullPointerException.class) && count < 10){
+                count++;
+                setBuffers();
+            }
         }
-        setVertexBuffer(vertexData);
-        setUVBuffer(uvData);
-        setDrawListBuffer(drawOrderFinal);
 
         return true;
     }
+    private Integer count = 0;
 
     public void draw() {
+        count = 0;
         setBuffers();
         GameView.GLRenderer.changeProgram(mProgram.getProgramId(), vertexBuffer);
         super.draw();

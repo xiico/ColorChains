@@ -89,7 +89,7 @@ public class UI {
             float rawY = evt.getRawY();
             RectF ctrlRect = new RectF(ctrl.getX() - (ctrl.getWidth() / 2), ctrl.getY() - (ctrl.getHeight() / 2) , ctrl.getX() + ctrl.cacheWidth, ctrl.getY() + ctrl.cacheHeight);
             RectF touchRect = new RectF(rawX, rawY, rawX + 1, rawY + 1);
-            if (touchRect.intersect(ctrlRect) && ctrl.visible) {
+            if (touchRect.intersect(ctrlRect) && ctrl.visible && ctrl instanceof Control.UIListener) {
                 ((Control.UIListener) ctrl).clicked(ctrl);
             }
         } else {
@@ -296,6 +296,7 @@ public class UI {
 
         public void setScore(Integer score){
             this.score = score;
+            isTranferingScore = false;
         }
 
         public void setTargetScore(Integer score){
@@ -304,6 +305,11 @@ public class UI {
 
         public void setPuzzleScore(Integer score){
             this.puzzleScore = score;
+        }
+
+        private boolean isTranferingScore = false;
+        public void transferScore(){
+            isTranferingScore = true;
         }
 
         @Override
@@ -320,6 +326,14 @@ public class UI {
         public void draw()
         {
             super.draw();
+
+            if(isTranferingScore){
+                if(this.puzzleScore > 0){
+                    this.score++;
+                    this.puzzleScore--;
+                } else isTranferingScore = false;
+            }
+
             fontBig.setX(this.getX() - (this.getWidth() / 2) + 220);
             fontBig.setY(this.getY() - (this.getHeight() / 2) + 48);
             fontBig.setText(score.toString());
@@ -380,14 +394,27 @@ public class UI {
             this.text = text;
         }
 
+        private static String fragmentShader =
+                "#ifdef GL_ES\n" +
+                "precision mediump float;\n" +
+                "#endif\n" +
+                "#extension GL_OES_standard_derivatives : enable\n" +
+                "uniform float time;\n" +
+                "uniform vec2 resolution;\n" +
+                "void main( void ) {\n" +
+                "  gl_FragColor = vec4(vec3(0.2,0.2,0.2), 0.4);\n" +
+                "}";
+
         public LevelCompleted(ProgressBar pb) {
             super("levelcomplete", TYPE.LEVELCOMPLETE, 0f, 0f, 0, 0);
+            this.mProgram = Shape.createProgram(vs_Image, fragmentShader, -1);
             setOffSetX(0);
             setOffSetY(0);
             setText("Level\nCompleted!");
             cacheWidth = (int) super.getWidth();
             cacheHeight = (int) super.getHeight();
             font = new Font(R.drawable.oldskol, 8.0f);
+            font.vAlign = Font.VerticalAlignment.BOTTOM;
             this.setX(GameView.metrics.widthPixels / 2);
             this.setY(GameView.metrics.heightPixels / 2);
             font.setText(text);
@@ -399,7 +426,7 @@ public class UI {
 
         @Override
         public void draw() {
-            loadNextLevel = _pb._value >= 1f;
+            loadNextLevel =  _pb.tempValue == _pb._value ||  _pb._value >= 1f;
             super.draw();
             changeProgram(font.mProgram.getProgramId(), font.vertexBuffer);
             font.draw();
