@@ -360,8 +360,6 @@ public class Board extends Entity {
             this.curStage.score += this.calculateScore();
             progressBar.setValue(curStage.score / (float)curStage.targetScore);
             if(curStage.score >= (float)curStage.targetScore) levelCompleted.visible = true;
-            //nextButton.visible = true;
-            //progressBar.visible = false;
             checkComplete = false;
             ((UI.InfoBox)UI.findControlById("infoBox")).transferScore();
         } else nextButton.visible = this.levelComplete && levelCompleted.canLoadNextLevel();
