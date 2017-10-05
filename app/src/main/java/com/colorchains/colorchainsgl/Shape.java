@@ -35,13 +35,14 @@ public class Shape implements Comparable<Shape> {
     private float width = 0;
     private float height = 0;
     public float scale = 1;
+    public float angle = 0;
     float stepScale = 0.05f;
     private float x = 0;
     private float y = 0;
     public static HashMap<Integer,TextureInfo> textures = new HashMap<>();
     public float angularSpeed = 0.25f;
-    public float minScale = 0.75f;
-    public float maxScale = 1.25f;
+    public float minScale = 0.75f;//0.75f;
+    public float maxScale = 1.25f;//1.25f
     public float scaleStep = 0.025f;
     public float offSetX = 0;
     public float offSetY = 0;
@@ -49,7 +50,12 @@ public class Shape implements Comparable<Shape> {
     public boolean rotate = false;
     public boolean useStaticVBO = false;
     public String id;
+    public float charAngle = 0;
     public List<ProgramInfo> programs = new ArrayList<>();
+    public float direction = -1f;
+    public boolean bounce = true;
+    public float minBounce = 320f;
+    public float maxBounce = 10f;
 
     public Shape(float[] coords, short[] drawOrder , String vertexShaderCode, String fragmentShaderCode, Integer resourceId, Integer filtering){
         mProgram = setupImage(resourceId, vertexShaderCode, fragmentShaderCode, filtering);
@@ -168,7 +174,8 @@ public class Shape implements Comparable<Shape> {
     private float time = 0;
     float[] mvpMatrix;
 
-    public void draw() { // pass in the calculated transformation matrix
+    public void draw() {
+        // pass in the calculated transformation matrix
         //public void draw() { // pass in the calculated transformation matrix
         if (GameView.GLRenderer.curProgram != this.mProgram.getProgramId())
             GameView.GLRenderer.changeProgram(this.mProgram.getProgramId(), Shape.vertexBuffer);
@@ -210,8 +217,6 @@ public class Shape implements Comparable<Shape> {
                 GLES20.glUniform1f(time, this.time);
                 /********** test *************/
             }
-
-
         } else if (getResourceId() == R.drawable.oldskol || (this instanceof GemCollection)) {
             int color = GLES20.glGetUniformLocation(mProgram.getProgramId(), "color");
             GLES20.glUniform4f(color, this.color[0], this.color[1], this.color[2], this.color[3]);
@@ -248,9 +253,9 @@ public class Shape implements Comparable<Shape> {
         if(rotate){
             long time = SystemClock.uptimeMillis() % 4000L;
             float angle = 0.090f * ((int) time) * this.angularSpeed;
-            Matrix.setRotateM(this.mRotationMatrix, 0, angle, 0, 0, -1.0f);
+            Matrix.setRotateM(this.mRotationMatrix, 0, angle, 0, 0, this.direction);
         } else {
-            Matrix.setRotateM(mRotationMatrix, 0, 0, 0, 0, -1.0f);
+            Matrix.setRotateM(mRotationMatrix, 0, 0, 0, 0, this.direction);
         }
 
         // Combine the rotation matrix with the projection and camera view

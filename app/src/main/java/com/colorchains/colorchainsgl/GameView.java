@@ -106,11 +106,11 @@ public class GameView extends GLSurfaceView {
     public void touchStart(MotionEvent evt){
 
         /************/
-        if (GameView.cycleBG) {
-            if (GameView.renderer.backGround.index + 1 < GameView.renderer.backGround.programs.size()) {
-                GameView.renderer.backGround.index++;
-            } else GameView.renderer.backGround.index = 0;
-        }
+//        if (GameView.cycleBG) {
+//            if (GameView.renderer.backGround.index + 1 < GameView.renderer.backGround.programs.size()) {
+//                GameView.renderer.backGround.index++;
+//            } else GameView.renderer.backGround.index = 0;
+//        }
         GameView.renderer.backGround.mProgram = GameView.renderer.backGround.programs.get(GameView.renderer.backGround.index);
         /***********/
 
@@ -136,7 +136,7 @@ public class GameView extends GLSurfaceView {
         Gem entity = (Gem)board.entities[row][col];
         board.selectedGem = entity;
         //entity.selected = true;
-        /*if(((Gem)board.selectedGem).curAnimation != null) ((Gem)board.selectedGem).curAnimation.play();*/
+        if(((Gem)board.selectedGem).curAnimation != null) ((Gem)board.selectedGem).curAnimation.play();
     }
 
     public void touchEnd(MotionEvent evt) {
@@ -261,10 +261,10 @@ public class GameView extends GLSurfaceView {
                     backGround.doScale = false;
                     backGround.rotate = false;
                     int randint = 0;
-                    if (!GameView.cycleBG) {
-                        Random r = new Random();
-                        randint = Math.abs(r.nextInt()) % backGround.programs.size();
-                    }
+//                    if (!GameView.cycleBG) {
+//                        Random r = new Random();
+//                        randint = Math.abs(r.nextInt()) % backGround.programs.size();
+//                    }
                     backGround.index = 0;//randint;
 
                     /******* end onSurfaceChanged GL2 **********/

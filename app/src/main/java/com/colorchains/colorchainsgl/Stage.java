@@ -19,6 +19,7 @@ public class Stage {
     public String[] tiles;
     public Integer targetScore;
     public Integer score;
+    public Integer highScore;
     public Integer[] sets;
 
     public Stage(String jsonString) {
@@ -33,6 +34,7 @@ public class Stage {
             this.id = jStage.getString("id");
             this.targetScore = parseInt(jStage.getString("targetScore"));
             this.score = parseInt(jStage.getString("score"));
+            this.highScore =  parseInt(jStage.getString("highScore"));
             if(jSets.length() > 0) {
                 this.sets = new Integer[jSets.length()];
                 for (int j = 0; j < jSets.length(); j++) {
@@ -75,8 +77,22 @@ public class Stage {
                         "\""+ entities[5] + "\"," +
                         "\""+ entities[6] + "\"," +
                         "\""+ entities[7] + "\"]," +
-                        "        \"customProperties\": [], \"targetScore\": %s, \"score\": %s, \"sets\":%s}",
-                this.id, this.targetScore, this.score, this.sets != null ? Arrays.toString(this.sets) : "[]");
+                        "        \"customProperties\": [], \"targetScore\": %s, \"score\": %s, \"sets\":%s, \"highScore\":%s }",
+                this.id, this.targetScore, this.score, this.sets != null ? Arrays.toString(this.sets) : "[]", this.highScore);
+        return  stage;
+    }
+    public String toJsonString(){
+        String stage = String.format("{\"id\":\"%s\", \"tiles\":[" +
+                        "\""+ tiles[0] + "\"," +
+                        "\""+ tiles[1] + "\"," +
+                        "\""+ tiles[2] + "\"," +
+                        "\""+ tiles[3] + "\"," +
+                        "\""+ tiles[4] + "\"," +
+                        "\""+ tiles[5] + "\"," +
+                        "\""+ tiles[6] + "\"," +
+                        "\""+ tiles[7] + "\"]," +
+                        "        \"customProperties\": [], \"targetScore\": %s, \"score\": %s, \"sets\":%s, \"highScore\":%s }",
+                this.id, this.targetScore, this.score, this.sets != null ? Arrays.toString(this.sets) : "[]", this.highScore);
         return  stage;
     }
 }

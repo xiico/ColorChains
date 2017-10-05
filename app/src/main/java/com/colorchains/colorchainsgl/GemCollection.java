@@ -118,7 +118,7 @@ public class GemCollection extends Shape{
                     uvIndex = (int)(Mario.marioCache.get(((Mario) gem).tileSet) / gem.getWidth());
                 } else {
                     if(checkMario) continue;
-                    uvIndex = gem.getGemType().getValue() + gem.curAnimation.curFrame.intValue();
+                    uvIndex = gem.getGemType().getValue() + gem.curAnimation.curFrame;
                 }
 
                 for (int j = 0; j < 8; j++) {
@@ -139,12 +139,17 @@ public class GemCollection extends Shape{
                     vertexData[(i * 12) + 9] = 0.5f;   //x
                     vertexData[(i * 12) + 10] = 0.5f;  //y
                     /*** roatation ***/
-                    long time = SystemClock.uptimeMillis() % 16000L;
-                    float angle = 0.72f * ((int) time) * this.angularSpeed;
-                    /*** roatation ***/
-                    if (scale <= minScale || scale >= maxScale) scaleStep = scaleStep * -1;
-                    scale += scaleStep;
-                    transformationMatrix = Shape.doTransformations(0, 0, scale, scale, angle, 1);
+                    if(gem.rotate) {
+                        long time = SystemClock.uptimeMillis() % 16000L;
+                        gem.angle = 0.72f * ((int) time) * this.angularSpeed;
+                    }
+                    /*** scale ***/
+                    if(gem.doScale) {
+                        if (gem.scale <= gem.minScale || gem.scale >= gem.maxScale)
+                            gem.scaleStep = gem.scaleStep * -1;
+                        gem.scale += gem.scaleStep;
+                    }
+                    transformationMatrix = Shape.doTransformations(0, 0, gem.scale, gem.scale, gem.angle, 1);
                     float[] result = new float[4];
                     for (int j = 0; j < 12; j += 3) {
                         float[] data = new float[]{vertexData[(i * 12) + j + 0],

@@ -4,16 +4,20 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 import static com.colorchains.colorchainsgl.GameView.GLRenderer.updateMarioTexture;
+import static java.lang.Integer.numberOfLeadingZeros;
 import static java.lang.Integer.parseInt;
 
 /**
@@ -47,6 +51,7 @@ public class Board extends Entity {
     private static final String APP_STATES = "appStates";
     private static final String BOARD_STATE = "boardState";
     private static final String STAGE_INDEX = "stageIndex";
+    private static final String STAGE_SCORES = "stageScores.";
     public SharedPreferences settings;
     private Integer stageIndex;
     private String loadResult = "";
@@ -135,9 +140,9 @@ public class Board extends Entity {
             Chain chain = chains.get(index);
             float iScore = 0;
             for (int i = 0; i < chain.chained.size(); i++) {
-                iScore = ((i + 1) + i / 10);
+                iScore = ((i + 1) + (i / 10));
             }
-            score += iScore * 10 * (chain.loop ? 2 : 1);
+            score += iScore * 10 * (chain.loop ? (int)Math.sqrt(chain.chained.size()) : 1);
         }
         return Math.round(score);
     }
@@ -271,7 +276,7 @@ public class Board extends Entity {
         if (this.entities[i][k] == null) return;
         //if (this.entities[i][k].setYs) this.entities[i][k].setYs(null, null);
         if (this.entities[i][k].type == TYPE.MARIO) this.marioBuffer.add(this.entities[i][k]);
-        if((this.entities[i][k]).id.equals("3-5")) this.entities[i][k].doScale = true;
+        if((this.entities[i][k]).id.equals("3-5") && this.entities[i][k].type != TYPE.MARIO) this.entities[i][k].doScale = this.entities[i][k].rotate = true;
     }
 
     private TYPE getEntity(String type) {
@@ -407,6 +412,7 @@ public class Board extends Entity {
         GameView.GLRenderer._boardReady = false;
         if (this.curStage == null) this.setCurStage(0);
         //this.curStage.score += this.calculateScore();
+        saveScore();
         if (this.curStage.score >= this.curStage.targetScore) {
             //progressBar.setValue(curStage.score / (float)curStage.targetScore);
             this.levelComplete = false;
@@ -459,7 +465,7 @@ public class Board extends Entity {
                 }
                 if(chain.complete && this.contactPoints(chain.chained.get(0), chain).indexOf(chain.chained.get(chain.count - 1)) >= 0) chain.loop = true;
             }
-            if(curStage.score == 0) curStage.score = calculateScore();
+            //if(curStage.score == 0) curStage.score = calculateScore();
             saveState();
             ((UI.InfoBox)UI.findControlById("infoBox")).setScore(curStage.score);
             ((UI.InfoBox)UI.findControlById("infoBox")).setPuzzleScore(calculateScore());
@@ -490,6 +496,31 @@ public class Board extends Entity {
         SharedPreferences.Editor editor = settings.edit();
         editor.putString("boardState", this.boardToJSON());
         editor.putInt("stageIndex", this.stageIndex);
+        editor.commit();
+    }
+
+    private void saveScore(){
+        SharedPreferences.Editor editor = settings.edit();
+        String stageScores = settings.getString(STAGE_SCORES + curStage.id,"");
+        if(stageScores.length() == 0){
+            stageScores = "{\"highScore\":0,\"scores\":[]}";
+        }
+        JSONObject obj;
+        JSONArray scores = null;
+        Integer highScore = null;
+        try {
+            obj = new JSONObject(stageScores);
+            scores = obj.getJSONArray("scores");
+            scores.put(calculateScore());
+            highScore = Integer.parseInt(obj.getString("highScore"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        if(curStage.score > curStage.highScore) {
+            highScore = curStage.score;
+        }
+        editor.putString(STAGE_SCORES + curStage.id,
+                String.format("{\"highScore\":%s,\"scores\":%s}", highScore, scores.toString()));
         editor.commit();
     }
 
@@ -640,14 +671,6 @@ public class Board extends Entity {
             }
         }
         return curStage.toJsonString(ents);
-    }
-
-//    public boolean ready(){
-//        return GameView.GLRenderer._boardReady;
-//    }
-    public void updateStageProgress(){
-        if(curStage == null) return;
-        //fg.Game.drawLoading(10, fg.System.canvas.height - 122, fg.System.canvas.width - 20, 10, this.currentLevel.curStage.score / this.currentLevel.curStage.targetScore);
     }
     public void loadStage(Integer index){
         GameView.GLRenderer._boardReady = false;

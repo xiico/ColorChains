@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.opengl.Matrix;
 import android.graphics.RectF;
 import android.opengl.GLES20;
+import android.os.SystemClock;
 import android.view.MotionEvent;
 
 import java.nio.ByteBuffer;
@@ -285,13 +286,18 @@ public class UI {
         private Integer score = 0;
         private Integer targetScore = 0;
         private Integer puzzleScore = 0;
-        private Font font;
-        private Font fontBig;
+        private Font levelAndTargetScoreLabel;
+        private Font puzzleScoreLabel;
         public InfoBox(String id, Float x, Float y) {
             super(id, TYPE.INFOBOX, x, y, 0, 0);
-            font = new Font(R.drawable.oldskol, 2.0f);
-            fontBig = new Font(R.drawable.oldskol, 4.0f);
-            fontBig.hAlign = Font.HorizontalAlignment.RIGHT;
+            levelAndTargetScoreLabel = new Font(R.drawable.oldskol, 4.0f);
+            levelAndTargetScoreLabel.hAlign = Font.HorizontalAlignment.RIGHT;
+
+            puzzleScoreLabel = new Font(R.drawable.oldskol, 4.0f);
+            puzzleScoreLabel.hAlign = Font.HorizontalAlignment.RIGHT;
+
+            //puzzleScoreLabel.charRotate = true;
+            puzzleScoreLabel.doCharScale = true;
         }
 
         public void setScore(Integer score){
@@ -334,21 +340,22 @@ public class UI {
                 } else isTranferingScore = false;
             }
 
-            fontBig.setX(this.getX() - (this.getWidth() / 2) + 220);
-            fontBig.setY(this.getY() - (this.getHeight() / 2) + 48);
-            fontBig.setText(score.toString());
-            changeProgram(fontBig.mProgram.getProgramId(), fontBig.vertexBuffer);
-            fontBig.draw();
-            fontBig.setText( targetScore.toString());
-            fontBig.setX(this.getX() - (this.getWidth() / 2)  + 220);
-            fontBig.setY(this.getY() - (this.getHeight() / 2) + 100);
-            changeProgram(fontBig.mProgram.getProgramId(), fontBig.vertexBuffer);
-            fontBig.draw();
-            fontBig.setText( puzzleScore.toString());
-            fontBig.setX(this.getX() - (this.getWidth() / 2) + 220);
-            fontBig.setY(this.getY() - (this.getHeight() / 2)+ 152);
-            changeProgram(fontBig.mProgram.getProgramId(), fontBig.vertexBuffer);
-            fontBig.draw();
+            levelAndTargetScoreLabel.setX(this.getX() - (this.getWidth() / 2) + 220);
+            levelAndTargetScoreLabel.setY(this.getY() - (this.getHeight() / 2) + 48);
+            levelAndTargetScoreLabel.setText(score.toString());
+            changeProgram(levelAndTargetScoreLabel.mProgram.getProgramId(), levelAndTargetScoreLabel.vertexBuffer);
+            levelAndTargetScoreLabel.draw();
+            levelAndTargetScoreLabel.setText( targetScore.toString());
+            levelAndTargetScoreLabel.setX(this.getX() - (this.getWidth() / 2)  + 220);
+            levelAndTargetScoreLabel.setY(this.getY() - (this.getHeight() / 2) + 100);
+            changeProgram(levelAndTargetScoreLabel.mProgram.getProgramId(), levelAndTargetScoreLabel.vertexBuffer);
+            levelAndTargetScoreLabel.draw();
+
+            puzzleScoreLabel.setText( puzzleScore.toString());
+            puzzleScoreLabel.setX(this.getX() - (this.getWidth() / 2) + 220);
+            puzzleScoreLabel.setY(this.getY() - (this.getHeight() / 2)+ 152);
+            changeProgram(puzzleScoreLabel.mProgram.getProgramId(), puzzleScoreLabel.vertexBuffer);
+            puzzleScoreLabel.draw();
         }
     }
 
@@ -369,11 +376,10 @@ public class UI {
     public static class LevelCompleted extends Control{
         private final Font font;
         private String text;
-        private boolean loadNextLevel = false;
         private ProgressBar _pb;
 
         public boolean canLoadNextLevel() {
-            return loadNextLevel;
+            return _pb.tempValue == _pb._value ||  _pb._value >= 1f;
         }
 
         public String getText() {
@@ -426,7 +432,6 @@ public class UI {
 
         @Override
         public void draw() {
-            loadNextLevel =  _pb.tempValue == _pb._value ||  _pb._value >= 1f;
             super.draw();
             changeProgram(font.mProgram.getProgramId(), font.vertexBuffer);
             font.draw();
@@ -444,7 +449,14 @@ public class UI {
         int defaultSize = 8;
         FontSize fontSize = FontSize.Normal;
         float r = 1;
-        float angle = 0;
+        float charAngle = 0;
+        float charAngularSpeed = 0.25f;
+        float charScale = 1;
+        float charScaleStep = 0.025f;
+        float minCharScale = 0.5f;
+        float maxCharScale = 1.5f;
+        boolean charRotate = false;
+        boolean doCharScale = false;
         HorizontalAlignment hAlign = HorizontalAlignment.CENTER;
         VerticalAlignment vAlign = VerticalAlignment.MIDDLE;
         float valgn = 0;
@@ -552,8 +564,6 @@ public class UI {
                 else if(vAlign == VerticalAlignment.BOTTOM) valgn = -(1/2f);
 
                 for (int i = 0; i < charCodes.length; i++) {
-//                texture.setMapping(textureMap[charCodes[i]]);
-//                texture.draw(gl, getX() + (i * (fontWidth)) + halgn, getY() + valgn, fontWidth * r, fontHeight * r, 0, true);
                     for (int j = 0; j < 8; j++) {
                         uvData[(lastUVIndex)+(i*8)+j] = uvMap[Math.min(charCodes[i], 95)][j];
                     }
@@ -561,32 +571,49 @@ public class UI {
                         drawOrderFinal[(lastDOFIndex)+(i*6)+j] = (short) (drawOrder[j]+(((lastDOIndex+i)*4)));
                     }
 
-                    vertexData[(lastVerIndex) + (i*12)+0]  = -0.5f + i + (halgn);  //x
-                    vertexData[(lastVerIndex) + (i*12)+1]  =  0.5f + (valgn) + l;  //y
-                    vertexData[(lastVerIndex) + (i*12)+2]  =  0.0f;  //z
-                    vertexData[(lastVerIndex) + (i*12)+3]  = -0.5f + i + (halgn); //x
-                    vertexData[(lastVerIndex) + (i*12)+4]  = -0.5f + (valgn) + l;  //y
-                    vertexData[(lastVerIndex) + (i*12)+5]  =  0.0f;  //z
-                    vertexData[(lastVerIndex) + (i*12)+6]  =  0.5f + i + (halgn);  //x
-                    vertexData[(lastVerIndex) + (i*12)+7]  = -0.5f + (valgn) + l;  //y
-                    vertexData[(lastVerIndex) + (i*12)+8]  =  0.0f;  //z
-                    vertexData[(lastVerIndex) + (i*12)+9]  =  0.5f + i + (halgn);  //x
-                    vertexData[(lastVerIndex) + (i*12)+10] =  0.5f + (valgn) + l;  //y
-                    vertexData[(lastVerIndex) + (i*12)+11] =  0.0f;  //z
 
-                    if(this.rotate || this.doScale) {
-                        transformationMatrix = Shape.doTransformations(4f, 2f, 4f, 4f, -60, -1);
+
+                    if(this.charRotate || this.doCharScale) {
+                        vertexData[(lastVerIndex) + (i*12)+0]  = -0.5f;// + i + (halgn);  //x
+                        vertexData[(lastVerIndex) + (i*12)+1]  =  0.5f;// + (valgn) + l;  //y
+                        vertexData[(lastVerIndex) + (i*12)+3]  = -0.5f;// + i + (halgn);  //x
+                        vertexData[(lastVerIndex) + (i*12)+4]  = -0.5f;// + (valgn) + l;  //y
+                        vertexData[(lastVerIndex) + (i*12)+6]  =  0.5f;// + i + (halgn);  //x
+                        vertexData[(lastVerIndex) + (i*12)+7]  = -0.5f;// + (valgn) + l;  //y
+                        vertexData[(lastVerIndex) + (i*12)+9]  =  0.5f;// + i + (halgn);  //x
+                        vertexData[(lastVerIndex) + (i*12)+10] =  0.5f;// + (valgn) + l;  //y
+
+                        /*** roatation ***/
+                        if(this.charRotate) {
+                            long time = SystemClock.uptimeMillis() % 16000L;
+                            this.charAngle = 0.72f * ((int) time) * this.charAngularSpeed;
+                        }
+                        /*** scale ***/
+                        if(this.doCharScale) {
+                            if (this.charScale <= this.minCharScale || this.charScale >= this.maxCharScale)
+                                this.charScaleStep = this.charScaleStep * -1;
+                            this.charScale += this.charScaleStep;
+                        }
+                        transformationMatrix = Shape.doTransformations(0, 0, this.charScale, this.charScale, this.charAngle, 1);
                         float[] result = new float[4];
                         for (int j = 0; j < 12; j += 3) {
                             float[] data = new float[]{vertexData[(lastVerIndex) + (i * 12) + j + 0],
                                     vertexData[(lastVerIndex) + (i * 12) + j + 1],
-                                    vertexData[(lastVerIndex) + (i * 12) + j + 2],
+                                    0/*vertexData[(lastVerIndex) + (i * 12) + j + 2]*/,
                                     1};
                             Matrix.multiplyMV(result, 0, transformationMatrix, 0, data, 0);
-                            vertexData[(lastVerIndex) + (i * 12) + j + 0] = result[0];
-                            vertexData[(lastVerIndex) + (i * 12) + j + 1] = result[1];
-                            vertexData[(lastVerIndex) + (i * 12) + j + 2] = result[2];
+                            vertexData[(lastVerIndex) + (i * 12) + j + 0] = result[0] + i + (halgn);
+                            vertexData[(lastVerIndex) + (i * 12) + j + 1] = result[1]+ (valgn) + l;
                         }
+                    } else {
+                        vertexData[(lastVerIndex) + (i*12)+0]  = -0.5f + i + (halgn);  //x
+                        vertexData[(lastVerIndex) + (i*12)+1]  =  0.5f + (valgn) + l;  //y
+                        vertexData[(lastVerIndex) + (i*12)+3]  = -0.5f + i + (halgn);  //x
+                        vertexData[(lastVerIndex) + (i*12)+4]  = -0.5f + (valgn) + l;  //y
+                        vertexData[(lastVerIndex) + (i*12)+6]  =  0.5f + i + (halgn);  //x
+                        vertexData[(lastVerIndex) + (i*12)+7]  = -0.5f + (valgn) + l;  //y
+                        vertexData[(lastVerIndex) + (i*12)+9]  =  0.5f + i + (halgn);  //x
+                        vertexData[(lastVerIndex) + (i*12)+10] =  0.5f + (valgn) + l;  //y
                     }
                 }
                 lastVerIndex += lineText.length()*12;

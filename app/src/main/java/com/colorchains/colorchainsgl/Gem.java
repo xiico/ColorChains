@@ -16,7 +16,7 @@ public class Gem extends Entity {
     private float movingSpeed = 0.24f * GameView.scale;
     public Point moveTo;
     public Board board;
-    public Animation curAnimation;
+    //public Animation curAnimation;
     public static Integer gemProgram = 0;
     public boolean selected = false;
 
@@ -37,9 +37,11 @@ public class Gem extends Entity {
         /***************/
 
         /***************/
-        this.curAnimation = this.addAnimation("idle", 0, 0, new Integer[]{0}, 0.5f, false);
+        //this.curAnimation = this.addAnimation("idle", 0, 0, new Integer[]{0}, 0.5f, false);
+        this.addAnimation("idle", 0, 0, new Integer[]{0}, 0.5f, false);
         this.addAnimation("vanish", 0, GameView.scaledDefaultSide * 1, new Integer[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, 0.3f, false);
-        this.addAnimation("appear", 0, GameView.scaledDefaultSide * 2, new Integer[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, 0.5f, false);//0.5
+        this.addAnimation("appear", 0, GameView.scaledDefaultSide * 2, new Integer[]{9, 8, 7, 6, 5, 4, 3, 2, 1, 0}, 0.5f, false);//0.5
+        curAnimation = this.animations.get("appear").play();
     }
 
     private GemType _gemType;
@@ -209,7 +211,12 @@ public class Gem extends Entity {
             }
         }
         if (this.curAnimation == null) this.curAnimation = this.animations.get("appear").play();
-        this.curAnimation.update();
+
+        if (!curAnimation.playing || this.curAnimation.parent == null) {
+            this.cacheX = !this.checked ? 0 : GameView.scaledDefaultSide;
+        } else this.curAnimation.update();
+
+        if(!curAnimation.playing && curAnimation.id != "idle") curAnimation = animations.get("idle");
         return null;
     }
 }
