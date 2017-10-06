@@ -1,5 +1,7 @@
 package com.colorchains.colorchainsgl;
 
+import android.graphics.PointF;
+
 /**
  * Created by francisco.cnmarao on 19/04/2017.
  */
@@ -44,7 +46,27 @@ class Animation {
         }
         if (this.curFrame > this.frames.length) this._curFrame = 0f;
         this.curFrame = this.frames[(int)_curFrame];
-        //parent.cacheX = Math.round(this.x) + (this.frames[(int) Math.floor(this.curFrame)] * GameView.scaledDefaultSide);
-        //parent.cacheY = Math.round(this.y);
+    }
+
+    class Tranform{
+        public float startScale = 0.5f;
+        public float endScale = 1.5f;
+        public float startAngle = 0;
+        public float endAngle = 0;
+        public float startAlpha = 1;
+        public float endAlpha = 1;
+        public PointF startPosition = new PointF();
+        public PointF endPosition = new PointF();
+        public boolean loopAlpha = false;
+        public boolean loopScale = false;
+        public boolean loopAngle = false;
+        public float scaleDuration = 0.5f;
+        public float angleDuration = 0.5f;
+        public float alphaDuration = 0.5f;
+        public float translationDuration = 1;
+        private Entity parent;
+        public Tranform(Entity entity){
+            this.parent = entity;
+        }
     }
 }

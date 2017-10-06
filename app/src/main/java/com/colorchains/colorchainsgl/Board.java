@@ -133,16 +133,16 @@ public class Board extends Entity {
         UI.addControl(levelCompleted);
     }
 
-    public int calculateScore(){
+    public int calculateScore(boolean lastScore){
         Float score = 0f;
         if (chains.size() == 0) return 0;
         for (int index = 0; index < chains.size(); index++) {
             Chain chain = chains.get(index);
             float iScore = 0;
             for (int i = 0; i < chain.chained.size(); i++) {
-                iScore = ((i + 1) + (i / 10));
+                iScore = ((i + 1) * 1.2f);
             }
-            score += iScore * 10 * (chain.loop ? (int)Math.sqrt(chain.chained.size()) : 1);
+            score += iScore * 10 * (chain.loop ? (int)Math.sqrt(chain.chained.size()) : 1) * ( lastScore ? Math.max( 16 / (16 - Math.min((curStage.targetMoves - curStage.moves),15)) , 1) : 1 );
         }
         return Math.round(score);
     }
@@ -175,6 +175,7 @@ public class Board extends Entity {
                 }
             }
         }
+        this.curStage.gemCount = 64 - marioBuffer.size();
         this.loadLevelCompleted();
     }
 
@@ -362,7 +363,9 @@ public class Board extends Entity {
         }
         if(this.levelComplete && checkComplete){
             //GameView.GLRenderer._boardReady = false;
-            this.curStage.score += this.calculateScore();
+            ((UI.InfoBox)UI.findControlById("infoBox")).setPuzzleScore(calculateScore(true));
+            this.curStage.score += this.calculateScore(true);
+            //this.curStage.score = this.curStage.score * Math.max( 16 / (16 - Math.min((curStage.targetMoves - curStage.moves),15)) , 1);
             progressBar.setValue(curStage.score / (float)curStage.targetScore);
             if(curStage.score >= (float)curStage.targetScore) levelCompleted.visible = true;
             checkComplete = false;
@@ -423,6 +426,7 @@ public class Board extends Entity {
             //this.curStage.score += this.calculateScore();
             reloadStage();
         }
+        curStage.moves = 0;
         this.levelComplete = false;
         this.selectedGem = null;
         this.chains = null;
@@ -449,6 +453,7 @@ public class Board extends Entity {
 
     public boolean parseBoard(){
         if (chains == null && (selectedGem == null || ((Gem)selectedGem).moveTo == null )) {
+            curStage.moves++;
             this.chains = new ArrayList<>();
             this.findChainTypes();
             for (Chain chain : chains) {
@@ -468,7 +473,7 @@ public class Board extends Entity {
             //if(curStage.score == 0) curStage.score = calculateScore();
             saveState();
             ((UI.InfoBox)UI.findControlById("infoBox")).setScore(curStage.score);
-            ((UI.InfoBox)UI.findControlById("infoBox")).setPuzzleScore(calculateScore());
+            ((UI.InfoBox)UI.findControlById("infoBox")).setPuzzleScore(calculateScore(false));
         }
         if (chains == null || chains.size() <= 0) return false;
         this.levelComplete = true;
@@ -501,18 +506,18 @@ public class Board extends Entity {
 
     private void saveScore(){
         SharedPreferences.Editor editor = settings.edit();
-        String stageScores = settings.getString(STAGE_SCORES + curStage.id,"");
-        if(stageScores.length() == 0){
-            stageScores = "{\"highScore\":0,\"scores\":[]}";
-        }
+        String stageScores = settings.getString(STAGE_SCORES + curStage.id,"{\"highScore\":0,\"scores\":[], \"moves\":[]}");
         JSONObject obj;
         JSONArray scores = null;
+        JSONArray moves = null;
         Integer highScore = null;
         try {
             obj = new JSONObject(stageScores);
-            scores = obj.getJSONArray("scores");
-            scores.put(calculateScore());
             highScore = Integer.parseInt(obj.getString("highScore"));
+            scores = obj.getJSONArray("scores");
+            moves = obj.getJSONArray("moves");
+            scores.put(calculateScore(true));
+            moves.put(curStage.moves);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -520,7 +525,7 @@ public class Board extends Entity {
             highScore = curStage.score;
         }
         editor.putString(STAGE_SCORES + curStage.id,
-                String.format("{\"highScore\":%s,\"scores\":%s}", highScore, scores.toString()));
+                String.format("{\"highScore\":%s,\"scores\":%s, \"moves\":%s}", highScore, scores.toString(),moves.toString()));
         editor.commit();
     }
 

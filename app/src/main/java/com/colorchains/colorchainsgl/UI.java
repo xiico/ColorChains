@@ -335,8 +335,15 @@ public class UI {
 
             if(isTranferingScore){
                 if(this.puzzleScore > 0){
-                    this.score++;
-                    this.puzzleScore--;
+//                    int step;
+//                    if(this.puzzleScore > 10000) step = 100;
+//                    if(this.puzzleScore > 1000) step = 10;
+//                    else if (this.puzzleScore > 500) step = 5;
+//                    else if (this.puzzleScore > 100) step = 2;
+//                    else step = 1;
+                    int step = Math.max(this.puzzleScore / 20, 1);
+                    this.score+= step;
+                    this.puzzleScore-= step;
                 } else isTranferingScore = false;
             }
 

@@ -3,19 +3,22 @@
     {
       "id": "level0",
       "tiles": [
-        "MMMMMMMM",
-        "MMMMMMMM",
-        "MM    MM",
-        "MM    MM",
-        "MM    MM",
-        "MM    MM",
-        "MMMMMMMM",
-        "MMMMMMMM"
+        "WWWWWWWW",
+        "WRRRRRRW",
+        "WRPPPPRW",
+        "WRPOOPRW",
+        "RWPOOPRW",
+        "WRPPPPRW",
+        "WRRRRRRW",
+        "WWWWWWWW"
       ],
       "customProperties": [],
       "targetScore": 100,
       "score": 0,
       "highScore": 0,
+      "moves": 0,
+      "maxMoves": 0,
+      "targetMoves": 32,
       "sets": [ 1, 2, 3, 4, 5, 6, 7, 8 ]
     },
     {
@@ -34,6 +37,9 @@
       "targetScore": 1000,
       "score": 0,
       "highScore": 0,
+      "moves": 0,
+      "maxMoves": 0,
+      "targetMoves": 16,
       "sets": [],
       "defaultTargetScore": 1000
     },
@@ -53,6 +59,9 @@
       "targetScore": 1000,
       "score": 0,
       "highScore": 0,
+      "moves": 0,
+      "maxMoves": 0,
+      "targetMoves": 0,
       "sets": [],
       "defaultTargetScore": 2000
     },
@@ -72,6 +81,9 @@
       "targetScore": 1000,
       "score": 0,
       "highScore": 0,
+      "moves": 0,
+      "maxMoves": 0,
+      "targetMoves": 0,
       "sets": [],
       "defaultTargetScore": 3000
     },
@@ -91,6 +103,9 @@
       "targetScore": 1000,
       "score": 0,
       "highScore": 0,
+      "moves": 0,
+      "maxMoves": 0,
+      "targetMoves": 0,
       "sets": [],
       "defaultTargetScore": 4000
     },
@@ -110,6 +125,9 @@
       "targetScore": 1000,
       "score": 0,
       "highScore": 0,
+      "moves": 0,
+      "maxMoves": 0,
+      "targetMoves": 0,
       "sets": [],
       "defaultTargetScore": 5000
     },
@@ -129,6 +147,9 @@
       "targetScore": 1000,
       "score": 0,
       "highScore": 0,
+      "moves": 0,
+      "maxMoves": 0,
+      "targetMoves": 0,
       "sets": [],
       "defaultTargetScore": 5000
     },
@@ -148,6 +169,9 @@
       "targetScore": 1000,
       "score": 0,
       "highScore": 0,
+      "moves": 0,
+      "maxMoves": 0,
+      "targetMoves": 0,
       "sets": [],
       "defaultTargetScore": 5000
     },
@@ -167,6 +191,9 @@
       "targetScore": 1000,
       "score": 0,
       "highScore": 0,
+      "moves": 0,
+      "maxMoves": 0,
+      "targetMoves": 0,
       "sets": [],
       "defaultTargetScore": 5000
     },
@@ -186,6 +213,9 @@
       "targetScore": 1000,
       "score": 0,
       "highScore": 0,
+      "moves": 0,
+      "maxMoves": 0,
+      "targetMoves": 0,
       "sets": [],
       "defaultTargetScore": 5000
     },
@@ -205,6 +235,9 @@
       "targetScore": 1000,
       "score": 0,
       "highScore": 0,
+      "moves": 0,
+      "maxMoves": 0,
+      "targetMoves": 0,
       "sets": [],
       "defaultTargetScore": 5000
     },
@@ -224,6 +257,9 @@
       "targetScore": 1000,
       "score": 0,
       "highScore": 0,
+      "moves": 0,
+      "maxMoves": 0,
+      "targetMoves": 0,
       "sets": [],
       "defaultTargetScore": 5000
     },
@@ -243,6 +279,9 @@
       "targetScore": 1000,
       "score": 0,
       "highScore": 0,
+      "moves": 0,
+      "maxMoves": 0,
+      "targetMoves": 0,
       "sets": [ 3, 7, 9, 6, 6, 8, 1, 4],
       "defaultTargetScore": 5000
     }
