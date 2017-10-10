@@ -89,9 +89,7 @@ public class Mario extends Gem {
     }
 
     @Override
-    public Point update(){
-        return  null;
-    }
+    public void update(){}
 
     public synchronized static void renderSubTile(Canvas c, Bitmap bmp, String key) {
         Integer posX = (marioCache.get(key)) % (GameView.scaledDefaultSide * 10);// * (int)board.metrics.density;

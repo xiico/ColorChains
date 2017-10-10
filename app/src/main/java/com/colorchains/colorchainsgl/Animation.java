@@ -19,6 +19,7 @@ class Animation {
     public Boolean playing = false;
     private int targetDelta = 16;
     private float _curFrame = 0;
+    public Transform transform;
 
     public Animation(String id, Integer x, Integer y, Integer[] frames, Float duration, Boolean loop, Entity parent) {
         this.parent = (Entity) parent;
@@ -29,6 +30,7 @@ class Animation {
         this.duration = duration;
         this.loop = loop;
         this.frameInterval = 1 / ((duration * 60 * this.targetDelta) / frames.length);
+        this.transform = new Transform(parent);
     }
     public Animation play(){
         if (!this.playing) this.playing = true;
@@ -42,31 +44,14 @@ class Animation {
             parent.cacheX = 0;
             parent.cacheY = 0;
             this.curFrame = this.frames[0];
-            return;
+            //return;
+        } else {
+            if (this.curFrame > this.frames.length) this._curFrame = 0f;
+            this.curFrame = this.frames[(int) _curFrame];
         }
-        if (this.curFrame > this.frames.length) this._curFrame = 0f;
-        this.curFrame = this.frames[(int)_curFrame];
     }
 
-    class Tranform{
-        public float startScale = 0.5f;
-        public float endScale = 1.5f;
-        public float startAngle = 0;
-        public float endAngle = 0;
-        public float startAlpha = 1;
-        public float endAlpha = 1;
-        public PointF startPosition = new PointF();
-        public PointF endPosition = new PointF();
-        public boolean loopAlpha = false;
-        public boolean loopScale = false;
-        public boolean loopAngle = false;
-        public float scaleDuration = 0.5f;
-        public float angleDuration = 0.5f;
-        public float alphaDuration = 0.5f;
-        public float translationDuration = 1;
-        private Entity parent;
-        public Tranform(Entity entity){
-            this.parent = entity;
-        }
-    }
+
+
+
 }

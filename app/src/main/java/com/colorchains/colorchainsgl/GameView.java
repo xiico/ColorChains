@@ -136,7 +136,8 @@ public class GameView extends GLSurfaceView {
         Gem entity = (Gem)board.entities[row][col];
         board.selectedGem = entity;
         //entity.selected = true;
-        if(((Gem)board.selectedGem).curAnimation != null) ((Gem)board.selectedGem).curAnimation.play();
+        //if(((Gem)board.selectedGem).curAnimation != null) ((Gem)board.selectedGem).curAnimation.play();
+        if(((Gem)board.selectedGem).curAnimation != null) ((Gem)board.selectedGem).transform.scaleOut(0.75f,1.05f,0.4f); //.scaleIn();
     }
 
     public void touchEnd(MotionEvent evt) {

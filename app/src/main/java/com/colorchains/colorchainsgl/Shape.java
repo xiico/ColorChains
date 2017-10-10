@@ -56,6 +56,7 @@ public class Shape implements Comparable<Shape> {
     public boolean bounce = true;
     public float minBounce = 320f;
     public float maxBounce = 10f;
+    public Transform transform;
 
     public Shape(float[] coords, short[] drawOrder , String vertexShaderCode, String fragmentShaderCode, Integer resourceId, Integer filtering){
         mProgram = setupImage(resourceId, vertexShaderCode, fragmentShaderCode, filtering);
@@ -244,8 +245,8 @@ public class Shape implements Comparable<Shape> {
         // Calculate translation and scale
         Matrix.translateM(this.mMVPMatrix, 0, getX() + offSetX, getY() + offSetY,0);
         if(doScale) {
-            if (scale <= minScale || scale >= maxScale) scaleStep = scaleStep * -1;
-            scale += scaleStep;
+//            if (scale <= minScale || scale >= maxScale) scaleStep = scaleStep * -1;
+//            scale += scaleStep;
             Matrix.scaleM(this.mMVPMatrix, 0, getWidth() * scale, getHeight() * scale, 1);
         } else Matrix.scaleM(this.mMVPMatrix, 0, this.getWidth(), this.getHeight(), 1);
 
@@ -264,6 +265,45 @@ public class Shape implements Comparable<Shape> {
         Matrix.multiplyMM(scratch, 0, this.mMVPMatrix, 0, this.mRotationMatrix, 0);
         /***************** End move to Shape ****************************/
         return scratch;
+    }
+
+
+    public void update(){
+        if(transform != null){
+            if(transform.isScalingIn){
+                if(transform.curScale == 0) {
+                    transform.curScale = transform.maxScale;
+                    //curAnimation.transform.minScale = this.scale;
+                    this.scale = transform.curScale;
+                    this.doScale = true;
+                }
+                else {
+                    if(this.scale - transform.scaleStep > transform.minScale) this.scale -= transform.scaleStep * 16.66f /*Timer.deltaTime*/;
+                    else {
+                        this.scale = transform.minScale;
+                        transform.isScalingIn = false;
+                        transform.curScale = 0;
+                        this.doScale = false;
+                    }
+                }
+            } else if(transform.isScalingOut){
+                if(transform.curScale == 0) {
+                    transform.curScale = transform.minScale;
+                    //curAnimation.transform.maxScale = this.scale;
+                    this.scale = transform.curScale;
+                    this.doScale = true;
+                }
+                else {
+                    if(this.scale + transform.scaleStep < transform.maxScale) this.scale += transform.scaleStep * Timer.deltaTime;
+                    else {
+                        this.scale = transform.maxScale;
+                        transform.isScalingOut = false;
+                        transform.curScale = 0;
+                        this.doScale = false;
+                    }
+                }
+            }
+        }
     }
 
 

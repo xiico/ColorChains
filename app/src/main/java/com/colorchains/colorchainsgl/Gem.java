@@ -42,6 +42,8 @@ public class Gem extends Entity {
         this.addAnimation("vanish", 0, GameView.scaledDefaultSide * 1, new Integer[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, 0.3f, false);
         this.addAnimation("appear", 0, GameView.scaledDefaultSide * 2, new Integer[]{9, 8, 7, 6, 5, 4, 3, 2, 1, 0}, 0.5f, false);//0.5
         curAnimation = this.animations.get("appear").play();
+        this.minScale = 0.75f;
+        this.scaleStep  = 0.0125f;
     }
 
     private GemType _gemType;
@@ -184,7 +186,8 @@ public class Gem extends Entity {
         }
     }
 
-    public Point update(){
+    @Override
+    public void update(){
         if (this.moveTo != null) {
             if (this.moveTo.y != this.getRow()) {
                 this.movingSpeed = this.moveTo.y > this.getRow() ? Math.abs(this.movingSpeed) : -Math.abs(this.movingSpeed);
@@ -207,7 +210,8 @@ public class Gem extends Entity {
                 }
                 this.movingSpeed = Math.abs(this.movingSpeed);
                 if(!board.selectedGem.equals(this)) board.parseBoard = true;
-                return this.moveTo = null;
+                this.moveTo = null;
+                //return
             }
         }
         if (this.curAnimation == null) this.curAnimation = this.animations.get("appear").play();
@@ -217,6 +221,7 @@ public class Gem extends Entity {
         } else this.curAnimation.update();
 
         if(!curAnimation.playing && curAnimation.id != "idle") curAnimation = animations.get("idle");
-        return null;
+        //return null;
+        super.update();
     }
 }

@@ -50,6 +50,11 @@ public class UI {
     }
 
     public static void update() {
+        for (Control ctrl: mainContainer.controls ) {
+            //Shape.bindTexture(ctrl.getResourceId());
+            if(ctrl.visible)
+                ctrl.update();
+        }
     }
 
     public static Control findControlById(String id){
@@ -442,6 +447,13 @@ public class UI {
             super.draw();
             changeProgram(font.mProgram.getProgramId(), font.vertexBuffer);
             font.draw();
+        }
+
+        @Override
+        public void update() {
+            //if(this.transform.isScalingIn && !font.transform.isScalingIn) font.transform.scaleIn(4,font.scale,0.5f);
+            //font.update();
+            super.update();
         }
     }
 

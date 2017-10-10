@@ -277,7 +277,8 @@ public class Board extends Entity {
         if (this.entities[i][k] == null) return;
         //if (this.entities[i][k].setYs) this.entities[i][k].setYs(null, null);
         if (this.entities[i][k].type == TYPE.MARIO) this.marioBuffer.add(this.entities[i][k]);
-        if((this.entities[i][k]).id.equals("3-5") && this.entities[i][k].type != TYPE.MARIO) this.entities[i][k].doScale = this.entities[i][k].rotate = true;
+        //if((this.entities[i][k]).id.equals("3-5") && this.entities[i][k].type != TYPE.MARIO) this.entities[i][k].doScale = this.entities[i][k].rotate = true;
+        if((this.entities[i][k]).id.equals("4-4") && this.entities[i][k].type != TYPE.MARIO) this.entities[i][k].transform.scaleIn(4f,this.entities[i][k].scale,0.5f);
     }
 
     private TYPE getEntity(String type) {
@@ -318,7 +319,8 @@ public class Board extends Entity {
         }
     }
 
-    void update(){
+    @Override
+    public void update(){
         if(this.clearChains) {
             this.chains = null;
             this.clearChains = false;
@@ -367,7 +369,10 @@ public class Board extends Entity {
             this.curStage.score += this.calculateScore(true);
             //this.curStage.score = this.curStage.score * Math.max( 16 / (16 - Math.min((curStage.targetMoves - curStage.moves),15)) , 1);
             progressBar.setValue(curStage.score / (float)curStage.targetScore);
-            if(curStage.score >= (float)curStage.targetScore) levelCompleted.visible = true;
+            if(curStage.score >= (float)curStage.targetScore) {
+                levelCompleted.visible = true;
+                levelCompleted.transform.scaleIn(4,levelCompleted.scale,0.5f);
+            }
             checkComplete = false;
             ((UI.InfoBox)UI.findControlById("infoBox")).transferScore();
         } else nextButton.visible = this.levelComplete && levelCompleted.canLoadNextLevel();

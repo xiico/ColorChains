@@ -144,11 +144,11 @@ public class GemCollection extends Shape{
                         gem.angle = 0.72f * ((int) time) * this.angularSpeed;
                     }
                     /*** scale ***/
-                    if(gem.doScale) {
-                        if (gem.scale <= gem.minScale || gem.scale >= gem.maxScale)
-                            gem.scaleStep = gem.scaleStep * -1;
-                        gem.scale += gem.scaleStep;
-                    }
+//                    if(gem.doScale) {
+//                        if (gem.scale <= gem.minScale || gem.scale >= gem.maxScale)
+//                            gem.scaleStep = gem.scaleStep * -1;
+//                        gem.scale += gem.scaleStep;
+//                    }
                     transformationMatrix = Shape.doTransformations(0, 0, gem.scale, gem.scale, gem.angle, 1);
                     float[] result = new float[4];
                     for (int j = 0; j < 12; j += 3) {
