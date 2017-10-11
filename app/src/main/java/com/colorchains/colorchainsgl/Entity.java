@@ -84,7 +84,6 @@ public abstract class Entity extends Shape {
         this.cacheY = cy;
 //        this.width = GameView.scaledDefaultSide;
 //        this.height = GameView.scaledDefaultSide;
-        this.transform = new Transform(this);
     }
 
     public static int getGemSprites(TYPE type){

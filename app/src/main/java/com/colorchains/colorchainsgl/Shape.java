@@ -61,6 +61,7 @@ public class Shape implements Comparable<Shape> {
     public Shape(float[] coords, short[] drawOrder , String vertexShaderCode, String fragmentShaderCode, Integer resourceId, Integer filtering){
         mProgram = setupImage(resourceId, vertexShaderCode, fragmentShaderCode, filtering);
         init(coords, drawOrder);
+        this.transform = new Transform(this);
     }
 
     public Shape(float[] coords, short[] drawOrder , String vertexShaderCode, String fragmentShaderCode, Integer resourceId){
@@ -68,6 +69,7 @@ public class Shape implements Comparable<Shape> {
             mProgram = setupImage(resourceId, vertexShaderCode, fragmentShaderCode, GLES20.GL_LINEAR /*GLES20.GL_NEAREST*/);
         }
         init(coords, drawOrder);
+        this.transform = new Transform(this);
     }
 
 
@@ -207,7 +209,7 @@ public class Shape implements Comparable<Shape> {
                 int color = GLES20.glGetUniformLocation(mProgram.getProgramId(), "color");
                 GLES20.glUniform4f(color, this.color[0], this.color[1], this.color[2], this.color[3]);
                 int value = GLES20.glGetUniformLocation(mProgram.getProgramId(), "value");
-                GLES20.glUniform1f(value, ((UI.Control.ProgressBar)this).getValue());
+                GLES20.glUniform1f(value, ((UI.ProgressBar)this).getValue());
             } else {
                 int color = GLES20.glGetUniformLocation(mProgram.getProgramId(), "color");
                 //GLES20.glUniform4f(color, colour1, colour2, colour3, 1);
@@ -271,26 +273,26 @@ public class Shape implements Comparable<Shape> {
     public void update(){
         if(transform != null){
             if(transform.isScalingIn){
-                if(transform.curScale == 0) {
-                    transform.curScale = transform.maxScale;
+                if(transform.defaultScale == 0) {
+                    transform.defaultScale = this.scale;
                     //curAnimation.transform.minScale = this.scale;
-                    this.scale = transform.curScale;
+                    this.scale = transform.maxScale;
                     this.doScale = true;
                 }
                 else {
-                    if(this.scale - transform.scaleStep > transform.minScale) this.scale -= transform.scaleStep * 16.66f /*Timer.deltaTime*/;
+                    if(this.scale - transform.scaleStep > transform.minScale) this.scale -= transform.scaleStep * Timer.deltaTime;
                     else {
                         this.scale = transform.minScale;
                         transform.isScalingIn = false;
-                        transform.curScale = 0;
+                        transform.defaultScale = 0;
                         this.doScale = false;
                     }
                 }
             } else if(transform.isScalingOut){
-                if(transform.curScale == 0) {
-                    transform.curScale = transform.minScale;
+                if(transform.defaultScale == 0) {
+                    transform.defaultScale = this.scale;
                     //curAnimation.transform.maxScale = this.scale;
-                    this.scale = transform.curScale;
+                    this.scale = transform.minScale;
                     this.doScale = true;
                 }
                 else {
@@ -298,7 +300,7 @@ public class Shape implements Comparable<Shape> {
                     else {
                         this.scale = transform.maxScale;
                         transform.isScalingOut = false;
-                        transform.curScale = 0;
+                        transform.defaultScale = 0;
                         this.doScale = false;
                     }
                 }

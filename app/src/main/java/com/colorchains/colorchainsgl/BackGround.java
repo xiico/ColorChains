@@ -48,31 +48,6 @@ public class BackGround extends Entity {
                     "void main() {" +
                     "  gl_FragColor = texture2D( s_texture, v_texCoord ) * vec4(color.r,color.g,color.b,color.a);\n" +
                     "}";
-    public static final String effect =
-            "precision mediump float;\n" +
-                    "uniform float time;\n" +
-                    "uniform vec2 resolution;\n" +
-                    "varying vec2 v_texCoord;\n" +
-                    "uniform sampler2D s_texture;\n" +
-                    "\n" +
-                    "float windows(vec2 uv){\n" +
-                    "  uv.x += sin(uv.y * 12.0 + time) * 0.02;\n" +
-                    "  uv.y -= sin(uv.x * 12.0 + time) * 0.02;\n" +
-                    "  float box = smoothstep(0.55, 0.604, uv.x) * (1.0 - smoothstep(1.196, 1.25, uv.x)) * smoothstep(0.25, 0.304, uv.y) * (1.0 - smoothstep(0.796, 0.85, uv.y));\n" +
-                    "  box *= smoothstep(0.005, 0.008, abs(uv.x - 0.9));\n" +
-                    "  box *= smoothstep(0.005, 0.008, abs(uv.y - 0.55));\n" +
-                    "  return box;\n" +
-                    "}\n" +
-                    "\n" +
-                    "void main( void ) {\n" +
-                    "\n" +
-                    " vec2 position = ( gl_FragCoord.xy / resolution.xy ) ;\n" +
-                    " position.x *= resolution.x / resolution.y;\n" +
-                    " gl_FragColor = texture2D( s_texture, v_texCoord ) * vec4(vec3(0., windows(position), 0.), 1.);\n" +
-                    " //gl_FragColor = vec4(0.5,0,0,1);\n" +
-                    " //gl_FragColor = texture2D( s_texture, v_texCoord ) * vec4(0.5,0,0,1) * position;\n" +
-                    "\n" +
-                    "}";
 
     public static final String effect3 =
             "precision mediump float;\n" +
@@ -85,59 +60,12 @@ public class BackGround extends Entity {
                     "void main( void ) {\n" +
                     "  vec2 st = (gl_FragCoord.xy * 2.0 - resolution) / min(resolution.x, resolution.y);\n" +
                     "  // How to move spher is here (https://goo.gl/MolkFJ).\n" +
-                    "  st.x += cos(time);\n" +
-                    "  st.y += sin(time);\n" +
+                    "  st.x += cos(time*2.)/2.;\n" +
+                    "  st.y += sin(time*2.)/2.;\n" +
                     "  // See this page (https://goo.gl/KJ9ScK) about the formula below.\n" +
-                    "  float f = abs(sin(time)) * 0.1 / length(st);\n" +
+                    "  float f = abs(sin(time)) * 1.0 / length(st);\n" +
                     "  gl_FragColor = texture2D( s_texture, v_texCoord ) * vec4(vec3(f), 1.0);\n" +
                     "}";
-    public static final String effect2 =
-            "  // this is the resolution of the window\n" +
-                    "  uniform vec2 resolution;\n" +
-                    "  // this is a count in seconds.\n" +
-                    "  uniform float time;\n" +
-                    "  void main() {\n" +
-                    "      // gl_FragCoord is the position of the pixel being drawn\n" +
-                    "      // so this code makes p a value that goes from -1 to +1 \n" +
-                    "      // x and y\n" +
-                    "      vec2 p = -1.0 + 2.0 * gl_FragCoord.xy / resolution.xy;\n" +
-                    "      // a = the time speed up by 40\n" +
-                    "      float a = time*40.0;\n" +
-                    "      // declare a bunch of variables.\n" +
-                    "      float d,e,f,g=1.0/40.0,h,i,r,q;\n" +
-                    "      // e goes from 0 to 400 across the screen\n" +
-                    "      e=400.0*(p.x*0.5+0.5);\n" +
-                    "      // f goes from 0 to 400 down the screen\n" +
-                    "      f=400.0*(p.y*0.5+0.5);\n" +
-                    "      // i goes from 200 + or - 20 based\n" +
-                    "      // on the sin of e * 1/40th + the slowed down time / 150\n" +
-                    "      // or in other words slow down even more.\n" +
-                    "      // e * 1/40 means e goes from 0 to 1\n" +
-                    "      i=200.0+sin(e*g+a/150.0)*20.0;\n" +
-                    "      // d is 200 + or - 18.0 + or - 7\n" +
-                    "      // the first +/- is cos of 0.0 to 0.5 down the screen\n" +
-                    "      // the second +/i is cos of 0.0 to 1.0 across the screen\n" +
-                    "      d=200.0+cos(f*g/2.0)*18.0+cos(e*g)*7.0;\n" +
-                    "      // I'm stopping here. You can probably figure out the rest\n" +
-                    "      // see answer\n" +
-                    "      r=sqrt(pow(i-e,2.0)+pow(d-f,2.0));\n" +
-                    "      q=f/r;\n" +
-                    "      e=(r*cos(q))-a/2.0;f=(r*sin(q))-a/2.0;\n" +
-                    "      d=sin(e*g)*176.0+sin(e*g)*164.0+r;\n" +
-                    "      h=((f+d)+a/2.0)*g;\n" +
-                    "      i=cos(h+r*p.x/1.3)*(e+e+a)+cos(q*g*6.0)*(r+h/3.0);\n" +
-                    "      h=sin(f*g)*144.0-sin(e*g)*212.0*p.x;\n" +
-                    "      h=(h+(f-e)*q+sin(r-(a+h)/7.0)*10.0+i/4.0)*g;\n" +
-                    "      i+=cos(h*2.3*sin(a/350.0-q))*184.0*sin(q-(r*4.3+a/12.0)*g)+tan(r*g+h)*184.0*cos(r*g+h);\n" +
-                    "      i=mod(i/5.6,256.0)/64.0;\n" +
-                    "      if(i<0.0) i+=4.0;\n" +
-                    "      if(i>=2.0) i=4.0-i;\n" +
-                    "      d=r/350.0;\n" +
-                    "      d+=sin(d*d*8.0)*0.52;\n" +
-                    "      f=(sin(a*g)+1.0)/2.0;\n" +
-                    "      gl_FragColor=vec4(vec3(f*i/1.6,i/2.0+d/13.0,i)*d*p.x+vec3(i/1.3+d/8.0,i/2.0+d/18.0,i)*d*(1.0-p.x),1.0);\n" +
-                    "}";
-
 
     public static final String swirl =
             "#ifdef GL_ES\n" +
@@ -601,19 +529,6 @@ public class BackGround extends Entity {
                     "\tfloat v = 32.0 * af * (1.0 - af) * df * (1.0 - df) * exp(-rp.y * 0.8);\n" +
                     "\tgl_FragColor = vec4(hsv(noise(vec2(ai, di) * 0.01), 1.0, v), 1.0);\n" +
                     "}";
-    static float squareCoords[] = {
-            -0.5f,  0.5f, 0.0f,  // top left      0
-            -0.5f, -0.5f, 0.0f,  // bottom left   1
-            0.5f, -0.5f, 0.0f,  // bottom right  2
-            0.5f,  0.5f, 0.0f}; // top right     3
-
-    /*
-            -0.5f, 0.5f, 0.0f,  // top left
-            -0.5f, -0.5f, 0.0f,  // bottom left
-            0.5f, -0.5f, 0.0f,  // bottom right
-            0.5f, 0.5f, 0.0f}; // top right*/
-
-    private static short drawOrder[] = {0, 1, 2, 0, 2, 3}; // order to draw vertices
 
     public BackGround() {
         //super(squareCoords,drawOrder,  vs_Image , fs_Image, resourceId);

@@ -26,5 +26,6 @@ public enum TYPE {
     IMAGE,
     BACKGROUND,
     TITLE,
-    LEVELCOMPLETE
+    LEVELCOMPLETE,
+    LEVELSELECT
 }

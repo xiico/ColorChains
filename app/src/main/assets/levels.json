@@ -61,7 +61,7 @@
       "highScore": 0,
       "moves": 0,
       "maxMoves": 0,
-      "targetMoves": 0,
+      "targetMoves": 42,
       "sets": [],
       "defaultTargetScore": 2000
     },
@@ -83,7 +83,7 @@
       "highScore": 0,
       "moves": 0,
       "maxMoves": 0,
-      "targetMoves": 0,
+      "targetMoves": 78,
       "sets": [],
       "defaultTargetScore": 3000
     },
@@ -105,7 +105,7 @@
       "highScore": 0,
       "moves": 0,
       "maxMoves": 0,
-      "targetMoves": 0,
+      "targetMoves": 200,
       "sets": [],
       "defaultTargetScore": 4000
     },
@@ -127,7 +127,7 @@
       "highScore": 0,
       "moves": 0,
       "maxMoves": 0,
-      "targetMoves": 0,
+      "targetMoves": 180,
       "sets": [],
       "defaultTargetScore": 5000
     },
@@ -149,7 +149,7 @@
       "highScore": 0,
       "moves": 0,
       "maxMoves": 0,
-      "targetMoves": 0,
+      "targetMoves": 112,
       "sets": [],
       "defaultTargetScore": 5000
     },
@@ -171,7 +171,7 @@
       "highScore": 0,
       "moves": 0,
       "maxMoves": 0,
-      "targetMoves": 0,
+      "targetMoves": 190,
       "sets": [],
       "defaultTargetScore": 5000
     },
@@ -242,7 +242,7 @@
       "defaultTargetScore": 5000
     },
     {
-      "id": "level10",
+      "id": "level11",
       "tiles": [
         "MMMMMMMM",
         "        ",

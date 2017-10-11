@@ -42,9 +42,9 @@ public class Board extends Entity {
     public float gemOffsetY = 252;//92*3;//(92/2) + 16;
     public Integer border = 8;
     //UI elements
-    private UI.Control.Button nextButton;
-    private UI.Control.ProgressBar progressBar;
-    private UI.Control.Confirm confirm;
+    private UI.Button nextButton;
+    private UI.ProgressBar progressBar;
+    private UI.Confirm confirm;
     private UI.LevelCompleted levelCompleted;
 
     public boolean clearChains = false;
@@ -87,11 +87,11 @@ public class Board extends Entity {
     }
 
     public void addControls(){
-        nextButton = new UI.Control.Button("next","Next",
+        nextButton = new UI.Button("next","Next",
                 gemOffsetX + (GameView.scaledDefaultSide * 7) + (this.getWidth() / 2),
                 gemOffsetY + (GameView.scaledDefaultSide * 8.5f) + (20 * GameView.scale) ,0,0);
         UI.addControl(nextButton);
-        nextButton.addUIListener(new UI.Control.Button.UIListener() {
+        nextButton.addUIListener(new UI.UIListener() {
             @Override
             public void clicked(Object sender) {
                 nextStage();
@@ -99,7 +99,7 @@ public class Board extends Entity {
         });
         //if(nextButton != null) return;
         nextButton.visible = false;
-        progressBar = new UI.Control.ProgressBar();
+        progressBar = new UI.ProgressBar();
         progressBar.setX(gemOffsetX);
         progressBar.setY(gemOffsetY + (GameView.scaledDefaultSide * 8f) + (4*GameView.scale));
         progressBar.setWidth(GameView.scaledDefaultSide * 8);
@@ -111,9 +111,9 @@ public class Board extends Entity {
         UI.addControl(progressBar);
         progressBar.visible = false;
 
-        confirm = new UI.Control.Confirm("confirm",
+        confirm = new UI.Confirm("confirm",
                 "There is a previously saved game.\n Do you want to continue it?", (float) GameView.scaledDefaultSide, GameView.metrics.heightPixels / 2f);
-        confirm.addUIListener(new UI.Control.Button.UIListener() {
+        confirm.addUIListener(new UI.UIListener() {
             @Override
             public void clicked(Object arg) {
                 loadResult = arg.toString();
@@ -133,7 +133,7 @@ public class Board extends Entity {
         UI.addControl(levelCompleted);
     }
 
-    public int calculateScore(boolean lastScore){
+    private int calculateScore(boolean lastScore){
         Float score = 0f;
         if (chains.size() == 0) return 0;
         for (int index = 0; index < chains.size(); index++) {
@@ -142,11 +142,11 @@ public class Board extends Entity {
             for (int i = 0; i < chain.chained.size(); i++) {
                 iScore = ((i + 1) * 1.2f);
             }
-            score += iScore * 10 * (chain.loop ? (int)Math.sqrt(chain.chained.size()) : 1) * ( lastScore ? Math.max( 16 / (16 - Math.min((curStage.targetMoves - curStage.moves),15)) , 1) : 1 );
+            score += iScore * 10 * (chain.loop ? (int)Math.sqrt(chain.chained.size()) : 1) * (lastScore ? Math.max((curStage.targetMoves / curStage.moves),1f) : 1)/*( lastScore ? Math.max( 16 / (16 - Math.min((curStage.targetMoves - curStage.moves),15)) , 1) : 1 )*/;
         }
         return Math.round(score);
     }
-    public void createEntities(Stage stage){
+    private void createEntities(Stage stage){
         //fg.Render.cached[TYPE.MARIO] = null;
         String[] rows = stage.tiles;
         rowsCount = rows.length;
@@ -200,7 +200,7 @@ public class Board extends Entity {
         Mario.RenderTiles(this);
         progressBar.visible = true;
     }
-    public void setCurStage(int index){
+    private void setCurStage(int index){
         this.curStage = this.stages.get(index);
     }
 
@@ -331,14 +331,14 @@ public class Board extends Entity {
             if (!loaded){
                 loaded = true;
                 String boardState = settings.getString(BOARD_STATE,"");
-                if(boardState != null && boardState.length() > 0)
+                if(boardState.length() > 0)
                     confirm.visible = true;
                 else {
                     loadStage(0);
                 }
             } else if (confirm.visible) {
-                if(loadResult == "") return;
-                if (loadResult == "OK") {
+                if(loadResult.equals("")) return;
+                if (loadResult.equals("OK")) {
                     stageIndex = settings.getInt(STAGE_INDEX, 0);
                     loadStage(new Stage(settings.getString("boardState", "")), stageIndex);
                     ((UI.InfoBox)UI.findControlById("infoBox")).setTargetScore(curStage.targetScore);
@@ -415,7 +415,6 @@ public class Board extends Entity {
         /********** Use GemCollection **********/
     }
 
-    private boolean showLevelCompleted = false;
     private void nextStage(){
         GameView.GLRenderer._boardReady = false;
         if (this.curStage == null) this.setCurStage(0);
@@ -456,7 +455,7 @@ public class Board extends Entity {
         updateMarioTexture = true;
     }
 
-    public boolean parseBoard(){
+    boolean parseBoard(){
         if (chains == null && (selectedGem == null || ((Gem)selectedGem).moveTo == null )) {
             curStage.moves++;
             this.chains = new ArrayList<>();
@@ -479,6 +478,7 @@ public class Board extends Entity {
             saveState();
             ((UI.InfoBox)UI.findControlById("infoBox")).setScore(curStage.score);
             ((UI.InfoBox)UI.findControlById("infoBox")).setPuzzleScore(calculateScore(false));
+            ((UI.InfoBox)UI.findControlById("infoBox")).setChains(chains);
         }
         if (chains == null || chains.size() <= 0) return false;
         this.levelComplete = true;
@@ -534,30 +534,27 @@ public class Board extends Entity {
         editor.commit();
     }
 
-    public void findChainTypes(){
-        for (int k = 0; k < entities.length; k++) {
-            Entity[] row = entities[k];
-            for (int l = 0; l < row.length; l++) {
-                Gem element = (Gem) row[l];
-                if(element == null || !((Gem)element).getClass().equals(Gem.class)) continue;
+    private void findChainTypes(){
+        for (Gem[] row : entities) {
+            for (Gem aRow : row) {
+                if (aRow == null || !((Gem) aRow).getClass().equals(Gem.class)) continue;
                 Chain chainType = null;
-                for (Chain chn: chains) {
-                    if(chn.id == element.type.toString()) chainType = chn;
+                for (Chain chn : chains) {
+                    if (chn.id.equals(aRow.type.toString())) chainType = chn;
                 }
                 List<Gem> gemList = new ArrayList<>();
-                gemList.add(element);
+                gemList.add(aRow);
                 if (chainType == null)
-                    this.chains.add(new Chain(element.type.toString(), gemList, 1, false));
-                else
-                {
-                    chainType.elements.add(element);
+                    this.chains.add(new Chain(aRow.type.toString(), gemList, 1, false));
+                else {
+                    chainType.elements.add(aRow);
                     chainType.count++;
                 }
             }
         }
     }
 
-    public void checkSides(Gem gem, Chain  chain){
+    private void checkSides(Gem gem, Chain chain){
         Integer posX = parseInt(gem.id.split("-")[1]), posY = parseInt(gem.id.split("-")[0]);
         chain.elements.remove(chain.elements.indexOf(gem));
         List<Gem> elements = new ArrayList<>();

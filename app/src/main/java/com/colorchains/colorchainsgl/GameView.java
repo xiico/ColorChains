@@ -218,8 +218,8 @@ public class GameView extends GLSurfaceView {
             scale = Math.round(metrics.widthPixels / 360f);
             GameView.defaultSide = GameView.is16x9 ? 42 : (metrics.widthPixels < 800 ? 46 : 48);
             GameView.scaledDefaultSide = GameView.defaultSide * (int)scale;
-            Shape.setPixelWidth(1 / width);
-            Shape.setPixelHeight(1 / height);
+            Shape.setPixelWidth(1f / width);
+            Shape.setPixelHeight(1f / height);
         }
         private boolean testProgram = false;
         @Override
@@ -262,11 +262,11 @@ public class GameView extends GLSurfaceView {
                     backGround.doScale = false;
                     backGround.rotate = false;
                     int randint = 0;
-//                    if (!GameView.cycleBG) {
-//                        Random r = new Random();
-//                        randint = Math.abs(r.nextInt()) % backGround.programs.size();
-//                    }
-                    backGround.index = 0;//randint;
+                    if (GameView.cycleBG) {
+                        Random r = new Random();
+                        randint = Math.abs(r.nextInt()) % backGround.programs.size();
+                    }
+                    backGround.index = randint;
 
                     /******* end onSurfaceChanged GL2 **********/
                     w = metrics.widthPixels;//600
@@ -274,7 +274,7 @@ public class GameView extends GLSurfaceView {
                     screenH = height;
                     screenW = width;
                 } else {
-                    UI.Control.ProgressBar progressBar = new UI.Control.ProgressBar();
+                    UI.ProgressBar progressBar = new UI.ProgressBar();
 //                    progressBar.setX(16f);
 //                    progressBar.setY(252f + (GameView.scaledDefaultSide * 8f) + (4*GameView.scale));
                     progressBar.setX(GameView.metrics.widthPixels / 2);
