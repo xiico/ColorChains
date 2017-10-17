@@ -75,6 +75,8 @@ public class Board extends Entity {
 //        gemOffsetX = 16;//(GameView.metrics.widthPixels - (92*7)) / 2;
 //        gemOffsetY = 252;//(126*(int)GameView.scale);
         this.border = 8 + (GameView.is16x9 ? 4 : 0);
+        this.border = (GameView.metrics.widthPixels <= 600 ? this.border / 2 : this.border);
+        this.border = (GameView.metrics.widthPixels <= 540 ? 7 : this.border);
         gemOffsetX = (border * (int)GameView.scale);
         gemOffsetY = (126*(int)GameView.scale);
         //Log.d("Board","border: " + this.border +",gemOffsetX: " + gemOffsetX + ",gemOffsetY: " + gemOffsetY);
@@ -123,7 +125,8 @@ public class Board extends Entity {
         confirm.visible = false;
 
         UI.InfoBox infoBox = new UI.InfoBox("infoBox", 0f, GameView.scale * 5);
-        infoBox.setX((GameView.metrics.widthPixels / 2f) - (infoBox.width / 2));
+        infoBox.setX((GameView.metrics.widthPixels / 2f) - (infoBox.getWidth() / 2));
+        infoBox.setY(42f);
         infoBox.visible = false;
         UI.addControl(infoBox);
 

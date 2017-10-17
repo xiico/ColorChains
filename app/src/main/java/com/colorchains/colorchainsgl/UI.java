@@ -23,8 +23,10 @@ import static com.colorchains.colorchainsgl.GameView.GLRenderer.changeProgram;
 
 class UI {
 
+    public static float fontScaleBig = 8;
     private static boolean _modal = false;
     private static Control mainContainer;
+
     static void init() {
         mainContainer = new Control("mainContainer", TYPE.CONTAINER, 0f, 0f, GameView.metrics.widthPixels, GameView.metrics.heightPixels);
     }
@@ -273,14 +275,14 @@ class UI {
     }
 
     public static class InfoBox extends Control{
-        public Integer width = 600;
-        public Integer height = 200;
+        //public Integer width = 600;
+        //public Integer height = 200;
         private Integer score = 0;
         private Integer targetScore = 0;
         private Integer puzzleScore = 0;
         private Font levelAndTargetScoreLabel;
         private Font puzzleScoreLabel;
-        private Font chainsLabel;
+        private List<Font> chainsLabels = new ArrayList<>();
         private List<Chain> chains;
         public InfoBox(String id, Float x, Float y) {
             super(id, TYPE.INFOBOX, x, y, 0, 0);
@@ -294,10 +296,12 @@ class UI {
             //puzzleScoreLabel.doCharScale = true;
             //puzzleScoreLabel.padding = 20f;
 
-            chainsLabel = new Font(R.drawable.oldskol, 4f);
-            chainsLabel.setX(this.getX() - (this.getWidth() / 2) + 490);
-            chainsLabel.setY(this.getY() - (this.getHeight() / 2) + 85);
-            //chainsLabel.padding = 0.32f;
+//            chainsLabel = new Font(R.drawable.oldskol, 3f);
+//            chainsLabel.hAlign = Font.HorizontalAlignment.CENTER;
+//            //chainsLabel.setX(this.getX() - (this.getWidth() / 2) + 248);//490
+//            //chainsLabel.setY(this.getY() - (this.getHeight() / 2) + 32);//85
+//            //chainsLabel.padding = 0.32f;
+
         }
 
         public void setScore(Integer score){
@@ -346,42 +350,74 @@ class UI {
             }
 
             levelAndTargetScoreLabel.setText(score.toString());
+            changeProgram(levelAndTargetScoreLabel.mProgram.getProgramId(), levelAndTargetScoreLabel.vertexBuffer);
             levelAndTargetScoreLabel.setX(this.getX() - (this.getWidth() / 2) + 220);
             levelAndTargetScoreLabel.setY(this.getY() - (this.getHeight() / 2) + 48);
-            changeProgram(levelAndTargetScoreLabel.mProgram.getProgramId(), levelAndTargetScoreLabel.vertexBuffer);
+            //GameView.GLRenderer.updateVertexBuffer(levelAndTargetScoreLabel.vertexBuffer);
             levelAndTargetScoreLabel.draw();
 
             levelAndTargetScoreLabel.setText( targetScore.toString());
             levelAndTargetScoreLabel.setX(this.getX() - (this.getWidth() / 2)  + 220);
             levelAndTargetScoreLabel.setY(this.getY() - (this.getHeight() / 2) + 100);
-            changeProgram(levelAndTargetScoreLabel.mProgram.getProgramId(), levelAndTargetScoreLabel.vertexBuffer);
+            //changeProgram(levelAndTargetScoreLabel.mProgram.getProgramId(), levelAndTargetScoreLabel.vertexBuffer);
+            GameView.GLRenderer.updateVertexBuffer(levelAndTargetScoreLabel.vertexBuffer);
             levelAndTargetScoreLabel.draw();
 
             puzzleScoreLabel.setText( puzzleScore.toString());
             puzzleScoreLabel.setX(this.getX() - (this.getWidth() / 2) + 220);
             puzzleScoreLabel.setY(this.getY() - (this.getHeight() / 2)+ 152);
-            changeProgram(puzzleScoreLabel.mProgram.getProgramId(), puzzleScoreLabel.vertexBuffer);
+            //changeProgram(puzzleScoreLabel.mProgram.getProgramId(), puzzleScoreLabel.vertexBuffer);
+            GameView.GLRenderer.updateVertexBuffer(puzzleScoreLabel.vertexBuffer);
             puzzleScoreLabel.draw();
 
-            if(chains != null){
-                String strChains = "";
-                for (Chain chn: chains) {
-                    strChains += chn.count + (chains.size() / 2 == chains.indexOf(chn) + 1 ? "\n" : " ");
-                }
-                strChains = strChains.substring(0,strChains.length() - 1);
-                chainsLabel.setText(strChains);
-                changeProgram(chainsLabel.mProgram.getProgramId(), chainsLabel.vertexBuffer);
-                chainsLabel.draw();
-
+            if(chainsLabels.size() == 0){
+//                String strChains = "";
 //                for (Chain chn: chains) {
-//                    int index = chains.indexOf(chn);
-//                    int line = (int)Math.floor(index / 4);
-//                    chainsLabel.setText(chn.count.toString());
-//                    chainsLabel.setX(this.getX() - (this.getWidth() / 2) + 272 + ((index % 4) * chainsLabel.getWidth() * chn.count.toString().length()));
-//                    chainsLabel.setY(this.getY() - (this.getHeight() / 2) + 56 + (line * chainsLabel.getHeight()));
-//                    changeProgram(chainsLabel.mProgram.getProgramId(), chainsLabel.vertexBuffer);
-//                    chainsLabel.draw();
+//                    strChains += chn.count + (chains.size() / 2 == chains.indexOf(chn) + 1 ? "\n" : " ");
 //                }
+//                strChains = strChains.substring(0,strChains.length() - 1);
+//                chainsLabel.setText(strChains);
+//                //changeProgram(chainsLabel.mProgram.getProgramId(), chainsLabel.vertexBuffer);
+//                GameView.GLRenderer.updateVertexBuffer(chainsLabel.vertexBuffer);
+//                chainsLabel.draw();
+
+                for (Chain chn: chains) {
+                    chainsLabels.add(new Font(R.drawable.oldskol, 3f));
+                    Font chainsLabel = chainsLabels.get(chainsLabels.size() - 1);
+                    chainsLabel.hAlign = Font.HorizontalAlignment.CENTER;
+                    //chainsLabel.scale = 5;
+
+                    int index = chains.indexOf(chn);
+                    int line = (int)Math.floor(index / 4);
+                    chainsLabel.setText(chn.count.toString());
+                    //chn.chained.get(0).type
+                    if(chn.id == "WHITEGEM")
+                        chainsLabel.color = new float[]{235f/255,235f/255,235f/255,1};//W
+                    else if(chn.id == "BLUEGEM")
+                        chainsLabel.color = new float[]{47f/255,130f/255,255f/255,1};//B
+                    else if(chn.id == "CYANGEM")
+                        chainsLabel.color = new float[]{52f/255,206f/255,206f/255,1};//C
+                    else if(chn.id == "ORANGEGEM")
+                        chainsLabel.color = new float[]{251f/255,113f/255,0,1};//O
+                    else if(chn.id == "PURPLEGEM")
+                        chainsLabel.color = new float[]{139f/255,15f/255,254f/255,1};//P
+                    else if(chn.id == "YELLOWGEM")
+                        chainsLabel.color = new float[]{236f/255,216f/255,0,1};//Y
+                    else if(chn.id == "REDGEM")
+                        chainsLabel.color = new float[]{255f/255,50f/255,50f/255,1};//R
+                    else if(chn.id == "GREENGEM")
+                        chainsLabel.color = new float[]{60f/255,216f/255,0,1};//G
+                    //lastStart += (chainsLabel.getWidth() * chn.count.toString().length()) /*+ (chainsLabel.getWidth() / 2)*/;
+                    //chainsLabel.setX(this.getX() - (this.getWidth() / 2) + 272 + lastStart);
+                    chainsLabel.setX(this.getX() - (this.getWidth() / 2) + 248 + (64 / 2 ) + ((index % 4) * /*chainsLabel.getWidth()*/64 /* * chn.count.toString().length()*/));//272
+                    chainsLabel.setY(this.getY() - (this.getHeight() / 2) + 32 + (68 / 2 ) + (line * 68 /* * chainsLabel.getHeight()*/));//56
+                    //changeProgram(chainsLabel.mProgram.getProgramId(), chainsLabel.vertexBuffer);
+                }
+            } else {
+                for (Font label: chainsLabels) {
+                    GameView.GLRenderer.updateVertexBuffer(label.vertexBuffer);
+                    label.draw();
+                }
             }
         }
     }
@@ -464,7 +500,7 @@ class UI {
             setOffSetY(0);
             cacheWidth = (int) super.getWidth();
             cacheHeight = (int) super.getHeight();
-            font = new Font(R.drawable.oldskol, 8.0f);
+            font = new Font(R.drawable.oldskol, fontScaleBig);
             setText("Level\nCompleted!");
             font.vAlign = Font.VerticalAlignment.BOTTOM;
             this.setX(GameView.metrics.widthPixels / 2);

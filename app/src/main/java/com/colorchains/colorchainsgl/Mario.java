@@ -47,10 +47,7 @@ public class Mario extends Gem {
         for (String key: marioCache.keySet()) {
             Mario.renderSubTile(canvas, resizedBitmap, key);
         }
-        //Render.cache(TYPE.MARIO, bmp2);
         marioTexture = bmp2;
-        //board.bg = bmp2;
-        //textures.remove(Gem.getGemSprites(TYPE.MARIO));
         return true;
     }
 

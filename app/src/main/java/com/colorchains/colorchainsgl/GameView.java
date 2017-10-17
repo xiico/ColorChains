@@ -43,7 +43,7 @@ public class GameView extends GLSurfaceView {
     public static boolean is16x9;
     public static float scale;
     private FloatBuffer vertexBuffer;
-    public static boolean cycleBG = false;
+    public static boolean cycleBG = true;
     static Board board;
     public GameView(Context context) {
         super(context);
@@ -217,6 +217,9 @@ public class GameView extends GLSurfaceView {
             GameView.is16x9 = metrics.heightPixels / (float)metrics.widthPixels >= 1.6f;
             scale = Math.round(metrics.widthPixels / 360f);
             GameView.defaultSide = GameView.is16x9 ? 42 : (metrics.widthPixels < 800 ? 46 : 48);
+            GameView.defaultSide = (metrics.widthPixels <= 600 ? 36 : GameView.defaultSide);
+            GameView.defaultSide = (metrics.widthPixels <= 540 ? 32 : GameView.defaultSide);
+            if(metrics.widthPixels <= 600) UI.fontScaleBig = 6.0f;
             GameView.scaledDefaultSide = GameView.defaultSide * (int)scale;
             Shape.setPixelWidth(1f / width);
             Shape.setPixelHeight(1f / height);
@@ -257,6 +260,8 @@ public class GameView extends GLSurfaceView {
                     backGround = new BackGround();
                     backGround.setX(width / 2f);
                     backGround.setY(height / 2f);
+                    backGround.setWidth(width);
+                    backGround.setHeight(height);
                     backGround.setOffSetX(0);
                     backGround.setOffSetY(0);
                     backGround.doScale = false;
@@ -345,6 +350,23 @@ public class GameView extends GLSurfaceView {
             curProgram = program;
             // Add program to OpenGL ES environment
             GLES20.glUseProgram(curProgram);
+
+            // get handle to vertex shader's vPosition member
+            int mPositionHandle = GLES20.glGetAttribLocation(curProgram, "vPosition");
+
+            // Enable a handle to the triangle vertices
+            GLES20.glEnableVertexAttribArray(mPositionHandle);
+
+            // Prepare the triangle coordinate data
+            GLES20.glVertexAttribPointer(mPositionHandle, Shape.COORDS_PER_VERTEX,
+                    GLES20.GL_FLOAT, false,
+                    Shape.vertexStride, vertexBuffer);
+        }
+
+        public static void updateVertexBuffer(FloatBuffer vertexBuffer){
+//            curProgram = program;
+//            // Add program to OpenGL ES environment
+//            GLES20.glUseProgram(curProgram);
 
             // get handle to vertex shader's vPosition member
             int mPositionHandle = GLES20.glGetAttribLocation(curProgram, "vPosition");
