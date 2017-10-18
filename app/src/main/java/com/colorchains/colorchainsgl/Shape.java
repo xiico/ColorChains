@@ -220,7 +220,7 @@ public class Shape implements Comparable<Shape> {
                 GLES20.glUniform1f(time, this.time);
                 /********** test *************/
             }
-        } else if (getResourceId() == R.drawable.oldskol || (this instanceof GemCollection)) {
+        } else if (getResourceId() == R.drawable.oldskol || (this instanceof EntityCollection)) {
             int color = GLES20.glGetUniformLocation(mProgram.getProgramId(), "color");
             GLES20.glUniform4f(color, this.color[0], this.color[1], this.color[2], this.color[3]);
         }

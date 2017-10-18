@@ -11,13 +11,11 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 import static com.colorchains.colorchainsgl.GameView.GLRenderer.updateMarioTexture;
-import static java.lang.Integer.numberOfLeadingZeros;
 import static java.lang.Integer.parseInt;
 
 /**
@@ -56,8 +54,8 @@ public class Board extends Entity {
     private Integer stageIndex;
     private String loadResult = "";
     private UI.Font loading;
-    public GemCollection gemCol;
-    public GemCollection marioCol;
+    public EntityCollection gemCol;
+    public EntityCollection marioCol;
     public boolean parseBoard = false;
 
     public Board(Context context)  throws JSONException {
@@ -134,6 +132,9 @@ public class Board extends Entity {
         levelCompleted.setX(GameView.metrics.widthPixels / 2);
         levelCompleted.setY(GameView.metrics.heightPixels / 2);
         UI.addControl(levelCompleted);
+
+        UI.LevelSelect levelSelect = new UI.LevelSelect(stages);
+        UI.addControl(levelSelect);
     }
 
     private int calculateScore(boolean lastScore){
@@ -385,16 +386,6 @@ public class Board extends Entity {
 
     @Override
     public void draw() {
-        //Render.clearScreen();
-        //Render.clearScreen(bg);//Render.clearScreen(Render.cached.get(TYPE.FONT) == null ?  bg: Render.cached.get(TYPE.FONT));//Render.clearScreen(bg);//Render.clearScreen();
-        //texture.draw(gl, x, y, width, height, 0, true);
-
-//        if(showLevelCompleted){
-//            if(levelCompleted.canLoadNextLevel()){
-//                //levelCompleted.visible = false;
-//                //loadNextLevel();
-//            }
-//        }
 
         if (!GameView.GLRenderer._boardReady) {
             if (this.curStage != null) {
@@ -404,18 +395,11 @@ public class Board extends Entity {
             return;
         }
         ((UI.InfoBox) UI.findControlById("infoBox")).visible = true;
-        //Render.draw(bg, 0, 0, false);
-        /********** Use GemCollection **********/
-//        for (Integer i = 0; i < rowsCount; i++) {
-//            for (Integer k = 0; k < colsCount; k++) {
-//                Gem entity = /*(Gem) */entities[i][k];
-//                if (entity != null && !entity.selected) entity.draw();
-//            }
-//        }
 
+        /********** Use EntityCollection **********/
         this.marioCol.draw();
         this.gemCol.draw();
-        /********** Use GemCollection **********/
+        /********** Use EntityCollection **********/
     }
 
     private void nextStage(){
@@ -477,7 +461,6 @@ public class Board extends Entity {
                 }
                 if(chain.complete && this.contactPoints(chain.chained.get(0), chain).indexOf(chain.chained.get(chain.count - 1)) >= 0) chain.loop = true;
             }
-            //if(curStage.score == 0) curStage.score = calculateScore();
             saveState();
             ((UI.InfoBox)UI.findControlById("infoBox")).setScore(curStage.score);
             ((UI.InfoBox)UI.findControlById("infoBox")).setPuzzleScore(calculateScore(false));
@@ -485,10 +468,6 @@ public class Board extends Entity {
         }
         if (chains == null || chains.size() <= 0) return false;
         this.levelComplete = true;
-//        this.chains.sort(function (a, b) {
-//            if (a.id < b.id) return -1;
-//            if (a.id > b.id) return 1;
-//        });
         Collections.sort(chains, new Comparator<Chain>() {
             @Override
             public int compare(Chain a, Chain b) {
@@ -498,8 +477,6 @@ public class Board extends Entity {
         });
         for (int index = 0; this.chains != null && index < this.chains.size(); index++) {
             Chain chain = this.chains.get(index);
-            //this.drawChainIcon(chain.id, 8, 390 + (index * 8));
-            //this.mainFontSmall.draw(": " + chain.count + (chain.count == chain.checks ? " $" : ""), 16, 390 + (index * 8));
             if (chain.count != chain.checks) this.levelComplete = false;
         }
         return false;
@@ -687,9 +664,9 @@ public class Board extends Entity {
         this.curStage = stages.get(index);
         this.stageIndex = index;
         this.createEntities(this.curStage);
-        /******* GemCollection *********/
+        /******* EntityCollection *********/
         BuildGemsCollections();
-        /******* GemCollection *********/
+        /******* EntityCollection *********/
     }
 
     private void BuildGemsCollections() {
@@ -704,6 +681,7 @@ public class Board extends Entity {
         //this.marioCol.buildTextureMap(80,10,8);
         this.marioCol.buildTextureMap(100,10,10);
         GameView.GLRenderer._boardReady = true;
+        ((UI.InfoBox)UI.findControlById("infoBox")).setChains(null);
     }
 
     public void clearGems(){

@@ -547,7 +547,7 @@ public class BackGround extends Entity {
             programs.add(Shape.createProgram(vs_Image, hive, -1));
             programs.add(Shape.createProgram(vs_Image, waves, -1));
             programs.add(Shape.createProgram(vs_Image, greenWater, -1));
-            programs.add(Shape.createProgram(vs_Image, rainbow, -1));
+            //programs.add(Shape.createProgram(vs_Image, rainbow, -1));
             programs.add(Shape.createProgram(vs_Image, tunnel3, -1));
             programs.add(Shape.createProgram(vs_Image, colorTunnel, -1));
         }

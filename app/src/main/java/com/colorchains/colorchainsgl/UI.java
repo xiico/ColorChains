@@ -275,8 +275,6 @@ class UI {
     }
 
     public static class InfoBox extends Control{
-        //public Integer width = 600;
-        //public Integer height = 200;
         private Integer score = 0;
         private Integer targetScore = 0;
         private Integer puzzleScore = 0;
@@ -291,17 +289,6 @@ class UI {
 
             puzzleScoreLabel = new Font(R.drawable.oldskol, 4.0f);
             puzzleScoreLabel.hAlign = Font.HorizontalAlignment.RIGHT;
-
-            //puzzleScoreLabel.charRotate = true;
-            //puzzleScoreLabel.doCharScale = true;
-            //puzzleScoreLabel.padding = 20f;
-
-//            chainsLabel = new Font(R.drawable.oldskol, 3f);
-//            chainsLabel.hAlign = Font.HorizontalAlignment.CENTER;
-//            //chainsLabel.setX(this.getX() - (this.getWidth() / 2) + 248);//490
-//            //chainsLabel.setY(this.getY() - (this.getHeight() / 2) + 32);//85
-//            //chainsLabel.padding = 0.32f;
-
         }
 
         public void setScore(Integer score){
@@ -310,6 +297,7 @@ class UI {
         }
 
         public void setChains(List<Chain> chains){
+            if(chains == null) chainsLabels = new ArrayList<>();
             this.chains = chains;
         }
 
@@ -353,44 +341,29 @@ class UI {
             changeProgram(levelAndTargetScoreLabel.mProgram.getProgramId(), levelAndTargetScoreLabel.vertexBuffer);
             levelAndTargetScoreLabel.setX(this.getX() - (this.getWidth() / 2) + 220);
             levelAndTargetScoreLabel.setY(this.getY() - (this.getHeight() / 2) + 48);
-            //GameView.GLRenderer.updateVertexBuffer(levelAndTargetScoreLabel.vertexBuffer);
             levelAndTargetScoreLabel.draw();
 
             levelAndTargetScoreLabel.setText( targetScore.toString());
             levelAndTargetScoreLabel.setX(this.getX() - (this.getWidth() / 2)  + 220);
             levelAndTargetScoreLabel.setY(this.getY() - (this.getHeight() / 2) + 100);
-            //changeProgram(levelAndTargetScoreLabel.mProgram.getProgramId(), levelAndTargetScoreLabel.vertexBuffer);
             GameView.GLRenderer.updateVertexBuffer(levelAndTargetScoreLabel.vertexBuffer);
             levelAndTargetScoreLabel.draw();
 
             puzzleScoreLabel.setText( puzzleScore.toString());
             puzzleScoreLabel.setX(this.getX() - (this.getWidth() / 2) + 220);
             puzzleScoreLabel.setY(this.getY() - (this.getHeight() / 2)+ 152);
-            //changeProgram(puzzleScoreLabel.mProgram.getProgramId(), puzzleScoreLabel.vertexBuffer);
             GameView.GLRenderer.updateVertexBuffer(puzzleScoreLabel.vertexBuffer);
             puzzleScoreLabel.draw();
 
-            if(chainsLabels.size() == 0){
-//                String strChains = "";
-//                for (Chain chn: chains) {
-//                    strChains += chn.count + (chains.size() / 2 == chains.indexOf(chn) + 1 ? "\n" : " ");
-//                }
-//                strChains = strChains.substring(0,strChains.length() - 1);
-//                chainsLabel.setText(strChains);
-//                //changeProgram(chainsLabel.mProgram.getProgramId(), chainsLabel.vertexBuffer);
-//                GameView.GLRenderer.updateVertexBuffer(chainsLabel.vertexBuffer);
-//                chainsLabel.draw();
-
+            if(chains != null && chainsLabels.size() == 0){
                 for (Chain chn: chains) {
                     chainsLabels.add(new Font(R.drawable.oldskol, 3f));
                     Font chainsLabel = chainsLabels.get(chainsLabels.size() - 1);
                     chainsLabel.hAlign = Font.HorizontalAlignment.CENTER;
-                    //chainsLabel.scale = 5;
 
                     int index = chains.indexOf(chn);
                     int line = (int)Math.floor(index / 4);
                     chainsLabel.setText(chn.count.toString());
-                    //chn.chained.get(0).type
                     if(chn.id == "WHITEGEM")
                         chainsLabel.color = new float[]{235f/255,235f/255,235f/255,1};//W
                     else if(chn.id == "BLUEGEM")
@@ -407,11 +380,8 @@ class UI {
                         chainsLabel.color = new float[]{255f/255,50f/255,50f/255,1};//R
                     else if(chn.id == "GREENGEM")
                         chainsLabel.color = new float[]{60f/255,216f/255,0,1};//G
-                    //lastStart += (chainsLabel.getWidth() * chn.count.toString().length()) /*+ (chainsLabel.getWidth() / 2)*/;
-                    //chainsLabel.setX(this.getX() - (this.getWidth() / 2) + 272 + lastStart);
-                    chainsLabel.setX(this.getX() - (this.getWidth() / 2) + 248 + (64 / 2 ) + ((index % 4) * /*chainsLabel.getWidth()*/64 /* * chn.count.toString().length()*/));//272
-                    chainsLabel.setY(this.getY() - (this.getHeight() / 2) + 32 + (68 / 2 ) + (line * 68 /* * chainsLabel.getHeight()*/));//56
-                    //changeProgram(chainsLabel.mProgram.getProgramId(), chainsLabel.vertexBuffer);
+                    chainsLabel.setX(this.getX() - (this.getWidth() / 2) + 248 + (64 / 2 ) + ((index % 4) * 64));
+                    chainsLabel.setY(this.getY() - (this.getHeight() / 2) + 32 + (68 / 2 ) + (line * 68));//56
                 }
             } else {
                 for (Font label: chainsLabels) {
@@ -437,21 +407,58 @@ class UI {
     }
 
     public static class LevelSelect extends Control{
-        private List<Stage> stages = new ArrayList<>();
-        public LevelSelect() {
-            super("levelSelect", TYPE.LEVELSELECT, 0f, 0f, 0, 0);
-            setOffSetX(0);
-            setOffSetY(0);
+        //EntityCollection stageCol;
+        List<EntityCollection> stagePages = new ArrayList<>();
+        int colSize = 5;
+        int rowSize = 5;
+        Integer curPage = 0;
+        List<List<Font>> stageFonts = new ArrayList<>();
+        List<Font> curStageFonts;
+        public LevelSelect(List<Stage> stages) {
+            super("levelSelect", TYPE.LEVELSELECT, 90f, 90f, 0, 0);
+            //stages = new ArrayList<>();
+            //Entity[][] entities = new Entity[colSize][rowSize];
+            EntityCollection stagePage = new EntityCollection(R.drawable.levelselect, new Entity[colSize][rowSize], rowSize, colSize);
+            curStageFonts = new ArrayList<>();
+            for (Stage stage : stages) {
+                int index = stages.indexOf(stage);
+                int i = index % (colSize * rowSize);
+                int row = (int)Math.floor(i / rowSize), col = i % colSize;
+                //addLevel(new Button(stage.id,"0",row * 80f, col * 80f, 0, 0), row, col);
+                //if(row >= rowSize || col >= colSize) continue;
+                addLevel(new Button(stage.id, String.valueOf((index) + 1), col * GameView.metrics.widthPixels / (colSize + 1f), row * 120f, 0, 0), row, col, stagePage.entities);
+                if((i > 0 && i % ((colSize * rowSize) - 1) == 0) || index  == stages.size() - 1){
+                    stagePages.add(stagePage);
+                    stagePages.get(stagePages.size() - 1).buildTextureMap(1,1,1);
+                    stagePages.get(stagePages.size() - 1).offSetX = GameView.metrics.widthPixels / (colSize + 1f);
+                    stagePages.get(stagePages.size() - 1).offSetY = GameView.metrics.heightPixels / 3;
+                    stageFonts.add(curStageFonts);
+                    curStageFonts = new ArrayList<>();
+                    stagePage = new EntityCollection(R.drawable.levelselect, new Entity[colSize][rowSize], rowSize, colSize);
+                }
+            }
         }
 
         @Override
         public void draw()
         {
-            super.draw();
+            stagePages.get(curPage).draw();
+            changeProgram(stageFonts.get(curPage).get(0).mProgram.getProgramId(), stageFonts.get(curPage).get(0).vertexBuffer);
+            for (Font font : stageFonts.get(curPage)) {
+                GameView.GLRenderer.updateVertexBuffer(font.vertexBuffer);
+                font.draw();
+            }
         }
 
-        public void addLevel(Stage stage){
-            stages.add(stage);
+        private void addLevel(Button stage, Integer row, Integer col, Entity[][] entities){
+            Font fnt = new Font(R.drawable.oldskol, 3);
+            fnt.setText(stage.text);
+            fnt.setX((GameView.metrics.widthPixels / (colSize + 1f)) + stage.getX());
+            fnt.setY((GameView.metrics.heightPixels / 3) + stage.getY());
+            curStageFonts.add(fnt);
+            stage.cacheWidth = 92;
+            stage.cacheHeight = 92;
+            entities[col][row] = stage;
         }
     }
 

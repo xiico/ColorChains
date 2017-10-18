@@ -13,6 +13,8 @@ import android.util.DisplayMetrics;
 
 import org.json.JSONException;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.FloatBuffer;
 import java.util.HashMap;
 import java.util.Random;
@@ -279,18 +281,26 @@ public class GameView extends GLSurfaceView {
                     screenH = height;
                     screenW = width;
                 } else {
-                    UI.ProgressBar progressBar = new UI.ProgressBar();
-//                    progressBar.setX(16f);
-//                    progressBar.setY(252f + (GameView.scaledDefaultSide * 8f) + (4*GameView.scale));
-                    progressBar.setX(GameView.metrics.widthPixels / 2);
-                    progressBar.setY(GameView.metrics.heightPixels / 2);
-                    progressBar.setWidth(GameView.scaledDefaultSide * 8);
-                    progressBar.setHeight(GameView.scaledDefaultSide / 4);
-                    progressBar.bgColor = Color.parseColor("#000000");
-                    progressBar.fgColor = Color.parseColor("#FFFFFF");
-                    UI.addControl(progressBar);
+                    UI.LevelSelect levelSelect = new UI.LevelSelect(Stage.getStageList(loadJSONFromAsset("levels.json")));
+                    UI.addControl(levelSelect);
                 }
             }
+        }
+
+        public String loadJSONFromAsset(String fileName) {
+            String json;
+            try {
+                InputStream is = context.getAssets().open(fileName);
+                int size = is.available();
+                byte[] buffer = new byte[size];
+                is.read(buffer);
+                is.close();
+                json = new String(buffer, "UTF-8");
+            } catch (IOException ex) {
+                ex.printStackTrace();
+                return null;
+            }
+            return json;
         }
 
         @Override
@@ -310,8 +320,6 @@ public class GameView extends GLSurfaceView {
                         updateMarioTexture = false;
                     }
                     if (board.gemCol != null) {
-                        //changeProgram(board.gemCol.mProgram, board.gemCol.vertexBuffer);
-                        //Shape.bindTexture(board.gemCol.getResourceId());
                         board.draw();
                         if (!GameView.disableTouch) board.parseBoard();
                     }
@@ -319,15 +327,12 @@ public class GameView extends GLSurfaceView {
 
                 if (GameView.showFPS) {
                     changeProgram(font.mProgram.getProgramId(), font.vertexBuffer);
-                    //Shape.bindTexture(font.getResourceId());
-                    // Display the current fps on the screen
                     font.setText(String.valueOf(Timer.fps));
                     font.draw();
                 }
             }
 
             UI.draw();
-
         }
         public static int loadShader(int type, String shaderCode) {
             // create a vertex shader type (GLES20.GL_VERTEX_SHADER)
