@@ -82,7 +82,7 @@ class UI {
         if(ctrl.controls.size()  == 0) {
             float rawX = evt.getRawX();
             float rawY = evt.getRawY();
-            RectF ctrlRect = new RectF(ctrl.getX() - (ctrl.getWidth() / 2), ctrl.getY() - (ctrl.getHeight() / 2) , ctrl.getX() + ctrl.cacheWidth, ctrl.getY() + ctrl.cacheHeight);
+            RectF ctrlRect = new RectF(ctrl.offSetX + ctrl.getX() - (ctrl.getWidth() / 2), ctrl.offSetY + ctrl.getY() - (ctrl.getHeight() / 2) , ctrl.offSetX + ctrl.getX() + ctrl.cacheWidth, ctrl.offSetY + ctrl.getY() + ctrl.cacheHeight);
             RectF touchRect = new RectF(rawX, rawY, rawX + 1, rawY + 1);
             if (touchRect.intersect(ctrlRect) && ctrl.visible && ctrl instanceof UIListener) {
                 ((UIListener) ctrl).clicked(ctrl);
@@ -100,6 +100,12 @@ class UI {
         public List<Control> controls = new ArrayList<>();
         public Control(String id, TYPE type, Float x, Float y, Integer cx, Integer cy) {
             super(id, type, x, y, cx, cy);
+        }
+        public void addControl(Control ctrl){
+            ctrl.parent = this;
+//            ctrl.offSetX = ctrl.parent.offSetX;
+//            ctrl.offSetY = ctrl.parent.offSetY;
+            this.controls.add(ctrl);
         }
     }
 
@@ -282,6 +288,7 @@ class UI {
         private Font puzzleScoreLabel;
         private List<Font> chainsLabels = new ArrayList<>();
         private List<Chain> chains;
+        private Font puzzleTitle;
         public InfoBox(String id, Float x, Float y) {
             super(id, TYPE.INFOBOX, x, y, 0, 0);
             levelAndTargetScoreLabel = new Font(R.drawable.oldskol, 4.0f);
@@ -289,11 +296,19 @@ class UI {
 
             puzzleScoreLabel = new Font(R.drawable.oldskol, 4.0f);
             puzzleScoreLabel.hAlign = Font.HorizontalAlignment.RIGHT;
+
+            puzzleTitle = new Font(R.drawable.oldskol, 2.0f);
+            puzzleTitle.setX(this.getX() - (this.getWidth() / 2) + 220);
+            puzzleTitle.setY(this.getY() - (this.getHeight() / 2) + 48);
         }
 
         public void setScore(Integer score){
             this.score = score;
             isTransferringScore = false;
+        }
+
+        public void setTitle(String title){
+            puzzleTitle.setText(title);
         }
 
         public void setChains(List<Chain> chains){
@@ -354,6 +369,9 @@ class UI {
             puzzleScoreLabel.setY(this.getY() - (this.getHeight() / 2)+ 152);
             GameView.GLRenderer.updateVertexBuffer(puzzleScoreLabel.vertexBuffer);
             puzzleScoreLabel.draw();
+
+            GameView.GLRenderer.updateVertexBuffer(puzzleTitle.vertexBuffer);
+            puzzleTitle.draw();
 
             if(chains != null && chainsLabels.size() == 0){
                 for (Chain chn: chains) {
@@ -420,6 +438,8 @@ class UI {
             //Entity[][] entities = new Entity[colSize][rowSize];
             EntityCollection stagePage = new EntityCollection(R.drawable.levelselect, new Entity[colSize][rowSize], rowSize, colSize);
             curStageFonts = new ArrayList<>();
+            //this.offSetX = GameView.metrics.widthPixels / (colSize + 1f);
+            //this.offSetY = GameView.metrics.heightPixels / 3;
             for (Stage stage : stages) {
                 int index = stages.indexOf(stage);
                 int i = index % (colSize * rowSize);
@@ -451,14 +471,26 @@ class UI {
         }
 
         private void addLevel(Button stage, Integer row, Integer col, Entity[][] entities){
+            stage.addUIListener(new UI.UIListener() {
+                @Override
+                public void clicked(Object sender) {
+                    GameView.board.loadResult = ((Button) sender).id.replace("level","");
+                }
+            });
+
             Font fnt = new Font(R.drawable.oldskol, 3);
             fnt.setText(stage.text);
-            fnt.setX((GameView.metrics.widthPixels / (colSize + 1f)) + stage.getX());
-            fnt.setY((GameView.metrics.heightPixels / 3) + stage.getY());
+            fnt.offSetX = (GameView.metrics.widthPixels / (colSize + 1f));
+            fnt.offSetY = (GameView.metrics.heightPixels / 3);
+            stage.offSetX = fnt.offSetX;
+            stage.offSetY = fnt.offSetY;
+            fnt.setX(stage.getX());
+            fnt.setY(stage.getY());
             curStageFonts.add(fnt);
             stage.cacheWidth = 92;
             stage.cacheHeight = 92;
             entities[col][row] = stage;
+            this.addControl(stage);
         }
     }
 
@@ -720,12 +752,14 @@ class UI {
             setUVBuffer(uvData);
             setDrawListBuffer(drawOrderFinal);
         }
-        public float getX() {
-            return super.getX();
-        }
-        public float getY() {
-            return super.getY();
-        }
+//        @Override
+//        public float getX() {
+//            return offSetX + super.getX();
+//        }
+//        @Override
+//        public float getY() {
+//            return offSetY + super.getY();
+//        }
 
         private void _getCharCodes(String text){
             charCodes = new int[text.length()];

@@ -24,8 +24,8 @@ public abstract class Entity extends Shape {
     public HashMap<String, Animation> animations = new HashMap<>();
     public Animation curAnimation;
     public Entity parent;
-    private float offSetX;
-    private float offSetY;
+    public float offSetX;
+    public float offSetY;
     protected static float[][] textureMap;
 
     public static Entity create(String id, TYPE type, Float x, Float y, Integer cx, Integer cy, Object parent){

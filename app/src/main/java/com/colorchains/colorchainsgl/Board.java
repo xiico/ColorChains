@@ -52,8 +52,9 @@ public class Board extends Entity {
     private static final String STAGE_SCORES = "stageScores.";
     public SharedPreferences settings;
     private Integer stageIndex;
-    private String loadResult = "";
+    public String loadResult = "";
     private UI.Font loading;
+    UI.LevelSelect levelSelect;
     public EntityCollection gemCol;
     public EntityCollection marioCol;
     public boolean parseBoard = false;
@@ -133,7 +134,8 @@ public class Board extends Entity {
         levelCompleted.setY(GameView.metrics.heightPixels / 2);
         UI.addControl(levelCompleted);
 
-        UI.LevelSelect levelSelect = new UI.LevelSelect(stages);
+        levelSelect = new UI.LevelSelect(stages);
+        levelSelect.visible = false;
         UI.addControl(levelSelect);
     }
 
@@ -335,20 +337,27 @@ public class Board extends Entity {
             if (!loaded){
                 loaded = true;
                 String boardState = settings.getString(BOARD_STATE,"");
-                if(boardState.length() > 0)
+                if(boardState.length() > 0) {
                     confirm.visible = true;
-                else {
-                    loadStage(0);
+                } else {
+                    //loadStage(0);
+                    levelSelect.visible = true;
                 }
-            } else if (confirm.visible) {
+            } else if (confirm.visible || levelSelect.visible) {
                 if(loadResult.equals("")) return;
                 if (loadResult.equals("OK")) {
                     stageIndex = settings.getInt(STAGE_INDEX, 0);
                     loadStage(new Stage(settings.getString("boardState", "")), stageIndex);
                     ((UI.InfoBox)UI.findControlById("infoBox")).setTargetScore(curStage.targetScore);
+                    ((UI.InfoBox)UI.findControlById("infoBox")).setTitle(this.curStage.id);
                 } else {
-                    stageIndex = 0;
+                    confirm.visible = false;
+                    levelSelect.visible = true;
+                    if(loadResult.equals("Cancel")) return;
+                    stageIndex = Integer.parseInt(loadResult);
                     loadStage(stageIndex);
+                    ((UI.InfoBox)UI.findControlById("infoBox")).setTargetScore(curStage.targetScore);
+                    //levelSelect.visible = true;
                 }
                 confirm.visible = false;
             }
@@ -402,7 +411,7 @@ public class Board extends Entity {
         /********** Use EntityCollection **********/
     }
 
-    private void nextStage(){
+    public void nextStage(){
         GameView.GLRenderer._boardReady = false;
         if (this.curStage == null) this.setCurStage(0);
         //this.curStage.score += this.calculateScore();
@@ -660,9 +669,11 @@ public class Board extends Entity {
         return curStage.toJsonString(ents);
     }
     public void loadStage(Integer index){
+        levelSelect.visible = false;
         GameView.GLRenderer._boardReady = false;
         this.curStage = stages.get(index);
         this.stageIndex = index;
+        ((UI.InfoBox)UI.findControlById("infoBox")).setTitle(this.curStage.id);
         this.createEntities(this.curStage);
         /******* EntityCollection *********/
         BuildGemsCollections();

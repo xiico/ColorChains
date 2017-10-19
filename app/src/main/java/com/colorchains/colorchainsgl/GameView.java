@@ -131,11 +131,11 @@ public class GameView extends GLSurfaceView {
         }
         float rawX = evt.getRawX();
         float rawY = evt.getRawY();
-        Integer row = (int)Math.floor((rawY - board.gemOffsetY /*+ ((defaultSide *2)/2)*/) / GameView.scaledDefaultSide);
-        Integer col = (int)Math.floor((rawX - board.gemOffsetX /*+ ((defaultSide *2)/2)*/) / GameView.scaledDefaultSide);
+        Integer row = (int)Math.floor((rawY - board.gemOffsetY) / GameView.scaledDefaultSide);
+        Integer col = (int)Math.floor((rawX - board.gemOffsetX) / GameView.scaledDefaultSide);
         //Log.d("TOUCH_START","row: " + row +",col: " + col + ",rawX: " + rawX + ",rawY: " + rawY + ", gemOffsetY: " + board.gemOffsetY + ", gemOffsetX: " + board.gemOffsetX + ", ds: " + GameView.scaledDefaultSide);
         if(!GameView.GLRenderer._boardReady || row >= board.entities.length || col >= board.entities[0].length || row < 0 || col < 0) return;
-        Gem entity = (Gem)board.entities[row][col];
+        Gem entity = board.entities[row][col];
         board.selectedGem = entity;
         //entity.selected = true;
         //if(((Gem)board.selectedGem).curAnimation != null) ((Gem)board.selectedGem).curAnimation.play();
