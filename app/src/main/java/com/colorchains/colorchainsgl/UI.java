@@ -103,8 +103,6 @@ class UI {
         }
         public void addControl(Control ctrl){
             ctrl.parent = this;
-//            ctrl.offSetX = ctrl.parent.offSetX;
-//            ctrl.offSetY = ctrl.parent.offSetY;
             this.controls.add(ctrl);
         }
     }
@@ -298,8 +296,6 @@ class UI {
             puzzleScoreLabel.hAlign = Font.HorizontalAlignment.RIGHT;
 
             puzzleTitle = new Font(R.drawable.oldskol, 2.0f);
-            puzzleTitle.setX(this.getX() - (this.getWidth() / 2) + 220);
-            puzzleTitle.setY(this.getY() - (this.getHeight() / 2) + 48);
         }
 
         public void setScore(Integer score){
@@ -308,6 +304,8 @@ class UI {
         }
 
         public void setTitle(String title){
+            puzzleTitle.setX(this.getX());
+            puzzleTitle.setY(this.getY() - 82);
             puzzleTitle.setText(title);
         }
 
@@ -331,7 +329,7 @@ class UI {
 
         @Override
         public float getX(){
-            return super.getX() + this.getWidth() / 2;
+            return super.getX() + (this.getWidth() / 2);
         }
 
         @Override
@@ -426,35 +424,33 @@ class UI {
 
     public static class LevelSelect extends Control{
         //EntityCollection stageCol;
-        List<EntityCollection> stagePages = new ArrayList<>();
         int colSize = 5;
         int rowSize = 5;
-        Integer curPage = 0;
+        Integer curPage = 1;
         List<List<Font>> stageFonts = new ArrayList<>();
         List<Font> curStageFonts;
         public LevelSelect(List<Stage> stages) {
             super("levelSelect", TYPE.LEVELSELECT, 90f, 90f, 0, 0);
-            //stages = new ArrayList<>();
-            //Entity[][] entities = new Entity[colSize][rowSize];
-            EntityCollection stagePage = new EntityCollection(R.drawable.levelselect, new Entity[colSize][rowSize], rowSize, colSize);
+            //EntityCollection stagePage = new EntityCollection(R.drawable.levelselect, new Entity[colSize][rowSize], rowSize, colSize);
+            LevelSelectPage stagePage = new LevelSelectPage(colSize, rowSize);
+            controls.add(stagePage);
             curStageFonts = new ArrayList<>();
-            //this.offSetX = GameView.metrics.widthPixels / (colSize + 1f);
-            //this.offSetY = GameView.metrics.heightPixels / 3;
             for (Stage stage : stages) {
                 int index = stages.indexOf(stage);
                 int i = index % (colSize * rowSize);
                 int row = (int)Math.floor(i / rowSize), col = i % colSize;
-                //addLevel(new Button(stage.id,"0",row * 80f, col * 80f, 0, 0), row, col);
-                //if(row >= rowSize || col >= colSize) continue;
-                addLevel(new Button(stage.id, String.valueOf((index) + 1), col * GameView.metrics.widthPixels / (colSize + 1f), row * 120f, 0, 0), row, col, stagePage.entities);
+                addLevel(new Button(stage.id, String.valueOf((index) + 1), col * GameView.metrics.widthPixels / (colSize + 1f), row * 120f, 0, 0), row, col, stagePage.page.entities);
                 if((i > 0 && i % ((colSize * rowSize) - 1) == 0) || index  == stages.size() - 1){
-                    stagePages.add(stagePage);
-                    stagePages.get(stagePages.size() - 1).buildTextureMap(1,1,1);
-                    stagePages.get(stagePages.size() - 1).offSetX = GameView.metrics.widthPixels / (colSize + 1f);
-                    stagePages.get(stagePages.size() - 1).offSetY = GameView.metrics.heightPixels / 3;
+                    //curPage++;
+                    ((LevelSelectPage)controls.get(controls.size() - 1)).page.buildTextureMap(1,1,1);
+                    ((LevelSelectPage)controls.get(controls.size() - 1)).page.offSetX = GameView.metrics.widthPixels / (colSize + 1f);
+                    ((LevelSelectPage)controls.get(controls.size() - 1)).page.offSetY = GameView.metrics.heightPixels / 3;
                     stageFonts.add(curStageFonts);
                     curStageFonts = new ArrayList<>();
-                    stagePage = new EntityCollection(R.drawable.levelselect, new Entity[colSize][rowSize], rowSize, colSize);
+                    //stagePage = new EntityCollection(R.drawable.levelselect, new Entity[colSize][rowSize], rowSize, colSize);
+                    stagePage = new LevelSelectPage(colSize, rowSize);
+                    controls.add(stagePage);
+                    stagePage.visible = (controls.size() == 2);
                 }
             }
         }
@@ -462,7 +458,7 @@ class UI {
         @Override
         public void draw()
         {
-            stagePages.get(curPage).draw();
+            ((LevelSelectPage)controls.get(curPage)).page.draw();
             changeProgram(stageFonts.get(curPage).get(0).mProgram.getProgramId(), stageFonts.get(curPage).get(0).vertexBuffer);
             for (Font font : stageFonts.get(curPage)) {
                 GameView.GLRenderer.updateVertexBuffer(font.vertexBuffer);
@@ -474,7 +470,7 @@ class UI {
             stage.addUIListener(new UI.UIListener() {
                 @Override
                 public void clicked(Object sender) {
-                    GameView.board.loadResult = ((Button) sender).id.replace("level","");
+                    GameView.board.loadResult = ((Button) sender).id;
                 }
             });
 
@@ -490,7 +486,15 @@ class UI {
             stage.cacheWidth = 92;
             stage.cacheHeight = 92;
             entities[col][row] = stage;
-            this.addControl(stage);
+            controls.get(controls.size() - 1).addControl(stage);
+        }
+
+        public static class LevelSelectPage extends Control{
+            public EntityCollection page;
+            public LevelSelectPage(Integer colSize, Integer rowSize){
+                super("LevelPage", TYPE.LEVELSELECT, 90f, 90f, 0, 0);
+                page = new EntityCollection(R.drawable.levelselect, new Entity[colSize][rowSize], rowSize, colSize);
+            }
         }
     }
 

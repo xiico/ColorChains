@@ -16,6 +16,7 @@ import static java.lang.Integer.parseInt;
 
 public class Stage {
     public String id;
+    public String name;
     public String[] tiles;
     public Integer targetScore;
     public Integer score;
@@ -42,6 +43,7 @@ public class Stage {
             this.moves =  parseInt(jStage.getString("moves"));
             this.maxMoves =  parseInt(jStage.getString("maxMoves"));
             this.targetMoves =  parseInt(jStage.getString("targetMoves"));
+            this.name =  jStage.getString("name");
             if(jSets.length() > 0) {
                 this.sets = new Integer[jSets.length()];
                 for (int j = 0; j < jSets.length(); j++) {
@@ -75,7 +77,7 @@ public class Stage {
         return stageList;
     }
     public String toJsonString(String[] entities){
-        String stage = String.format("{\"id\":\"%s\", \"tiles\":[" +
+        String stage = String.format("{\"id\":\"%s\",\"name\":\"%s\" , \"tiles\":[" +
                         "\""+ entities[0] + "\"," +
                         "\""+ entities[1] + "\"," +
                         "\""+ entities[2] + "\"," +
@@ -85,11 +87,11 @@ public class Stage {
                         "\""+ entities[6] + "\"," +
                         "\""+ entities[7] + "\"]," +
                         "        \"customProperties\": [], \"targetScore\": %s, \"score\": %s, \"sets\":%s, \"highScore\":%s, \"moves\":%s, \"maxMoves\":%s, \"targetMoves\":%s }",
-                this.id, this.targetScore, this.score, this.sets != null ? Arrays.toString(this.sets) : "[]", this.highScore, moves, this.maxMoves, this.targetMoves);
+                this.id, this.name, this.targetScore, this.score, this.sets != null ? Arrays.toString(this.sets) : "[]", this.highScore, moves, this.maxMoves, this.targetMoves);
         return  stage;
     }
     public String toJsonString(){
-        String stage = String.format("{\"id\":\"%s\", \"tiles\":[" +
+        String stage = String.format("{\"id\":\"%s\",\"name\":\"%s\" , \"tiles\":[" +
                         "\""+ tiles[0] + "\"," +
                         "\""+ tiles[1] + "\"," +
                         "\""+ tiles[2] + "\"," +
@@ -99,7 +101,7 @@ public class Stage {
                         "\""+ tiles[6] + "\"," +
                         "\""+ tiles[7] + "\"]," +
                         "        \"customProperties\": [], \"targetScore\": %s, \"score\": %s, \"sets\":%s, \"highScore\":%s }",
-                this.id, this.targetScore, this.score, this.sets != null ? Arrays.toString(this.sets) : "[]", this.highScore, this.moves, this.maxMoves);
+                this.id, this.name, this.targetScore, this.score, this.sets != null ? Arrays.toString(this.sets) : "[]", this.highScore, this.moves, this.maxMoves);
         return  stage;
     }
 }

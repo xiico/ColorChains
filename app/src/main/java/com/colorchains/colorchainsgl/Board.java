@@ -349,7 +349,7 @@ public class Board extends Entity {
                     stageIndex = settings.getInt(STAGE_INDEX, 0);
                     loadStage(new Stage(settings.getString("boardState", "")), stageIndex);
                     ((UI.InfoBox)UI.findControlById("infoBox")).setTargetScore(curStage.targetScore);
-                    ((UI.InfoBox)UI.findControlById("infoBox")).setTitle(this.curStage.id);
+                    ((UI.InfoBox)UI.findControlById("infoBox")).setTitle(this.curStage.name);
                 } else {
                     confirm.visible = false;
                     levelSelect.visible = true;
@@ -444,7 +444,10 @@ public class Board extends Entity {
         }
         GameView.renderer.backGround.mProgram = GameView.renderer.backGround.programs.get(GameView.renderer.backGround.index);
 
-        this.setCurStage(++stageIndex);
+        if(stageIndex + 1 < this.stages.size())
+            this.setCurStage(stageIndex++);
+        else
+            this.setCurStage(stageIndex = 0);
         //this.createEntities(this.curStage);
         loadStage(stageIndex);
         ((UI.InfoBox)UI.findControlById("infoBox")).setTargetScore(curStage.targetScore);
@@ -673,7 +676,7 @@ public class Board extends Entity {
         GameView.GLRenderer._boardReady = false;
         this.curStage = stages.get(index);
         this.stageIndex = index;
-        ((UI.InfoBox)UI.findControlById("infoBox")).setTitle(this.curStage.id);
+        ((UI.InfoBox)UI.findControlById("infoBox")).setTitle(this.curStage.name);
         this.createEntities(this.curStage);
         /******* EntityCollection *********/
         BuildGemsCollections();

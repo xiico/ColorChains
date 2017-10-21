@@ -1,7 +1,8 @@
 {
   "stages": [
     {
-      "id": "level0",
+      "id": "0",
+      "name": "Level Zero",
       "tiles": [
         "WWWWWWWW",
         "WRRRRRRW",
@@ -22,7 +23,8 @@
       "sets": [ 1, 2, 3, 4, 5, 6, 7, 8 ]
     },
     {
-      "id": "level1",
+      "id": "1",
+      "name": "Level One",
       "tiles": [
         "MMMMMMMM",
         "MMMMMMMM",
@@ -39,12 +41,13 @@
       "highScore": 0,
       "moves": 0,
       "maxMoves": 0,
-      "targetMoves": 12,
+      "targetMoves": 27,
       "sets": [],
       "defaultTargetScore": 1000
     },
     {
-      "id": "level2",
+      "id": "2",
+      "name": "Level Two",
       "tiles": [
         "MMMMMMMM",
         "MMM  MMM",
@@ -61,12 +64,13 @@
       "highScore": 0,
       "moves": 0,
       "maxMoves": 0,
-      "targetMoves": 42,
+      "targetMoves": 67,
       "sets": [],
       "defaultTargetScore": 2000
     },
     {
-      "id": "level3",
+      "id": "3",
+      "name": "Level Three",
       "tiles": [
         "MM MMMMM",
         "MM  MMMM",
@@ -83,12 +87,13 @@
       "highScore": 0,
       "moves": 0,
       "maxMoves": 0,
-      "targetMoves": 78,
+      "targetMoves": 99,
       "sets": [],
       "defaultTargetScore": 3000
     },
     {
-      "id": "level4",
+      "id": "4",
+      "name": "Level Four",
       "tiles": [
         "        ",
         " MM  MM ",
@@ -105,12 +110,13 @@
       "highScore": 0,
       "moves": 0,
       "maxMoves": 0,
-      "targetMoves": 200,
+      "targetMoves": 325,
       "sets": [],
       "defaultTargetScore": 4000
     },
     {
-      "id": "level5",
+      "id": "5",
+      "name": "Level Five",
       "tiles": [
         "M      M",
         "MMM  MMM",
@@ -127,12 +133,13 @@
       "highScore": 0,
       "moves": 0,
       "maxMoves": 0,
-      "targetMoves": 180,
+      "targetMoves": 320,
       "sets": [],
       "defaultTargetScore": 5000
     },
     {
-      "id": "level6",
+      "id": "6",
+      "name": "Level Six",
       "tiles": [
         "MMMMMMMM",
         "   MM   ",
@@ -154,7 +161,8 @@
       "defaultTargetScore": 5000
     },
     {
-      "id": "level7",
+      "id": "7",
+      "name": "Level Seven",
       "tiles": [
         "MMMMMMMM",
         "        ",
@@ -171,12 +179,13 @@
       "highScore": 0,
       "moves": 0,
       "maxMoves": 0,
-      "targetMoves": 190,
+      "targetMoves": 208,
       "sets": [],
       "defaultTargetScore": 5000
     },
     {
-      "id": "level8",
+      "id": "8",
+      "name": "Level Eight",
       "tiles": [
         "M      M",
         "        ",
@@ -193,12 +202,13 @@
       "highScore": 0,
       "moves": 0,
       "maxMoves": 0,
-      "targetMoves": 0,
+      "targetMoves": 371,
       "sets": [],
       "defaultTargetScore": 5000
     },
     {
-      "id": "level9",
+      "id": "9",
+      "name": "Level Nine",
       "tiles": [
         "MM    MM",
         "MMM  MMM",
@@ -215,12 +225,13 @@
       "highScore": 0,
       "moves": 0,
       "maxMoves": 0,
-      "targetMoves": 0,
+      "targetMoves": 123,
       "sets": [],
       "defaultTargetScore": 5000
     },
     {
-      "id": "level10",
+      "id": "10",
+      "name": "Level Ten",
       "tiles": [
         "        ",
         "MMM  MMM",
@@ -237,12 +248,13 @@
       "highScore": 0,
       "moves": 0,
       "maxMoves": 0,
-      "targetMoves": 0,
+      "targetMoves": 177,
       "sets": [],
       "defaultTargetScore": 5000
     },
     {
-      "id": "level11",
+      "id": "11",
+      "name": "Level Eleven",
       "tiles": [
         "MMMMMMMM",
         "        ",
@@ -259,24 +271,25 @@
       "highScore": 0,
       "moves": 0,
       "maxMoves": 0,
-      "targetMoves": 0,
+      "targetMoves": 267,
       "sets": [],
       "defaultTargetScore": 5000
     },
     {
-      "id": "level12",
+      "id": "12",
+      "name": "Level Twelve",
       "tiles": [
-        "WWWMMPMM",
-        "BGWMMPMM",
-        "BGWWWPMM",
-        "BGGGGYYM",
-        "BMCCCMYM",
-        "BMCRCYYM",
-        "BMCCCYOO",
-        "BBBMMMOO"
+        "   MM MM",
+        "   MM MM",
+        "      MM",
+        "       M",
+        " M   M M",
+        " M     M",
+        " M      ",
+        "   MMM  "
       ],
       "customProperties": [],
-      "targetScore": 12,
+      "targetScore": 1000,
       "score": 0,
       "highScore": 0,
       "moves": 0,
@@ -286,19 +299,20 @@
       "defaultTargetScore": 5000
     },
     {
-      "id": "level13",
+      "id": "13",
+      "name": "Level Thirteen",
       "tiles": [
-        "WWWMMPMM",
-        "BGWMMPMM",
-        "BGWWWPMM",
-        "BGGGGYYM",
-        "BMCCCMYM",
-        "BMCRCYYM",
-        "BMCCCYOO",
-        "BBBMMMOO"
+        "    MMMM",
+        "    MMMM",
+        "    MMMM",
+        "     MMM",
+        "MMM     ",
+        "MMMM    ",
+        "MMMM    ",
+        "MMMM    "
       ],
       "customProperties": [],
-      "targetScore": 13,
+      "targetScore": 1000,
       "score": 0,
       "highScore": 0,
       "moves": 0,
@@ -308,19 +322,20 @@
       "defaultTargetScore": 5000
     },
     {
-      "id": "level14",
+      "id": "14",
+      "name": "Level Fourteen",
       "tiles": [
-        "WWWMMPMM",
-        "BGWMMPMM",
-        "BGWWWPMM",
-        "BGGGGYYM",
-        "BMCCCMYM",
-        "BMCRCYYM",
-        "BMCCCYOO",
-        "BBBMMMOO"
+        "MMMMMMMM",
+        "      MM",
+        "      MM",
+        "     MMM",
+        "MMM     ",
+        "MM      ",
+        "MM      ",
+        "MMMMMMMM"
       ],
       "customProperties": [],
-      "targetScore": 14,
+      "targetScore": 1000,
       "score": 0,
       "highScore": 0,
       "moves": 0,
@@ -330,19 +345,20 @@
       "defaultTargetScore": 5000
     },
     {
-      "id": "level15",
+      "id": "15",
+      "name": "Level Fifteen",
       "tiles": [
-        "WWWMMPMM",
-        "BGWMMPMM",
-        "BGWWWPMM",
-        "BGGGGYYM",
-        "BMCCCMYM",
-        "BMCRCYYM",
-        "BMCCCYOO",
-        "BBBMMMOO"
+        "        ",
+        "MMM  MMM",
+        "        ",
+        "   MM   ",
+        "        ",
+        "M MMMM M",
+        "   MM   ",
+        "        "
       ],
       "customProperties": [],
-      "targetScore": 15,
+      "targetScore": 1000,
       "score": 0,
       "highScore": 0,
       "moves": 0,
@@ -352,19 +368,20 @@
       "defaultTargetScore": 5000
     },
     {
-      "id": "level16",
+      "id": "16",
+      "name": "Level Sixteen",
       "tiles": [
-        "WWWMMPMM",
-        "BGWMMPMM",
-        "BGWWWPMM",
-        "BGGGGYYM",
-        "BMCCCMYM",
-        "BMCRCYYM",
-        "BMCCCYOO",
-        "BBBMMMOO"
+        "        ",
+        "MM  MMM ",
+        "    MMM ",
+        "     MM ",
+        "        ",
+        " MMM  MM",
+        " MMM    ",
+        "        "
       ],
       "customProperties": [],
-      "targetScore": 16,
+      "targetScore": 1000,
       "score": 0,
       "highScore": 0,
       "moves": 0,
@@ -374,19 +391,20 @@
       "defaultTargetScore": 5000
     },
     {
-      "id": "level17",
+      "id": "17",
+      "name": "Level Seventeen",
       "tiles": [
-        "WWWMMPMM",
-        "BGWMMPMM",
-        "BGWWWPMM",
-        "BGGGGYYM",
-        "BMCCCMYM",
-        "BMCRCYYM",
-        "BMCCCYOO",
-        "BBBMMMOO"
+        "        ",
+        "    M   ",
+        "        ",
+        "MMM   MM",
+        "MMM   MM",
+        "        ",
+        "    M   ",
+        "        "
       ],
       "customProperties": [],
-      "targetScore": 17,
+      "targetScore": 1000,
       "score": 0,
       "highScore": 0,
       "moves": 0,
@@ -396,19 +414,20 @@
       "defaultTargetScore": 5000
     },
     {
-      "id": "level18",
+      "id": "18",
+      "name": "Level Eighteen",
       "tiles": [
-        "WWWMMPMM",
-        "BGWMMPMM",
-        "BGWWWPMM",
-        "BGGGGYYM",
-        "BMCCCMYM",
-        "BMCRCYYM",
-        "BMCCCYOO",
-        "BBBMMMOO"
+        "   MM   ",
+        "   MM   ",
+        "        ",
+        "M      M",
+        "M      M",
+        "        ",
+        "   MM   ",
+        "   MM   "
       ],
       "customProperties": [],
-      "targetScore": 18,
+      "targetScore": 1000,
       "score": 0,
       "highScore": 0,
       "moves": 0,
@@ -418,19 +437,20 @@
       "defaultTargetScore": 5000
     },
     {
-      "id": "level19",
+      "id": "19",
+      "name": "Level Nineteen",
       "tiles": [
-        "WWWMMPMM",
-        "BGWMMPMM",
-        "BGWWWPMM",
-        "BGGGGYYM",
-        "BMCCCMYM",
-        "BMCRCYYM",
-        "BMCCCYOO",
-        "BBBMMMOO"
+        "        ",
+        "M M M M ",
+        "        ",
+        "M     MM",
+        "M M M MM",
+        "        ",
+        "        ",
+        "MMMMMMMM"
       ],
       "customProperties": [],
-      "targetScore": 19,
+      "targetScore": 1000,
       "score": 0,
       "highScore": 0,
       "moves": 0,
@@ -440,19 +460,20 @@
       "defaultTargetScore": 5000
     },
     {
-      "id": "level20",
+      "id": "20",
+      "name": "Level Twenty",
       "tiles": [
-        "WWWMMPMM",
-        "BGWMMPMM",
-        "BGWWWPMM",
-        "BGGGGYYM",
-        "BMCCCMYM",
-        "BMCRCYYM",
-        "BMCCCYOO",
-        "BBBMMMOO"
+        "    M   ",
+        "  MMMM  ",
+        "        ",
+        "MM     M",
+        "M     MM",
+        "        ",
+        "  MMMM  ",
+        "    M   "
       ],
       "customProperties": [],
-      "targetScore": 20,
+      "targetScore": 1000,
       "score": 0,
       "highScore": 0,
       "moves": 0,
@@ -462,16 +483,17 @@
       "defaultTargetScore": 5000
     },
     {
-      "id": "level21",
+      "id": "21",
+      "name": "Level Twenty One",
       "tiles": [
-        "WWWMMPMM",
-        "BGWMMPMM",
-        "BGWWWPMM",
-        "BGGGGYYM",
-        "BMCCCMYM",
-        "BMCRCYYM",
-        "BMCCCYOO",
-        "BBBMMMOO"
+        "   MM   ",
+        "   MM   ",
+        "        ",
+        "MM    MM",
+        "MM    MM",
+        "        ",
+        "   MM   ",
+        "   MM   "
       ],
       "customProperties": [],
       "targetScore": 21,
@@ -484,16 +506,17 @@
       "defaultTargetScore": 5000
     },
     {
-      "id": "level22",
+      "id": "22",
+      "name": "Level Twenty Two",
       "tiles": [
-        "WWWMMPMM",
-        "BGWMMPMM",
-        "BGWWWPMM",
-        "BGGGGYYM",
-        "BMCCCMYM",
-        "BMCRCYYM",
-        "BMCCCYOO",
-        "BBBMMMOO"
+        "        ",
+        "   MM   ",
+        "   MM   ",
+        " MMMMMM ",
+        " MMMMMM ",
+        "   MM   ",
+        "   MM   ",
+        "        "
       ],
       "customProperties": [],
       "targetScore": 22,
@@ -506,16 +529,17 @@
       "defaultTargetScore": 5000
     },
     {
-      "id": "level23",
+      "id": "23",
+      "name": "Level Twenty Three",
       "tiles": [
-        "WWWMMPMM",
-        "BGWMMPMM",
-        "BGWWWPMM",
-        "BGGGGYYM",
-        "BMCCCMYM",
-        "BMCRCYYM",
-        "BMCCCYOO",
-        "BBBMMMOO"
+        "        ",
+        " M    M ",
+        "        ",
+        "   MM   ",
+        "   MM   ",
+        "        ",
+        " M    M ",
+        "        "
       ],
       "customProperties": [],
       "targetScore": 23,
@@ -528,16 +552,17 @@
       "defaultTargetScore": 5000
     },
     {
-      "id": "level24",
+      "id": "24",
+      "name": "Level Twenty Four",
       "tiles": [
-        "WWWMMPMM",
-        "BGWMMPMM",
-        "BGWWWPMM",
-        "BGGGGYYM",
-        "BMCCCMYM",
-        "BMCRCYYM",
-        "BMCCCYOO",
-        "BBBMMMOO"
+        "  MMMM  ",
+        "        ",
+        "M      M",
+        "MM    MM",
+        "MM    MM",
+        "M      M",
+        "        ",
+        "  MMMM  "
       ],
       "customProperties": [],
       "targetScore": 24,
@@ -550,16 +575,17 @@
       "defaultTargetScore": 5000
     },
     {
-      "id": "level25",
+      "id": "25",
+      "name": "Level Twenty Five",
       "tiles": [
-        "WWWMMPMM",
-        "BGWMMPMM",
-        "BGWWWPMM",
-        "BGGGGYYM",
-        "BMCCCMYM",
-        "BMCRCYYM",
-        "BMCCCYOO",
-        "BBBMMMOO"
+        "        ",
+        "  M     ",
+        " MMM    ",
+        "  M     ",
+        "     M  ",
+        "    MMM ",
+        "     M  ",
+        "        "
       ],
       "customProperties": [],
       "targetScore": 25,
@@ -572,16 +598,17 @@
       "defaultTargetScore": 5000
     },
     {
-      "id": "level26",
+      "id": "26",
+      "name": "Level Twenty Five",
       "tiles": [
-        "WWWMMPMM",
-        "BGWMMPMM",
-        "BGWWWPMM",
-        "BGGGGYYM",
-        "BMCCCMYM",
-        "BMCRCYYM",
-        "BMCCCYOO",
-        "BBBMMMOO"
+        "     MMM",
+        " M    MM",
+        "  M    M",
+        "   M    ",
+        "    M   ",
+        "M    M  ",
+        "MM    M ",
+        "MMM     "
       ],
       "customProperties": [],
       "targetScore": 26,
@@ -594,26 +621,26 @@
       "defaultTargetScore": 5000
     },
     {
-      "id": "level27",
+      "id": "27",
+      "name": "Level Twenty Seven",
       "tiles": [
-        "WWWMMPMM",
-        "BGWMMPMM",
-        "BGWWWPMM",
-        "BGGGGYYM",
-        "BMCCCMYM",
-        "BMCRCYYM",
-        "BMCCCYOO",
-        "BBBMMMOO"
+        "WWWWWWWW",
+        "WRRRRRRW",
+        "WRPPPPRW",
+        "WRPOOPRW",
+        "RWPOOPRW",
+        "WRPPPPRW",
+        "WRRRRRRW",
+        "WWWWWWWW"
       ],
       "customProperties": [],
-      "targetScore": 27,
+      "targetScore": 100,
       "score": 0,
       "highScore": 0,
       "moves": 0,
       "maxMoves": 0,
-      "targetMoves": 0,
-      "sets": [ 3, 7, 9, 6, 6, 8, 1, 4],
-      "defaultTargetScore": 5000
+      "targetMoves": 32,
+      "sets": [ 1, 2, 3, 4, 5, 6, 7, 8 ]
     }
   ]
 }
