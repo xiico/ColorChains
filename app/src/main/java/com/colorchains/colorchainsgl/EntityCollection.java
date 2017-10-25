@@ -56,13 +56,15 @@ public class EntityCollection extends Shape{
         super(fontCoords, drawOrder, vs_Gem/*vs_Text*/, fs_Gem/*fs_Text*/, resourceId/*, GLES20.GL_LINEAR*/);
         //this.setWidth(GameView.scaledDefaultSide);//92
         //this.setHeight(GameView.scaledDefaultSide);//92
-        entityWidthGl = 1;
-        entityHeightGl = 1;
+//        entityWidthGl = 1;// colCount;
+//        entityHeightGl = 1;// rowCount;
         this.entities = entities;
         this.rowCount = rowCount;
         this.colCount = colCount;
     }
     public void buildTextureMap(Integer totalItems, Integer width, Integer height){
+        entityWidthGl = 1f / width;// colCount;
+        entityHeightGl = 1f / height;// rowCount;
         uvMap = new float[totalItems][8];
         for (int i = 0; i < totalItems; i++) {
             int hPos = i;

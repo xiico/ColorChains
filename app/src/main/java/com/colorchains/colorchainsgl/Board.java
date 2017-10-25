@@ -71,8 +71,6 @@ public class Board extends Entity {
         //App settings
         settings = this.context.getSharedPreferences(APP_STATES, 0);
 
-//        gemOffsetX = 16;//(GameView.metrics.widthPixels - (92*7)) / 2;
-//        gemOffsetY = 252;//(126*(int)GameView.scale);
         this.border = 8 + (GameView.is16x9 ? 4 : 0);
         this.border = (GameView.metrics.widthPixels <= 600 ? this.border / 2 : this.border);
         this.border = (GameView.metrics.widthPixels <= 540 ? 7 : this.border);
@@ -113,7 +111,7 @@ public class Board extends Entity {
         progressBar.visible = false;
 
         confirm = new UI.Confirm("confirm",
-                "There is a previously saved game.\n Do you want to continue it?", (float) GameView.scaledDefaultSide, GameView.metrics.heightPixels / 2f);
+                "There is a previously saved game.\nDo you want to continue it?", (float) GameView.scaledDefaultSide, GameView.metrics.heightPixels / 2f);
         confirm.addUIListener(new UI.UIListener() {
             @Override
             public void clicked(Object arg) {
@@ -134,7 +132,7 @@ public class Board extends Entity {
         levelCompleted.setY(GameView.metrics.heightPixels / 2);
         UI.addControl(levelCompleted);
 
-        levelSelect = new UI.LevelSelect(stages);
+        levelSelect = new UI.LevelSelect(stages, this);
         levelSelect.visible = false;
         UI.addControl(levelSelect);
     }
@@ -148,7 +146,7 @@ public class Board extends Entity {
             for (int i = 0; i < chain.chained.size(); i++) {
                 iScore = ((i + 1) * 1.2f);
             }
-            score += iScore * 10 * (chain.loop ? (int)Math.sqrt(chain.chained.size()) : 1) * (lastScore ? Math.max((curStage.targetMoves / curStage.moves),1f) : 1)/*( lastScore ? Math.max( 16 / (16 - Math.min((curStage.targetMoves - curStage.moves),15)) , 1) : 1 )*/;
+            score += iScore * 10 * (chain.loop ? (int)Math.sqrt(chain.chained.size()) : 1) * (lastScore ? Math.max(((float)curStage.targetMoves / curStage.moves),1f) : 1)/*( lastScore ? Math.max( 16 / (16 - Math.min((curStage.targetMoves - curStage.moves),15)) , 1) : 1 )*/;
         }
         return Math.round(score);
     }
@@ -456,7 +454,7 @@ public class Board extends Entity {
 
     boolean parseBoard(){
         if (chains == null && (selectedGem == null || ((Gem)selectedGem).moveTo == null )) {
-            curStage.moves++;
+            if(selectedGem != null) curStage.moves++;
             this.chains = new ArrayList<>();
             this.findChainTypes();
             for (Chain chain : chains) {
@@ -524,6 +522,20 @@ public class Board extends Entity {
         editor.putString(STAGE_SCORES + curStage.id,
                 String.format("{\"highScore\":%s,\"scores\":%s, \"moves\":%s}", highScore, scores.toString(),moves.toString()));
         editor.commit();
+    }
+
+    public Integer getScore(String id){
+        String stageScores = settings.getString(STAGE_SCORES + id,"");
+        if(stageScores.length() == 0) return 0;
+        JSONObject obj;
+        Integer highScore = null;
+        try {
+            obj = new JSONObject(stageScores);
+            highScore = Integer.parseInt(obj.getString("highScore"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return highScore;
     }
 
     private void findChainTypes(){
@@ -677,6 +689,7 @@ public class Board extends Entity {
         this.curStage = stages.get(index);
         this.stageIndex = index;
         ((UI.InfoBox)UI.findControlById("infoBox")).setTitle(this.curStage.name);
+        levelSelect.update(stages,this);
         this.createEntities(this.curStage);
         /******* EntityCollection *********/
         BuildGemsCollections();

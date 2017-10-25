@@ -281,7 +281,7 @@ public class GameView extends GLSurfaceView {
                     screenH = height;
                     screenW = width;
                 } else {
-                    UI.LevelSelect levelSelect = new UI.LevelSelect(Stage.getStageList(loadJSONFromAsset("levels.json")));
+                    UI.LevelSelect levelSelect = new UI.LevelSelect(Stage.getStageList(loadJSONFromAsset("levels.json")), board);
                     UI.addControl(levelSelect);
                 }
             }

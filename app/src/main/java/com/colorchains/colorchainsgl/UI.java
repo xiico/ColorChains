@@ -78,7 +78,7 @@ class UI {
     }
 
     private static void checkTouch(Control ctrl, MotionEvent evt)    {
-        if (!ctrl.visible) return;
+        if (!ctrl.visible || !ctrl.enabled) return;
         if(ctrl.controls.size()  == 0) {
             float rawX = evt.getRawX();
             float rawY = evt.getRawY();
@@ -97,6 +97,7 @@ class UI {
 
     static class Control extends Entity  {
         public boolean visible = true;
+        public boolean enabled = true;
         public List<Control> controls = new ArrayList<>();
         public Control(String id, TYPE type, Float x, Float y, Integer cx, Integer cy) {
             super(id, type, x, y, cx, cy);
@@ -426,23 +427,44 @@ class UI {
         //EntityCollection stageCol;
         int colSize = 5;
         int rowSize = 5;
-        Integer curPage = 1;
+        Integer curPage = 0;
         List<List<Font>> stageFonts = new ArrayList<>();
         List<Font> curStageFonts;
-        public LevelSelect(List<Stage> stages) {
+        Board board;
+        List<Stage> stages;
+        Font title;
+        public LevelSelect(List<Stage> stages, Board board) {
             super("levelSelect", TYPE.LEVELSELECT, 90f, 90f, 0, 0);
             //EntityCollection stagePage = new EntityCollection(R.drawable.levelselect, new Entity[colSize][rowSize], rowSize, colSize);
+            this.board = board;
+            this.stages = stages;
+            title = new Font(R.drawable.oldskol, 5);
+            title.setY(192);
+            title.setX(GameView.metrics.widthPixels / 2);
+            title.setText("Level Select");
+            init(stages, board);
+        }
+
+        private void init(List<Stage> stages, Board board) {
             LevelSelectPage stagePage = new LevelSelectPage(colSize, rowSize);
             controls.add(stagePage);
             curStageFonts = new ArrayList<>();
+            Integer lastHighScore = 0;
             for (Stage stage : stages) {
+                Integer high = board.getScore(stage.id);
                 int index = stages.indexOf(stage);
                 int i = index % (colSize * rowSize);
                 int row = (int)Math.floor(i / rowSize), col = i % colSize;
-                addLevel(new Button(stage.id, String.valueOf((index) + 1), col * GameView.metrics.widthPixels / (colSize + 1f), row * 120f, 0, 0), row, col, stagePage.page.entities);
+                Button btn = new Button(stage.id, String.valueOf((index) + 1), col * GameView.metrics.widthPixels / (colSize + 1f), row * 120f, 0, 0);
+                btn.addAnimation("idle", 0, 0, new Integer[]{0}, 0.5f, false);
+                btn.curAnimation = btn.addAnimation("idle", 0, 0, new Integer[]{0}, 0.5f, false);
+                btn.curAnimation.curFrame = high > 0 || (high == 0 && lastHighScore != 0) || index == 0 ? 0 : 1;
+                btn.enabled = btn.curAnimation.curFrame == 0 || (high == 0 && lastHighScore != 0) || index == 0;
+                lastHighScore = high;
+                addLevel(btn, row, col, stagePage.page.entities);
                 if((i > 0 && i % ((colSize * rowSize) - 1) == 0) || index  == stages.size() - 1){
                     //curPage++;
-                    ((LevelSelectPage)controls.get(controls.size() - 1)).page.buildTextureMap(1,1,1);
+                    ((LevelSelectPage)controls.get(controls.size() - 1)).page.buildTextureMap(2,2,1);
                     ((LevelSelectPage)controls.get(controls.size() - 1)).page.offSetX = GameView.metrics.widthPixels / (colSize + 1f);
                     ((LevelSelectPage)controls.get(controls.size() - 1)).page.offSetY = GameView.metrics.heightPixels / 3;
                     stageFonts.add(curStageFonts);
@@ -450,9 +472,13 @@ class UI {
                     //stagePage = new EntityCollection(R.drawable.levelselect, new Entity[colSize][rowSize], rowSize, colSize);
                     stagePage = new LevelSelectPage(colSize, rowSize);
                     controls.add(stagePage);
-                    stagePage.visible = (controls.size() == 2);
+                    stagePage.visible = (controls.size() == 1);
                 }
             }
+        }
+
+        public void update(List<Stage> stages, Board board){
+            init(stages, board);
         }
 
         @Override
@@ -460,10 +486,20 @@ class UI {
         {
             ((LevelSelectPage)controls.get(curPage)).page.draw();
             changeProgram(stageFonts.get(curPage).get(0).mProgram.getProgramId(), stageFonts.get(curPage).get(0).vertexBuffer);
-            for (Font font : stageFonts.get(curPage)) {
-                GameView.GLRenderer.updateVertexBuffer(font.vertexBuffer);
-                font.draw();
+//            for (Font font : stageFonts.get(curPage)) {
+//                GameView.GLRenderer.updateVertexBuffer(font.vertexBuffer);
+//                font.draw();
+//            }
+            for(Control btn: controls.get(curPage).controls){
+                if(btn.curAnimation.curFrame == 0){
+                    Integer index = controls.get(curPage).controls.indexOf(btn);
+                    Font font = stageFonts.get(curPage).get(index);
+                    GameView.GLRenderer.updateVertexBuffer(font.vertexBuffer);
+                    font.draw();
+                }
             }
+            GameView.GLRenderer.updateVertexBuffer(title.vertexBuffer);
+            title.draw();
         }
 
         private void addLevel(Button stage, Integer row, Integer col, Entity[][] entities){
@@ -494,6 +530,7 @@ class UI {
             public LevelSelectPage(Integer colSize, Integer rowSize){
                 super("LevelPage", TYPE.LEVELSELECT, 90f, 90f, 0, 0);
                 page = new EntityCollection(R.drawable.levelselect, new Entity[colSize][rowSize], rowSize, colSize);
+                page.setWidth(page.getWidth() / 2);
             }
         }
     }
@@ -504,7 +541,7 @@ class UI {
         private ProgressBar _pb;
 
         public boolean canLoadNextLevel() {
-            return _pb.tempValue == _pb._value ||  _pb._value >= 1f;
+            return _pb.tempValue == _pb._value || _pb._value >= 1f;
         }
 
         public String getText() {
