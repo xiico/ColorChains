@@ -101,6 +101,10 @@ public class GameView extends GLSurfaceView {
             case MotionEvent.ACTION_UP:
                 this.touchEnd(motionEvent);
                 break;
+
+            case MotionEvent.ACTION_MOVE:
+                this.touchEnd(motionEvent);
+                break;
         }
         return true;
     }
@@ -118,7 +122,7 @@ public class GameView extends GLSurfaceView {
 
         if(GameView.paused) GameView.paused = false;
         if(GameView.disableTouch) return;
-        UI.checkUITouch(evt);
+        UI.touchStartUI(evt);
         if (board.levelComplete) {
             return;
         }
@@ -143,6 +147,7 @@ public class GameView extends GLSurfaceView {
     }
 
     public void touchEnd(MotionEvent evt) {
+        UI.touchEndUI(evt);
         if(GameView.disableTouch) return;
         if (board.levelComplete) return;
         if (!GameView.started) return;

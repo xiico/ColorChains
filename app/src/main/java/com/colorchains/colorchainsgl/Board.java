@@ -146,10 +146,15 @@ public class Board extends Entity {
             for (int i = 0; i < chain.chained.size(); i++) {
                 iScore = ((i + 1) * 1.2f);
             }
-            score += iScore * 10 * (chain.loop ? (int)Math.sqrt(chain.chained.size()) : 1) * (lastScore ? Math.max(((float)curStage.targetMoves / curStage.moves),1f) : 1)/*( lastScore ? Math.max( 16 / (16 - Math.min((curStage.targetMoves - curStage.moves),15)) , 1) : 1 )*/;
+            score += iScore * 10 * (chain.loop ? (int)Math.sqrt(chain.chained.size()) : 1) * (lastScore ? Math.max(getScoreMultiplier(),1f) : 1)/*( lastScore ? Math.max( 16 / (16 - Math.min((curStage.targetMoves - curStage.moves),15)) , 1) : 1 )*/;
         }
         return Math.round(score);
     }
+
+    private float getScoreMultiplier(){
+        return curStage.moves > 0 ? ((float)curStage.targetMoves / curStage.moves) : 0;
+    }
+
     private void createEntities(Stage stage){
         //fg.Render.cached[TYPE.MARIO] = null;
         String[] rows = stage.tiles;
@@ -357,6 +362,7 @@ public class Board extends Entity {
                     ((UI.InfoBox)UI.findControlById("infoBox")).setTargetScore(curStage.targetScore);
                     //levelSelect.visible = true;
                 }
+                ((UI.InfoBox)UI.findControlById("infoBox")).setHighScore(getHighScore(curStage.id));
                 confirm.visible = false;
             }
         }
@@ -372,15 +378,17 @@ public class Board extends Entity {
                         entity.checked = false;
                 }
             }
-            progressBar.setValue(curStage.score / (float)curStage.targetScore);
+            //progressBar.setValue(curStage.score / (float)curStage.targetScore);
         }
         if(this.levelComplete && checkComplete){
             //GameView.GLRenderer._boardReady = false;
             ((UI.InfoBox)UI.findControlById("infoBox")).setPuzzleScore(calculateScore(true));
             this.curStage.score += this.calculateScore(true);
             //this.curStage.score = this.curStage.score * Math.max( 16 / (16 - Math.min((curStage.targetMoves - curStage.moves),15)) , 1);
-            progressBar.setValue(curStage.score / (float)curStage.targetScore);
-            if(curStage.score >= (float)curStage.targetScore) {
+            //progressBar.setValue(curStage.score / (float)curStage.targetScore);
+            progressBar.setValue(this.getScoreMultiplier() / 2.1f);
+            //if(curStage.score >= (float)curStage.targetScore) {
+            if(this.getScoreMultiplier() >= 1) {
                 levelCompleted.visible = true;
                 levelCompleted.transform.scaleIn(4,levelCompleted.scale,0.5f);
             }
@@ -409,12 +417,14 @@ public class Board extends Entity {
         /********** Use EntityCollection **********/
     }
 
+    float minValue = 1f;
     public void nextStage(){
         GameView.GLRenderer._boardReady = false;
         if (this.curStage == null) this.setCurStage(0);
         //this.curStage.score += this.calculateScore();
         saveScore();
-        if (this.curStage.score >= this.curStage.targetScore) {
+        //if (this.curStage.score >= this.curStage.targetScore) {
+        if (this.getScoreMultiplier() >= 1) {
             //progressBar.setValue(curStage.score / (float)curStage.targetScore);
             this.levelComplete = false;
             loadNextLevel();
@@ -423,7 +433,9 @@ public class Board extends Entity {
         } else {
             //this.curStage.score += this.calculateScore();
             reloadStage();
+            progressBar.reset();
         }
+        ((UI.InfoBox)UI.findControlById("infoBox")).setHighScore(getHighScore(curStage.id));
         curStage.moves = 0;
         this.levelComplete = false;
         this.selectedGem = null;
@@ -524,7 +536,7 @@ public class Board extends Entity {
         editor.commit();
     }
 
-    public Integer getScore(String id){
+    public Integer getHighScore(String id){
         String stageScores = settings.getString(STAGE_SCORES + id,"");
         if(stageScores.length() == 0) return 0;
         JSONObject obj;

@@ -2,7 +2,7 @@
   "stages": [
     {
       "id": "0",
-      "name": "Level Zero",
+      "name": "High Score",
       "tiles": [
         "MMMMMMMM",
         "MMMMMMMM",
@@ -157,7 +157,7 @@
       "highScore": 0,
       "moves": 0,
       "maxMoves": 0,
-      "targetMoves": 67,
+      "targetMoves": 380,
       "sets": [],
       "defaultTargetScore": 2000
     },

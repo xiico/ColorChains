@@ -26,6 +26,7 @@ class UI {
     public static float fontScaleBig = 8;
     private static boolean _modal = false;
     private static Control mainContainer;
+    private static Control selectedControl;
 
     static void init() {
         mainContainer = new Control("mainContainer", TYPE.CONTAINER, 0f, 0f, GameView.metrics.widthPixels, GameView.metrics.heightPixels);
@@ -73,7 +74,7 @@ class UI {
         }
     }
 
-    static void checkUITouch(MotionEvent evt) {
+    static void touchStartUI(MotionEvent evt) {
         checkTouch(mainContainer,evt);
     }
 
@@ -85,13 +86,21 @@ class UI {
             RectF ctrlRect = new RectF(ctrl.offSetX + ctrl.getX() - (ctrl.getWidth() / 2), ctrl.offSetY + ctrl.getY() - (ctrl.getHeight() / 2) , ctrl.offSetX + ctrl.getX() + ctrl.cacheWidth, ctrl.offSetY + ctrl.getY() + ctrl.cacheHeight);
             RectF touchRect = new RectF(rawX, rawY, rawX + 1, rawY + 1);
             if (touchRect.intersect(ctrlRect) && ctrl.visible && ctrl instanceof UIListener) {
-                ((UIListener) ctrl).clicked(ctrl);
+                //((UIListener) ctrl).clicked(ctrl);
+                selectedControl = ctrl;
             }
         } else {
             for (int index = 0; index < ctrl.controls.size(); index++) {
                 Control _ctrl = ctrl.controls.get(index);
                 checkTouch(_ctrl, evt);
             }
+        }
+    }
+
+    public static void touchEndUI(MotionEvent evt) {
+        if(selectedControl != null){
+            ((UIListener) selectedControl).clicked(selectedControl);
+            selectedControl = null;
         }
     }
 
@@ -204,9 +213,9 @@ class UI {
         }
 
         public float getValue(){
-            if(tempValue > _value) _value += 0.01f;
-            if(tempValue < _value) _value -= 0.01f;
-            if(Math.abs(tempValue - _value) <= 0.01) _value = tempValue;
+            if(tempValue > _value) _value += 0.006f;
+            if(tempValue < _value) _value -= 0.006f;
+            if(Math.abs(tempValue - _value) <= 0.006) _value = tempValue;
             return _value;
         }
 
@@ -283,18 +292,18 @@ class UI {
         private Integer score = 0;
         private Integer targetScore = 0;
         private Integer puzzleScore = 0;
-        private Font levelAndTargetScoreLabel;
-        private Font puzzleScoreLabel;
+        private Font highScoreNumber;
+        private Font puzzleScoreNumber;
         private List<Font> chainsLabels = new ArrayList<>();
         private List<Chain> chains;
         private Font puzzleTitle;
         public InfoBox(String id, Float x, Float y) {
             super(id, TYPE.INFOBOX, x, y, 0, 0);
-            levelAndTargetScoreLabel = new Font(R.drawable.oldskol, 4.0f);
-            levelAndTargetScoreLabel.hAlign = Font.HorizontalAlignment.RIGHT;
+            highScoreNumber = new Font(R.drawable.oldskol, 4.0f);
+            highScoreNumber.hAlign = Font.HorizontalAlignment.RIGHT;
 
-            puzzleScoreLabel = new Font(R.drawable.oldskol, 4.0f);
-            puzzleScoreLabel.hAlign = Font.HorizontalAlignment.RIGHT;
+            puzzleScoreNumber = new Font(R.drawable.oldskol, 4.0f);
+            puzzleScoreNumber.hAlign = Font.HorizontalAlignment.RIGHT;
 
             puzzleTitle = new Font(R.drawable.oldskol, 2.0f);
         }
@@ -321,6 +330,10 @@ class UI {
 
         public void setPuzzleScore(Integer score){
             this.puzzleScore = score;
+        }
+
+        public void setHighScore(Integer score){
+            highScoreNumber.setText(score.toString());
         }
 
         private boolean isTransferringScore = false;
@@ -351,23 +364,17 @@ class UI {
                 } else isTransferringScore = false;
             }
 
-            levelAndTargetScoreLabel.setText(score.toString());
-            changeProgram(levelAndTargetScoreLabel.mProgram.getProgramId(), levelAndTargetScoreLabel.vertexBuffer);
-            levelAndTargetScoreLabel.setX(this.getX() - (this.getWidth() / 2) + 220);
-            levelAndTargetScoreLabel.setY(this.getY() - (this.getHeight() / 2) + 48);
-            levelAndTargetScoreLabel.draw();
+            //highScoreNumber.setText(score.toString());
+            changeProgram(highScoreNumber.mProgram.getProgramId(), highScoreNumber.vertexBuffer);
+            highScoreNumber.setX(this.getX() - (this.getWidth() / 2) + 220);
+            highScoreNumber.setY(this.getY() - (this.getHeight() / 2) + 60);
+            highScoreNumber.draw();
 
-            levelAndTargetScoreLabel.setText( targetScore.toString());
-            levelAndTargetScoreLabel.setX(this.getX() - (this.getWidth() / 2)  + 220);
-            levelAndTargetScoreLabel.setY(this.getY() - (this.getHeight() / 2) + 100);
-            GameView.GLRenderer.updateVertexBuffer(levelAndTargetScoreLabel.vertexBuffer);
-            levelAndTargetScoreLabel.draw();
-
-            puzzleScoreLabel.setText( puzzleScore.toString());
-            puzzleScoreLabel.setX(this.getX() - (this.getWidth() / 2) + 220);
-            puzzleScoreLabel.setY(this.getY() - (this.getHeight() / 2)+ 152);
-            GameView.GLRenderer.updateVertexBuffer(puzzleScoreLabel.vertexBuffer);
-            puzzleScoreLabel.draw();
+            puzzleScoreNumber.setText( score.toString());
+            puzzleScoreNumber.setX(this.getX() - (this.getWidth() / 2) + 220);
+            puzzleScoreNumber.setY(this.getY() - (this.getHeight() / 2)+ 140);
+            GameView.GLRenderer.updateVertexBuffer(puzzleScoreNumber.vertexBuffer);
+            puzzleScoreNumber.draw();
 
             GameView.GLRenderer.updateVertexBuffer(puzzleTitle.vertexBuffer);
             puzzleTitle.draw();
@@ -451,7 +458,7 @@ class UI {
             curStageFonts = new ArrayList<>();
             Integer lastHighScore = 0;
             for (Stage stage : stages) {
-                Integer high = board.getScore(stage.id);
+                Integer high = board.getHighScore(stage.id);
                 int index = stages.indexOf(stage);
                 int i = index % (colSize * rowSize);
                 int row = (int)Math.floor(i / rowSize), col = i % colSize;
