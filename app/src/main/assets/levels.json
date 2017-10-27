@@ -557,12 +557,12 @@
       "name": "Level Twenty Three",
       "tiles": [
         "        ",
-        "  MMMM  ",
+        "  MMMMM ",
         "        ",
         "MM     M",
         "M     MM",
         "        ",
-        "  MMMM  ",
+        " MMMMMM ",
         "        "
       ],
       "customProperties": [],
