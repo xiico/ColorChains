@@ -93,12 +93,10 @@ public class Board extends Entity {
         UI.addControl(nextButton);
         nextButton.addUIListener(new UI.UIListener() {
             @Override
-            public void onTouchStart(Object sender, MotionEvent evt) {
-                nextStage();
-            }
+            public void onTouchStart(Object sender, MotionEvent evt) {}
 
             @Override
-            public void onTouchEnd(Object args, MotionEvent evt) {}
+            public void onTouchEnd(Object args, MotionEvent evt) {nextStage();}
 
             @Override
             public void onMove(Object sender, MotionEvent evt) {}
@@ -147,22 +145,22 @@ public class Board extends Entity {
         levelSelect.visible = false;
         levelSelect.setWidth(GameView.screenW);
         levelSelect.setHeight(GameView.screenH);
-        levelSelect.addUIListener(new UI.UIListener() {
-            @Override
-            public void onTouchStart(Object sender, MotionEvent evt) {
-                //GameView.board.loadResult = ((UI.Button) sender).id;
-            }
-
-            @Override
-            public void onTouchEnd(Object args, MotionEvent evt) {
-
-            }
-
-            @Override
-            public void onMove(Object sender, MotionEvent evt) {
-
-            }
-        });
+//        levelSelect.addUIListener(new UI.UIListener() {
+//            @Override
+//            public void onTouchStart(Object sender, MotionEvent evt) {
+//                //GameView.board.loadResult = ((UI.Button) sender).id;
+//            }
+//
+//            @Override
+//            public void onTouchEnd(Object args, MotionEvent evt) {
+//
+//            }
+//
+//            @Override
+//            public void onMove(Object sender, MotionEvent evt) {
+//
+//            }
+//        });
         UI.addControl(levelSelect);
     }
 
