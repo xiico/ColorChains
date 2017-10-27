@@ -183,9 +183,7 @@ class UI {
         }
 
         @Override
-        public void onMove(Object args, MotionEvent evt) {
-
-        }
+        public void onMove(Object args, MotionEvent evt) {}
 
         // Assign the listener implementing events interface that will receive the events
         public void addUIListener(UIListener listener) {
@@ -540,7 +538,7 @@ class UI {
         @Override
         public void draw()
         {
-            getCurPage().page.offSetX = moveOffsetX;
+            getCurPage().page.offSetX = defaultOffsetX + moveOffsetX - touchOffsetX;
             ((LevelSelectPage)controls.get(curPage)).page.draw();
             changeProgram(stageFonts.get(curPage).get(0).mProgram.getProgramId(), stageFonts.get(curPage).get(0).vertexBuffer);
             for(Control btn: controls.get(curPage).controls){
@@ -548,7 +546,6 @@ class UI {
                     Integer index = controls.get(curPage).controls.indexOf(btn);
                     Font font = stageFonts.get(curPage).get(index);
                     font.offSetX = getCurPage().page.offSetX;
-                    font.offSetY = getCurPage().page.offSetY;
                     GameView.GLRenderer.updateVertexBuffer(font.vertexBuffer);
                     font.draw();
                 }
