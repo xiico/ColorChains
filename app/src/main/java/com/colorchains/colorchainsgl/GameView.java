@@ -103,10 +103,14 @@ public class GameView extends GLSurfaceView {
                 break;
 
             case MotionEvent.ACTION_MOVE:
-                this.touchEnd(motionEvent);
+                this.touchMove(motionEvent);
                 break;
         }
         return true;
+    }
+
+    private void touchMove(MotionEvent motionEvent) {
+        UI.touchMoveUI(motionEvent);
     }
 
     public void touchStart(MotionEvent evt){
@@ -230,6 +234,8 @@ public class GameView extends GLSurfaceView {
             GameView.scaledDefaultSide = GameView.defaultSide * (int)scale;
             Shape.setPixelWidth(1f / width);
             Shape.setPixelHeight(1f / height);
+            GameView.screenW = width;
+            GameView.screenH = height;
         }
         private boolean testProgram = false;
         @Override

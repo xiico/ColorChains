@@ -26,10 +26,12 @@ class UI {
     public static float fontScaleBig = 8;
     private static boolean _modal = false;
     private static Control mainContainer;
-    private static Control selectedControl;
+    private static List<Control> selectedControls;
+    static MotionEvent.PointerCoords coords = new MotionEvent.PointerCoords();
 
     static void init() {
         mainContainer = new Control("mainContainer", TYPE.CONTAINER, 0f, 0f, GameView.metrics.widthPixels, GameView.metrics.heightPixels);
+        selectedControls = new ArrayList<>();
     }
     static boolean isInModalMode(){
         return _modal;
@@ -41,9 +43,7 @@ class UI {
 
     static void update() {
         for (Control ctrl: mainContainer.controls ) {
-            //Shape.bindTexture(ctrl.getResourceId());
-            if(ctrl.visible)
-                ctrl.update();
+            if(ctrl.visible) ctrl.update();
         }
     }
 
@@ -54,11 +54,8 @@ class UI {
     }
 
     static void draw() {
-        //GameView.GLRenderer.changeProgram(mainContainer.controls.get(0).mProgram, Shape.vertexBuffer);
         for (Control ctrl: mainContainer.controls ) {
-            //Shape.bindTexture(ctrl.getResourceId());
-            if(ctrl.visible)
-                ctrl.draw();
+            if(ctrl.visible) ctrl.draw();
         }
     }
 
@@ -76,31 +73,51 @@ class UI {
 
     static void touchStartUI(MotionEvent evt) {
         checkTouch(mainContainer,evt);
-    }
-
-    private static void checkTouch(Control ctrl, MotionEvent evt)    {
-        if (!ctrl.visible || !ctrl.enabled) return;
-        if(ctrl.controls.size()  == 0) {
-            float rawX = evt.getRawX();
-            float rawY = evt.getRawY();
-            RectF ctrlRect = new RectF(ctrl.offSetX + ctrl.getX() - (ctrl.getWidth() / 2), ctrl.offSetY + ctrl.getY() - (ctrl.getHeight() / 2) , ctrl.offSetX + ctrl.getX() + ctrl.cacheWidth, ctrl.offSetY + ctrl.getY() + ctrl.cacheHeight);
-            RectF touchRect = new RectF(rawX, rawY, rawX + 1, rawY + 1);
-            if (touchRect.intersect(ctrlRect) && ctrl.visible && ctrl instanceof UIListener) {
-                //((UIListener) ctrl).clicked(ctrl);
-                selectedControl = ctrl;
-            }
-        } else {
-            for (int index = 0; index < ctrl.controls.size(); index++) {
-                Control _ctrl = ctrl.controls.get(index);
-                checkTouch(_ctrl, evt);
+        evt.getPointerCoords(0, coords);
+        if(selectedControls.size() > 0){
+            for (Control selectedControl: selectedControls) {
+                //((UIListener) selectedControl).clicked(selectedControl);
+                ((UIListener) selectedControl).onTouchStart(selectedControl, evt);
             }
         }
     }
 
     public static void touchEndUI(MotionEvent evt) {
-        if(selectedControl != null){
-            ((UIListener) selectedControl).clicked(selectedControl);
-            selectedControl = null;
+        if(selectedControls.size() > 0){
+            for (Control selectedControl: selectedControls) {
+                ((UIListener) selectedControl).onTouchEnd(selectedControl, evt);
+            }
+            selectedControls = new ArrayList<>();
+            coords = new MotionEvent.PointerCoords();
+        }
+    }
+
+    public static void touchMoveUI(MotionEvent evt) {
+        if(selectedControls.size() > 0){
+            for (Control selectedControl: selectedControls) {
+                //((UIListener) selectedControl).clicked(selectedControl);
+                ((UIListener) selectedControl).onMove(selectedControl, evt);
+            }
+        }
+    }
+
+    private static void checkTouch(Control ctrl, MotionEvent evt) {
+        if (!ctrl.visible || !ctrl.enabled) return;
+        if(ctrl instanceof UIListener) {
+            float rawX = evt.getRawX();
+            float rawY = evt.getRawY();
+            RectF ctrlRect = new RectF(ctrl.offSetX + ctrl.getX() - (ctrl.getWidth() / 2), ctrl.offSetY + ctrl.getY() - (ctrl.getHeight() / 2), ctrl.offSetX + ctrl.getX() + ctrl.cacheWidth, ctrl.offSetY + ctrl.getY() + ctrl.cacheHeight);
+            RectF touchRect = new RectF(rawX, rawY, rawX + 1, rawY + 1);
+            if (touchRect.intersect(ctrlRect)) {
+                //((UIListener) ctrl).clicked(ctrl);
+                selectedControls.add(ctrl);
+            }
+        }
+        if (ctrl.controls.size() > 0) {
+            for (int index = 0; index < ctrl.controls.size(); index++) {
+                Control _ctrl = ctrl.controls.get(index);
+                checkTouch(_ctrl, evt);
+            }
         }
     }
 
@@ -118,7 +135,9 @@ class UI {
     }
 
     public interface UIListener{
-        void clicked(Object args);
+        void onTouchStart(Object args, MotionEvent evt);
+        void onTouchEnd(Object args, MotionEvent evt);
+        void onMove(Object args, MotionEvent evt);
     }
 
     static class Button extends Control implements UIListener {
@@ -154,10 +173,18 @@ class UI {
             font.draw();
         }
 
-        public void clicked(Object args) {
+        public void onTouchStart(Object args, MotionEvent evt) {}
+
+        @Override
+        public void onTouchEnd(Object args, MotionEvent evt) {
             for (UIListener listener: listeners) {
-                listener.clicked(this);
+                listener.onTouchEnd(this, evt);
             }
+        }
+
+        @Override
+        public void onMove(Object args, MotionEvent evt) {
+
         }
 
         // Assign the listener implementing events interface that will receive the events
@@ -269,10 +296,20 @@ class UI {
         }
 
         @Override
-        public void clicked(Object args) {
+        public void onTouchStart(Object args, MotionEvent evt) {
+
+        }
+
+        @Override
+        public void onTouchEnd(Object args, MotionEvent evt) {
             for (UIListener listener: listeners) {
-                listener.clicked(((Button)args).text);
+                listener.onTouchEnd(((Button)args).text, evt);
             }
+        }
+
+        @Override
+        public void onMove(Object args, MotionEvent evt) {
+
         }
 
         @Override
@@ -430,7 +467,7 @@ class UI {
         }
     }
 
-    public static class LevelSelect extends Control{
+    static class LevelSelect extends Control implements UIListener{
         //EntityCollection stageCol;
         int colSize = 5;
         int rowSize = 5;
@@ -440,11 +477,19 @@ class UI {
         Board board;
         List<Stage> stages;
         Font title;
+        float defaultOffsetX = 0;
+        float defaultOffsetY = 0;
+        float touchOffsetX = 0;
+        float moveOffsetX = 0;
+        private ArrayList<UIListener> listeners = new ArrayList<>();
+
         public LevelSelect(List<Stage> stages, Board board) {
-            super("levelSelect", TYPE.LEVELSELECT, 90f, 90f, 0, 0);
+            super("levelSelect", TYPE.LEVELSELECT, 0f, 0f, 0, 0);
             //EntityCollection stagePage = new EntityCollection(R.drawable.levelselect, new Entity[colSize][rowSize], rowSize, colSize);
             this.board = board;
             this.stages = stages;
+            this.cacheWidth = GameView.screenW;
+            this.cacheHeight = GameView.screenH;
             title = new Font(R.drawable.oldskol, 5);
             title.setY(192);
             title.setX(GameView.metrics.widthPixels / 2);
@@ -452,11 +497,17 @@ class UI {
             init(stages, board);
         }
 
+        public void setTitle(String title){
+            this.title.setText(title);
+        }
+
         private void init(List<Stage> stages, Board board) {
             LevelSelectPage stagePage = new LevelSelectPage(colSize, rowSize);
             controls.add(stagePage);
             curStageFonts = new ArrayList<>();
             Integer lastHighScore = 0;
+            defaultOffsetX = (GameView.metrics.widthPixels / (colSize + 1f));
+            defaultOffsetY = (GameView.metrics.heightPixels / 3);
             for (Stage stage : stages) {
                 Integer high = board.getHighScore(stage.id);
                 int index = stages.indexOf(stage);
@@ -470,13 +521,11 @@ class UI {
                 lastHighScore = high;
                 addLevel(btn, row, col, stagePage.page.entities);
                 if((i > 0 && i % ((colSize * rowSize) - 1) == 0) || index  == stages.size() - 1){
-                    //curPage++;
                     ((LevelSelectPage)controls.get(controls.size() - 1)).page.buildTextureMap(2,2,1);
                     ((LevelSelectPage)controls.get(controls.size() - 1)).page.offSetX = GameView.metrics.widthPixels / (colSize + 1f);
                     ((LevelSelectPage)controls.get(controls.size() - 1)).page.offSetY = GameView.metrics.heightPixels / 3;
                     stageFonts.add(curStageFonts);
                     curStageFonts = new ArrayList<>();
-                    //stagePage = new EntityCollection(R.drawable.levelselect, new Entity[colSize][rowSize], rowSize, colSize);
                     stagePage = new LevelSelectPage(colSize, rowSize);
                     controls.add(stagePage);
                     stagePage.visible = (controls.size() == 1);
@@ -491,16 +540,15 @@ class UI {
         @Override
         public void draw()
         {
+            getCurPage().page.offSetX = moveOffsetX;
             ((LevelSelectPage)controls.get(curPage)).page.draw();
             changeProgram(stageFonts.get(curPage).get(0).mProgram.getProgramId(), stageFonts.get(curPage).get(0).vertexBuffer);
-//            for (Font font : stageFonts.get(curPage)) {
-//                GameView.GLRenderer.updateVertexBuffer(font.vertexBuffer);
-//                font.draw();
-//            }
             for(Control btn: controls.get(curPage).controls){
                 if(btn.curAnimation.curFrame == 0){
                     Integer index = controls.get(curPage).controls.indexOf(btn);
                     Font font = stageFonts.get(curPage).get(index);
+                    font.offSetX = getCurPage().page.offSetX;
+                    font.offSetY = getCurPage().page.offSetY;
                     GameView.GLRenderer.updateVertexBuffer(font.vertexBuffer);
                     font.draw();
                 }
@@ -512,15 +560,24 @@ class UI {
         private void addLevel(Button stage, Integer row, Integer col, Entity[][] entities){
             stage.addUIListener(new UI.UIListener() {
                 @Override
-                public void clicked(Object sender) {
+                public void onTouchStart(Object sender, MotionEvent evt) {
+                }
+
+                @Override
+                public void onTouchEnd(Object sender, MotionEvent evt) {
                     GameView.board.loadResult = ((Button) sender).id;
+                }
+
+                @Override
+                public void onMove(Object sender, MotionEvent evt) {
+
                 }
             });
 
             Font fnt = new Font(R.drawable.oldskol, 3);
             fnt.setText(stage.text);
-            fnt.offSetX = (GameView.metrics.widthPixels / (colSize + 1f));
-            fnt.offSetY = (GameView.metrics.heightPixels / 3);
+            fnt.offSetX = defaultOffsetX;
+            fnt.offSetY = defaultOffsetY;
             stage.offSetX = fnt.offSetX;
             stage.offSetY = fnt.offSetY;
             fnt.setX(stage.getX());
@@ -532,10 +589,39 @@ class UI {
             controls.get(controls.size() - 1).addControl(stage);
         }
 
+        public LevelSelectPage getCurPage(){
+            return ((LevelSelectPage)controls.get(curPage));
+        }
+
+        @Override
+        public void onTouchStart(Object args, MotionEvent evt) {
+            touchOffsetX = evt.getX() - offSetX;
+        }
+
+        @Override
+        public void onTouchEnd(Object args, MotionEvent evt) {
+
+        }
+
+        @Override
+        public void onMove(Object args, MotionEvent evt) {
+            setTitle(Math.round(evt.getRawX()) + " - " + Math.round(evt.getRawY()));
+            moveOffsetX = Math.round(evt.getRawX());
+        }
+
+        // Assign the listener implementing events interface that will receive the events
+        public void addUIListener(UIListener listener) {
+            this.listeners.add(listener);
+        }
+
         public static class LevelSelectPage extends Control{
             public EntityCollection page;
             public LevelSelectPage(Integer colSize, Integer rowSize){
-                super("LevelPage", TYPE.LEVELSELECT, 90f, 90f, 0, 0);
+                super("LevelPage", TYPE.LEVELSELECT, 0f, 0f, 0, 0);
+                this.setWidth(GameView.screenW);
+                this.setHeight(GameView.screenH);
+                this.cacheWidth = GameView.screenW;
+                this.cacheHeight = GameView.screenH;
                 page = new EntityCollection(R.drawable.levelselect, new Entity[colSize][rowSize], rowSize, colSize);
                 page.setWidth(page.getWidth() / 2);
             }

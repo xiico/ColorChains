@@ -3,6 +3,7 @@ package com.colorchains.colorchainsgl;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.view.MotionEvent;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -54,7 +55,7 @@ public class Board extends Entity {
     private Integer stageIndex;
     public String loadResult = "";
     private UI.Font loading;
-    UI.LevelSelect levelSelect;
+    private UI.LevelSelect levelSelect;
     public EntityCollection gemCol;
     public EntityCollection marioCol;
     public boolean parseBoard = false;
@@ -92,9 +93,15 @@ public class Board extends Entity {
         UI.addControl(nextButton);
         nextButton.addUIListener(new UI.UIListener() {
             @Override
-            public void clicked(Object sender) {
+            public void onTouchStart(Object sender, MotionEvent evt) {
                 nextStage();
             }
+
+            @Override
+            public void onTouchEnd(Object args, MotionEvent evt) {}
+
+            @Override
+            public void onMove(Object sender, MotionEvent evt) {}
         });
         //if(nextButton != null) return;
         nextButton.visible = false;
@@ -114,9 +121,13 @@ public class Board extends Entity {
                 "There is a previously saved game.\nDo you want to continue it?", (float) GameView.scaledDefaultSide, GameView.metrics.heightPixels / 2f);
         confirm.addUIListener(new UI.UIListener() {
             @Override
-            public void clicked(Object arg) {
-                loadResult = arg.toString();
-            }
+            public void onTouchStart(Object sender, MotionEvent evt) {}
+
+            @Override
+            public void onTouchEnd(Object sender, MotionEvent evt) {loadResult = sender.toString();}
+
+            @Override
+            public void onMove(Object sender, MotionEvent evt) {}
         });
         UI.addControl(confirm);
         confirm.visible = false;
@@ -134,6 +145,24 @@ public class Board extends Entity {
 
         levelSelect = new UI.LevelSelect(stages, this);
         levelSelect.visible = false;
+        levelSelect.setWidth(GameView.screenW);
+        levelSelect.setHeight(GameView.screenH);
+        levelSelect.addUIListener(new UI.UIListener() {
+            @Override
+            public void onTouchStart(Object sender, MotionEvent evt) {
+                //GameView.board.loadResult = ((UI.Button) sender).id;
+            }
+
+            @Override
+            public void onTouchEnd(Object args, MotionEvent evt) {
+
+            }
+
+            @Override
+            public void onMove(Object sender, MotionEvent evt) {
+
+            }
+        });
         UI.addControl(levelSelect);
     }
 
