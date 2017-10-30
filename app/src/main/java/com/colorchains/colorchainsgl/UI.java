@@ -5,7 +5,10 @@ import android.opengl.Matrix;
 import android.graphics.RectF;
 import android.opengl.GLES20;
 import android.os.SystemClock;
+import android.support.v4.view.VelocityTrackerCompat;
+import android.util.Log;
 import android.view.MotionEvent;
+import android.view.VelocityTracker;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -480,6 +483,9 @@ class UI {
         float touchOffsetX = 0;
         float moveOffsetX = 0;
         private ArrayList<UIListener> listeners = new ArrayList<>();
+        private boolean dragging = false;
+        private boolean changingPage = false;
+        private float lastSpeed = 0;
 
         public LevelSelect(List<Stage> stages, Board board) {
             super("levelSelect", TYPE.LEVELSELECT, 0f, 0f, 0, 0);
@@ -536,9 +542,63 @@ class UI {
         }
 
         @Override
+        public void update(){
+            if(changingPage) changePage();
+            else centerPage();
+            getCurPage().page.update();
+        }
+
+        private void centerPage(){
+            if(getCurPage().page.offSetX != defaultOffsetX && !dragging){
+                if(getCurPage().page.offSetX > defaultOffsetX){
+                    if(getCurPage().page.offSetX > defaultOffsetX)
+                        getCurPage().page.offSetX-= Math.max((getCurPage().page.offSetX - defaultOffsetX) / 6, 1 );
+                } else {
+                    if(getCurPage().page.offSetX < defaultOffsetX)
+                        getCurPage().page.offSetX+=Math.max((defaultOffsetX - getCurPage().page.offSetX) / 6, 1 );
+                }
+            }
+        }
+
+
+        private void changePage(){
+            if(lastSpeed < 0){
+                if(curPage == controls.size()) {
+                    changingPage = false;
+                    return;
+                } else {
+                    if(getCurPage().page.offSetX + lastSpeed > -(GameView.screenW)){
+                        getCurPage().page.offSetX += lastSpeed;
+                    } else {
+                        changingPage = false;
+                        getCurPage().visible = false;
+                        curPage++;
+                        getCurPage().visible = true;
+                    }
+                }
+            } else {
+                if(curPage == 0) {
+                    changingPage = false;
+                    return;
+                } else {
+                    if(getCurPage().page.offSetX + lastSpeed < (GameView.screenW)){
+                        getCurPage().page.offSetX += lastSpeed;
+                    } else {
+                        changingPage = false;
+                        getCurPage().visible = false;
+                        curPage--;
+                        getCurPage().visible = true;
+                        getCurPage().transform.fadeIn(0,1,0.5f);
+                    }
+                }
+            }
+        }
+
+        @Override
         public void draw()
         {
-            getCurPage().page.offSetX = defaultOffsetX + moveOffsetX - touchOffsetX;
+            if(dragging)
+                getCurPage().page.offSetX = defaultOffsetX + moveOffsetX - touchOffsetX;
             ((LevelSelectPage)controls.get(curPage)).page.draw();
             changeProgram(stageFonts.get(curPage).get(0).mProgram.getProgramId(), stageFonts.get(curPage).get(0).vertexBuffer);
             for(Control btn: controls.get(curPage).controls){
@@ -590,20 +650,52 @@ class UI {
             return ((LevelSelectPage)controls.get(curPage));
         }
 
+        private VelocityTracker mVelocityTracker = null;
         @Override
         public void onTouchStart(Object args, MotionEvent evt) {
+            if(mVelocityTracker == null) {
+                // Retrieve a new VelocityTracker object to watch the
+                // velocity of a motion.
+                mVelocityTracker = VelocityTracker.obtain();
+            } else {
+                 // Reset the velocity tracker back to its initial state.
+                 mVelocityTracker.clear();
+            }
+            // Add a user's movement to the tracker.
+            mVelocityTracker.addMovement(evt);
             touchOffsetX = evt.getX() - offSetX;
+            moveOffsetX = Math.round(evt.getRawX());
+            dragging = true;
         }
 
         @Override
         public void onTouchEnd(Object args, MotionEvent evt) {
-
+            int pointerId = evt.getPointerId(evt.getActionIndex());
+            lastSpeed = VelocityTrackerCompat.getXVelocity(mVelocityTracker, pointerId);
+            if(Math.abs(lastSpeed) > 40)
+                changingPage = true;
+            dragging = false;
+            //Log.d("", "offSetX: " + getCurPage().page.offSetX);
+            // Return a VelocityTracker object back to be re-used by others.
+            mVelocityTracker.clear();
         }
 
         @Override
         public void onMove(Object args, MotionEvent evt) {
-            setTitle(Math.round(evt.getRawX()) + " - " + Math.round(evt.getRawY()));
+            int pointerId = evt.getPointerId(evt.getActionIndex());
+            //setTitle(Math.round(evt.getRawX()) + " - " + Math.round(evt.getRawY()));
             moveOffsetX = Math.round(evt.getRawX());
+
+            mVelocityTracker.addMovement(evt);
+            // When you want to determine the velocity, call
+            // computeCurrentVelocity(). Then call getXVelocity()
+            // and getYVelocity() to retrieve the velocity for each pointer ID.
+            mVelocityTracker.computeCurrentVelocity(17);
+            // Log velocity of pixels per second
+            // Best practice to use VelocityTrackerCompat where possible.
+            //Log.d("", "X velocity: " + VelocityTrackerCompat.getXVelocity(mVelocityTracker, pointerId));
+            //Log.d("", "Y velocity: " + VelocityTrackerCompat.getYVelocity(mVelocityTracker, pointerId));
+            //Log.d("", "offSetX: " + getCurPage().page.offSetX);
         }
 
         // Assign the listener implementing events interface that will receive the events

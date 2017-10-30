@@ -361,6 +361,7 @@ public class Board extends Entity {
             this.chains = null;
             this.clearChains = false;
         }
+        UI.update();
         if(!GameView.started) {
             return;
         } else {
@@ -372,6 +373,7 @@ public class Board extends Entity {
                 } else {
                     //loadStage(0);
                     levelSelect.visible = true;
+                    levelSelect.getCurPage().page.transform.fadeIn(0,1f,0.5f);
                 }
             } else if (confirm.visible || levelSelect.visible) {
                 if(loadResult.equals("")) return;
@@ -382,7 +384,9 @@ public class Board extends Entity {
                     ((UI.InfoBox)UI.findControlById("infoBox")).setTitle(this.curStage.name);
                 } else {
                     confirm.visible = false;
+                    if(!levelSelect.visible) levelSelect.getCurPage().page.transform.fadeIn(0,1f,0.5f);
                     levelSelect.visible = true;
+
                     if(loadResult.equals("Cancel")) return;
                     stageIndex = Integer.parseInt(loadResult);
                     loadStage(stageIndex);
@@ -422,7 +426,6 @@ public class Board extends Entity {
             checkComplete = false;
             ((UI.InfoBox)UI.findControlById("infoBox")).transferScore();
         } else nextButton.visible = this.levelComplete && levelCompleted.canLoadNextLevel();
-        UI.update();
     }
     private boolean checkComplete = true;
 

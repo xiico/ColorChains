@@ -343,6 +343,7 @@ public class GameView extends GLSurfaceView {
                 }
             }
 
+            UI.update();
             UI.draw();
         }
         public static int loadShader(int type, String shaderCode) {

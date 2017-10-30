@@ -563,7 +563,7 @@
         "M     MM",
         "        ",
         " MMMMMM ",
-        "        "
+        "  MMMM  "
       ],
       "customProperties": [],
       "targetScore": 1000,
@@ -580,12 +580,12 @@
       "name": "Level Twenty Four",
       "tiles": [
         "   MM   ",
-        "   MM   ",
-        "        ",
+        " MMMM M ",
+        "      M ",
         "MM    MM",
         "MM    MM",
-        "        ",
-        "   MM   ",
+        " M      ",
+        " M MMMM ",
         "   MM   "
       ],
       "customProperties": [],
@@ -648,14 +648,14 @@
       "id": "28",
       "name": "Level Twenty Seven",
       "tiles": [
-        "  MMMM  ",
+        "   MM   ",
         "        ",
         "M      M",
         "MM    MM",
         "MM    MM",
         "M      M",
         "        ",
-        "  MMMM  "
+        "   MM   "
       ],
       "customProperties": [],
       "targetScore": 24,
@@ -671,14 +671,14 @@
       "id": "29",
       "name": "Level Twenty Eight",
       "tiles": [
-        "        ",
+        "M   MMMM",
         "  M     ",
-        " MMM    ",
+        " MM  MM ",
         "  M     ",
         "     M  ",
-        "    MMM ",
+        " MM  MM ",
         "     M  ",
-        "        "
+        "MMMM   M"
       ],
       "customProperties": [],
       "targetScore": 25,
@@ -985,9 +985,9 @@
       "id": "43",
       "name": "Level Thirty Five",
       "tiles": [
-        "   MMM  ",
+        " MMMMMM ",
         "        ",
-        "M  MM  M",
+        " M MM  M",
         "        ",
         "M  M    ",
         "     M  ",

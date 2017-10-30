@@ -57,6 +57,7 @@ public class Shape implements Comparable<Shape> {
     public float minBounce = 320f;
     public float maxBounce = 10f;
     public Transform transform;
+    private boolean doFade = false;
 
     public Shape(float[] coords, short[] drawOrder , String vertexShaderCode, String fragmentShaderCode, Integer resourceId, Integer filtering){
         mProgram = setupImage(resourceId, vertexShaderCode, fragmentShaderCode, filtering);
@@ -272,37 +273,78 @@ public class Shape implements Comparable<Shape> {
 
     public void update(){
         if(transform != null){
-            if(transform.isScalingIn){
-                if(transform.defaultScale == 0) {
-                    transform.defaultScale = this.scale;
-                    //curAnimation.transform.minScale = this.scale;
-                    this.scale = transform.maxScale;
-                    this.doScale = true;
-                }
+            scale();
+            fade();
+        }
+    }
+
+    private void fade(){
+        if(transform.isFadingIn){
+            if(transform.defaultAlpha == -1f) {
+                transform.defaultAlpha = this.color[3];
+                //curAnimation.transform.minScale = this.scale;
+                this.color[3] = transform.maxAlpha;
+                this.doFade = true;
+            }
+            else {
+                if(this.color[3] + (transform.alphaStep * Timer.deltaTime) < transform.minAlpha) this.color[3] += transform.alphaStep * Timer.deltaTime;
                 else {
-                    if(this.scale - transform.scaleStep > transform.minScale) this.scale -= transform.scaleStep * Timer.deltaTime;
-                    else {
-                        this.scale = transform.minScale;
-                        transform.isScalingIn = false;
-                        transform.defaultScale = 0;
-                        this.doScale = false;
-                    }
+                    this.color[3] = transform.minAlpha;
+                    transform.isFadingIn = false;
+                    transform.defaultAlpha = -1f;
+                    this.doFade = false;
                 }
-            } else if(transform.isScalingOut){
-                if(transform.defaultScale == 0) {
-                    transform.defaultScale = this.scale;
-                    //curAnimation.transform.maxScale = this.scale;
+            }
+        } else if(transform.isFadingOut){
+            if(transform.defaultAlpha == -1) {
+                transform.defaultAlpha = this.color[3];
+                //curAnimation.transform.maxScale = this.scale;
+                this.color[3] = transform.minAlpha;
+                this.doFade = true;
+            }
+            else {
+                if(this.color[3] + transform.alphaStep < transform.minAlpha) this.color[3] += transform.alphaStep * Timer.deltaTime;
+                else {
+                    this.color[3] = transform.maxAlpha;
+                    transform.isFadingOut = false;
+                    transform.defaultAlpha = -1;
+                    this.doFade = false;
+                }
+            }
+        }
+    }
+
+    private void scale() {
+        if(transform.isScalingIn){
+            if(transform.defaultScale == 0) {
+                transform.defaultScale = this.scale;
+                //curAnimation.transform.minScale = this.scale;
+                this.scale = transform.maxScale;
+                this.doScale = true;
+            }
+            else {
+                if(this.scale - transform.scaleStep > transform.minScale) this.scale -= transform.scaleStep * Timer.deltaTime;
+                else {
                     this.scale = transform.minScale;
-                    this.doScale = true;
+                    transform.isScalingIn = false;
+                    transform.defaultScale = 0;
+                    this.doScale = false;
                 }
+            }
+        } else if(transform.isScalingOut){
+            if(transform.defaultScale == 0) {
+                transform.defaultScale = this.scale;
+                //curAnimation.transform.maxScale = this.scale;
+                this.scale = transform.minScale;
+                this.doScale = true;
+            }
+            else {
+                if(this.scale + transform.scaleStep < transform.maxScale) this.scale += transform.scaleStep * Timer.deltaTime;
                 else {
-                    if(this.scale + transform.scaleStep < transform.maxScale) this.scale += transform.scaleStep * Timer.deltaTime;
-                    else {
-                        this.scale = transform.maxScale;
-                        transform.isScalingOut = false;
-                        transform.defaultScale = 0;
-                        this.doScale = false;
-                    }
+                    this.scale = transform.maxScale;
+                    transform.isScalingOut = false;
+                    transform.defaultScale = 0;
+                    this.doScale = false;
                 }
             }
         }
