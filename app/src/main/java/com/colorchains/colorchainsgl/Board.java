@@ -44,6 +44,12 @@ public class Board extends Entity {
     private UI.Button nextButton;
     private UI.ProgressBar progressBar;
     private UI.Confirm confirm;
+
+    private UI.Button showExit;
+    private UI.Confirm exitPuzzle;
+
+    private UI.Button showReload;
+    private UI.Confirm reloadPuzzle;
     private UI.LevelCompleted levelCompleted;
 
     public boolean clearChains = false;
@@ -59,6 +65,7 @@ public class Board extends Entity {
     public EntityCollection gemCol;
     public EntityCollection marioCol;
     public boolean parseBoard = false;
+    public List<String> moveHistory = new ArrayList<>();
 
     public Board(Context context)  throws JSONException {
         super("board", TYPE.BOARD,0f,0f,1280,768);
@@ -129,6 +136,95 @@ public class Board extends Entity {
         });
         UI.addControl(confirm);
         confirm.visible = false;
+
+        showExit = new UI.Button("exit","",
+                gemOffsetX + (GameView.scaledDefaultSide * .5f) + (this.getWidth() / 2),
+                gemOffsetY + (GameView.scaledDefaultSide * 8.5f) + (20 * GameView.scale) ,0,0, TYPE.CANCELRELOAD, 0);
+        showExit.addUIListener(new UI.UIListener() {
+            @Override
+            public void onTouchStart(Object sender, MotionEvent evt) {}
+
+            @Override
+            public void onTouchEnd(Object sender, MotionEvent evt) {
+                exitPuzzle.visible = true;
+                selectedGem = null;
+                GameView.disableTouch = true;
+                GameView.GLRenderer._boardReady = false;
+            }
+
+            @Override
+            public void onMove(Object sender, MotionEvent evt) {}
+        });
+        UI.addControl(showExit);
+        showExit.visible = false;
+
+        exitPuzzle = new UI.Confirm("exitPuzzle","Are you sure you want to exit?", (float) GameView.scaledDefaultSide, GameView.metrics.heightPixels / 2f);
+        exitPuzzle.addUIListener(new UI.UIListener() {
+            @Override
+            public void onTouchStart(Object sender, MotionEvent evt) {}
+
+            @Override
+            public void onTouchEnd(Object sender, MotionEvent evt) {
+                if(sender == "Cancel") {
+                    GameView.GLRenderer._boardReady = true;
+                } else {
+                    updateMarioTexture = true;
+                    ((UI.InfoBox)UI.findControlById("infoBox")).visible = false;
+                    progressBar.visible = false;
+                    levelSelect.visible = true;
+                    showExit.visible  = false;
+                    showReload.visible = false;
+                    confirm.visible = false;
+                }
+                exitPuzzle.visible = false;
+            }
+
+            @Override
+            public void onMove(Object sender, MotionEvent evt) {}
+        });
+        UI.addControl(exitPuzzle);
+        exitPuzzle.visible = false;
+
+        showReload = new UI.Button("reload","",
+                gemOffsetX + (GameView.scaledDefaultSide * 2) + (this.getWidth() / 2),
+                gemOffsetY + (GameView.scaledDefaultSide * 8.5f) + (20 * GameView.scale) ,0,0, TYPE.CANCELRELOAD, 1);
+        showReload.addUIListener(new UI.UIListener() {
+            @Override
+            public void onTouchStart(Object sender, MotionEvent evt) {}
+
+            @Override
+            public void onTouchEnd(Object sender, MotionEvent evt) {
+                showReload.visible = true;
+                selectedGem = null;
+                GameView.disableTouch = true;
+                GameView.GLRenderer._boardReady = false;
+            }
+
+            @Override
+            public void onMove(Object sender, MotionEvent evt) {}
+        });
+        UI.addControl(showReload);
+        showReload.visible = false;
+        reloadPuzzle = new UI.Confirm("exitPuzzle","Are you sure you want to reload this puzzle?", (float) GameView.scaledDefaultSide, GameView.metrics.heightPixels / 2f);
+        reloadPuzzle.addUIListener(new UI.UIListener() {
+            @Override
+            public void onTouchStart(Object sender, MotionEvent evt) {}
+
+            @Override
+            public void onTouchEnd(Object sender, MotionEvent evt) {
+                if(sender == "Cancel") {
+                    GameView.GLRenderer._boardReady = true;
+                } else {
+                    loadStage(new Stage(moveHistory.get(0)), stageIndex);
+                }
+                showReload.visible = false;
+            }
+
+            @Override
+            public void onMove(Object sender, MotionEvent evt) {}
+        });
+        UI.addControl(reloadPuzzle);
+        reloadPuzzle.visible = false;
 
         UI.InfoBox infoBox = new UI.InfoBox("infoBox", 0f, GameView.scale * 5);
         infoBox.setX((GameView.metrics.widthPixels / 2f) - (infoBox.getWidth() / 2));
@@ -395,6 +491,7 @@ public class Board extends Entity {
                 }
                 ((UI.InfoBox)UI.findControlById("infoBox")).setHighScore(getHighScore(curStage.id));
                 confirm.visible = false;
+                loadResult = "";
             }
         }
         if(GameView.GLRenderer._boardReady) {
@@ -445,6 +542,8 @@ public class Board extends Entity {
         this.marioCol.draw();
         this.gemCol.draw();
         /********** Use EntityCollection **********/
+        showReload.draw();
+        showExit.draw();
     }
 
     float minValue = 1f;
@@ -535,8 +634,10 @@ public class Board extends Entity {
     }
 
     private void saveState(){
+        String boardState = this.boardToJSON();
+        moveHistory.add(boardState);
         SharedPreferences.Editor editor = settings.edit();
-        editor.putString("boardState", this.boardToJSON());
+        editor.putString("boardState", boardState);
         editor.putInt("stageIndex", this.stageIndex);
         editor.commit();
     }
@@ -726,16 +827,19 @@ public class Board extends Entity {
         return curStage.toJsonString(ents);
     }
     public void loadStage(Integer index){
+        moveHistory = new ArrayList<>();
         levelSelect.visible = false;
         GameView.GLRenderer._boardReady = false;
         this.curStage = stages.get(index);
         this.stageIndex = index;
         ((UI.InfoBox)UI.findControlById("infoBox")).setTitle(this.curStage.name);
-        levelSelect.update(stages,this);
+        //levelSelect.update(stages,this);
         this.createEntities(this.curStage);
         /******* EntityCollection *********/
         BuildGemsCollections();
         /******* EntityCollection *********/
+        showReload.visible = true;
+        showExit.visible = true;
     }
 
     private void BuildGemsCollections() {
@@ -764,6 +868,7 @@ public class Board extends Entity {
     }
 
     public void reloadStage(){
+        moveHistory = new ArrayList<>();
         GameView.GLRenderer._boardReady = false;
         Integer curScore = curStage != null ? curStage.score : 0;
         clearGems();
@@ -774,6 +879,7 @@ public class Board extends Entity {
     }
 
     public void loadStage(Stage stage, Integer index){
+        moveHistory = new ArrayList<>();
         GameView.GLRenderer._boardReady = false;
         this.curStage = stage;
         this.stageIndex = index;

@@ -388,7 +388,7 @@ public class Shape implements Comparable<Shape> {
     }
 
     public Integer resourceId = -1;
-    public Integer index = -1;
+    public Integer index = 0;
     @Override
     public int compareTo(Shape p) {
         /*if(this.getResourceId() < p.getResourceId()) return -1;
@@ -439,6 +439,18 @@ public class Shape implements Comparable<Shape> {
                         0.0f    , 1.0f    ,// bottom left   1|//0.0f, 0.0f,// bottom left   1
                         0.5f    , 1.0f    ,// bottom right  2|//1.0f, 0.0f,// bottom right  2
                         0.5f    , 0.0f     // top right     3|//1.0f, 1.0f // top right     3
+                };
+                break;
+            case R.drawable.cancelreload:
+                uvs = new float[] {
+                        0.0f    , 0.0f    ,
+                        0.0f    , 1.0f    ,
+                        0.5f    , 1.0f    ,
+                        0.5f    , 0.0f    ,
+                        0.5f    , 1.0f    ,// top left      0|//0.0f, 1.0f,// top left      0
+                        0.5f    , 0.0f    ,// bottom left   1|//0.0f, 0.0f,// bottom left   1
+                        1.0f    , 0.0f    ,// bottom right  2|//1.0f, 0.0f,// bottom right  2
+                        1.0f    , 1.0f     // top right     3|//1.0f, 1.0f // top right     3
                 };
                 break;
             default:

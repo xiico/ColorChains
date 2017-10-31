@@ -125,8 +125,8 @@ public class GameView extends GLSurfaceView {
         /***********/
 
         if(GameView.paused) GameView.paused = false;
-        if(GameView.disableTouch) return;
         UI.touchStartUI(evt);
+        if(GameView.disableTouch) return;
         if (board.levelComplete) {
             return;
         }

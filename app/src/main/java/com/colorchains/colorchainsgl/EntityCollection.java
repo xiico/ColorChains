@@ -54,10 +54,6 @@ public class EntityCollection extends Shape{
     Integer colCount = 0;
     public EntityCollection(Integer resourceId, Entity[][] entities/*Board board*/, Integer rowCount, Integer colCount) {
         super(fontCoords, drawOrder, vs_Gem/*vs_Text*/, fs_Gem/*fs_Text*/, resourceId/*, GLES20.GL_LINEAR*/);
-        //this.setWidth(GameView.scaledDefaultSide);//92
-        //this.setHeight(GameView.scaledDefaultSide);//92
-//        entityWidthGl = 1;// colCount;
-//        entityHeightGl = 1;// rowCount;
         this.entities = entities;
         this.rowCount = rowCount;
         this.colCount = colCount;

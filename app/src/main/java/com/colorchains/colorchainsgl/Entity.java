@@ -52,7 +52,7 @@ public abstract class Entity extends Shape {
             -0.5f, -0.5f, 0.0f,  // bottom left   1
             0.5f, -0.5f, 0.0f,  // bottom right  2
             0.5f,  0.5f, 0.0f}; // top right     3
-    private static short drawOrder[] = {0, 1, 2, 0, 2, 3}; // order to draw vertices
+    static short[] drawOrder = {0, 1, 2, 0, 2, 3}; // order to draw vertices
     public static final String vs_Image =
             "uniform mat4 uMVPMatrix;\n" +
             "attribute vec4 vPosition;\n" +
@@ -118,6 +118,10 @@ public abstract class Entity extends Shape {
                 return R.drawable.infobox;
             case LEVELCOMPLETE:
                 return R.drawable.levelcomplete;
+            case PAGING:
+                return R.drawable.paging;
+            case CANCELRELOAD:
+                return R.drawable.cancelreload;
             default:
                 return -1;
         }

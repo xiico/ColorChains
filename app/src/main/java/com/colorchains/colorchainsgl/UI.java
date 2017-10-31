@@ -147,8 +147,9 @@ class UI {
         private List<UIListener> listeners = new ArrayList<>();
         private final String text;
         private Font font;
+        private float[] uvs;
         public Button(String id, String text, Float x, Float y, Integer cx, Integer cy) {
-            super(id, TYPE.BUTTON, x, y, cx, cy);
+            super(id,TYPE.BUTTON,x,y,cx,cy);
             cacheWidth = Math.round(super.getWidth() / 2);
             cacheHeight = (int) super.getHeight();
             this.text = text;
@@ -156,6 +157,22 @@ class UI {
             font.setText(text);
             font.setX(this.getX());
             font.setY(this.getY());
+        }
+
+        public Button(String id, String text, Float x, Float y, Integer cx, Integer cy, TYPE type, Integer textureIndex) {
+            super(id, type, x, y, cx, cy);
+            cacheWidth = Math.round(super.getWidth() / 2);
+            cacheHeight = (int) super.getHeight();
+            this.text = text;
+            font = new Font(R.drawable.oldskol, 2.0f);
+            font.setText(text);
+            font.setX(this.getX());
+            font.setY(this.getY());
+            this.uvs = new float[8];
+            for (int i = 0; i < 8 ; i++) {
+                uvs[i] = (super.uvs[(textureIndex*8)+i]);
+            }
+            setUVBuffer(uvs);
         }
 
         @Override
@@ -172,8 +189,10 @@ class UI {
         public void draw()
         {
             super.draw();
-            changeProgram(font.mProgram.getProgramId(), font.vertexBuffer);
-            font.draw();
+            if(font.text.length() > 0) {
+                changeProgram(font.mProgram.getProgramId(), font.vertexBuffer);
+                font.draw();
+            }
         }
 
         public void onTouchStart(Object args, MotionEvent evt) {}
@@ -518,23 +537,27 @@ class UI {
                 int i = index % (colSize * rowSize);
                 int row = (int)Math.floor(i / rowSize), col = i % colSize;
                 Button btn = new Button(stage.id, String.valueOf((index) + 1), col * GameView.metrics.widthPixels / (colSize + 1f), row * 120f, 0, 0);
-                btn.addAnimation("idle", 0, 0, new Integer[]{0}, 0.5f, false);
+                //btn.addAnimation("idle", 0, 0, new Integer[]{0}, 0.5f, false);
                 btn.curAnimation = btn.addAnimation("idle", 0, 0, new Integer[]{0}, 0.5f, false);
                 btn.curAnimation.curFrame = high > 0 || (high == 0 && lastHighScore != 0) || index == 0 ? 0 : 1;
                 btn.enabled = btn.curAnimation.curFrame == 0 || (high == 0 && lastHighScore != 0) || index == 0;
                 lastHighScore = high;
                 addLevel(btn, row, col, stagePage.page.entities);
-                if((i > 0 && i % ((colSize * rowSize) - 1) == 0) || index  == stages.size() - 1){
+                if((i > 0 && i % ((colSize * rowSize) - 1) == 0) || index == stages.size() - 1){
                     ((LevelSelectPage)controls.get(controls.size() - 1)).page.buildTextureMap(2,2,1);
                     ((LevelSelectPage)controls.get(controls.size() - 1)).page.offSetX = GameView.metrics.widthPixels / (colSize + 1f);
                     ((LevelSelectPage)controls.get(controls.size() - 1)).page.offSetY = GameView.metrics.heightPixels / 3;
                     stageFonts.add(curStageFonts);
-                    curStageFonts = new ArrayList<>();
-                    stagePage = new LevelSelectPage(colSize, rowSize);
-                    controls.add(stagePage);
-                    stagePage.visible = (controls.size() == 1);
+                    stagePage.page.offSetX = controls.size() == 1 ? stagePage.page.offSetX : GameView.screenW;
+                    if(index != stages.size() - 1) {
+                        curStageFonts = new ArrayList<>();
+                        stagePage = new LevelSelectPage(colSize, rowSize);
+                        controls.add(stagePage);
+                        stagePage.visible = (controls.size() == 1);
+                    }
                 }
             }
+            setPaging(0,controls.size());
         }
 
         public void update(List<Stage> stages, Board board){
@@ -552,18 +575,19 @@ class UI {
             if(getCurPage().page.offSetX != defaultOffsetX && !dragging){
                 if(getCurPage().page.offSetX > defaultOffsetX){
                     if(getCurPage().page.offSetX > defaultOffsetX)
-                        getCurPage().page.offSetX-= Math.max((getCurPage().page.offSetX - defaultOffsetX) / 6, 1 );
+                        getCurPage().page.offSetX -= Math.max((getCurPage().page.offSetX - defaultOffsetX) / 6, 1 );
                 } else {
                     if(getCurPage().page.offSetX < defaultOffsetX)
-                        getCurPage().page.offSetX+=Math.max((defaultOffsetX - getCurPage().page.offSetX) / 6, 1 );
+                        getCurPage().page.offSetX += Math.max((defaultOffsetX - getCurPage().page.offSetX) / 6, 1 );
                 }
             }
+            lastSpeed = 0;
         }
 
 
         private void changePage(){
             if(lastSpeed < 0){
-                if(curPage == controls.size()) {
+                if(curPage == controls.size() - 1) {
                     changingPage = false;
                     return;
                 } else {
@@ -574,6 +598,8 @@ class UI {
                         getCurPage().visible = false;
                         curPage++;
                         getCurPage().visible = true;
+                        getCurPage().transform.fadeIn(0,1,1f);
+                        setPaging(curPage,controls.size());
                     }
                 }
             } else {
@@ -588,7 +614,8 @@ class UI {
                         getCurPage().visible = false;
                         curPage--;
                         getCurPage().visible = true;
-                        getCurPage().transform.fadeIn(0,1,0.5f);
+                        getCurPage().transform.fadeIn(0,1,1f);
+                        setPaging(curPage,controls.size());
                     }
                 }
             }
@@ -612,6 +639,8 @@ class UI {
             }
             GameView.GLRenderer.updateVertexBuffer(title.vertexBuffer);
             title.draw();
+
+            pagesView.draw();
         }
 
         private void addLevel(Button stage, Integer row, Integer col, Entity[][] entities){
@@ -622,7 +651,8 @@ class UI {
 
                 @Override
                 public void onTouchEnd(Object sender, MotionEvent evt) {
-                    GameView.board.loadResult = ((Button) sender).id;
+                    if(Math.abs(lastSpeed) < 1 )
+                        GameView.board.loadResult = ((Button) sender).id;
                 }
 
                 @Override
@@ -650,6 +680,29 @@ class UI {
             return ((LevelSelectPage)controls.get(curPage));
         }
 
+        EntityCollection pagesView;
+        public void setPaging(Integer selected, Integer total){
+            if(pagesView == null){
+                pagesView = new EntityCollection(R.drawable.paging, new Entity[total][1], 1, total);
+                pagesView.setWidth(pagesView.getWidth() / 2);
+                for (int i = 0; i < total; i++) {
+                    int row = 0, col = i % total;
+                    Control ctrl = new Control("page",TYPE.PAGING,col * 48f,0f,0,0);
+                    ctrl.curAnimation = ctrl.addAnimation("idle", 0, 0, new Integer[]{0}, 0.5f, false);
+                    ctrl.curAnimation.curFrame = i == selected ? 1 : 0;
+                    pagesView.entities[col][row] = ctrl;
+                }
+                pagesView.setX((GameView.screenW / 2) + 12 - (total * 24f / 2));
+                pagesView.setY(((126*(int)GameView.scale)) + (GameView.scaledDefaultSide * 8f) + (4*GameView.scale));
+            } else {
+                for (int i = 0; i < total; i++) {
+                    int row = 0, col = i % total;
+                    pagesView.entities[col][row].curAnimation.curFrame = i == selected ? 1 : 0;
+                }
+            }
+            pagesView.buildTextureMap(total,2,1);
+        }
+
         private VelocityTracker mVelocityTracker = null;
         @Override
         public void onTouchStart(Object args, MotionEvent evt) {
@@ -672,7 +725,7 @@ class UI {
         public void onTouchEnd(Object args, MotionEvent evt) {
             int pointerId = evt.getPointerId(evt.getActionIndex());
             lastSpeed = VelocityTrackerCompat.getXVelocity(mVelocityTracker, pointerId);
-            if(Math.abs(lastSpeed) > 40)
+            if(Math.abs(lastSpeed) > 12)
                 changingPage = true;
             dragging = false;
             //Log.d("", "offSetX: " + getCurPage().page.offSetX);
