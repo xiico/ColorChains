@@ -57,6 +57,7 @@ public class Shape implements Comparable<Shape> {
     public float minBounce = 320f;
     public float maxBounce = 10f;
     public Transform transform;
+    public boolean updateVertexBuffer = false;
     private boolean doFade = false;
 
     public Shape(float[] coords, short[] drawOrder , String vertexShaderCode, String fragmentShaderCode, Integer resourceId, Integer filtering){
@@ -181,7 +182,7 @@ public class Shape implements Comparable<Shape> {
     public void draw() {
         // pass in the calculated transformation matrix
         //public void draw() { // pass in the calculated transformation matrix
-        if (GameView.GLRenderer.curProgram != this.mProgram.getProgramId())
+        if (GameView.GLRenderer.curProgram != this.mProgram.getProgramId() || this.updateVertexBuffer)
             GameView.GLRenderer.changeProgram(this.mProgram.getProgramId(), Shape.vertexBuffer);
         if (GameView.GLRenderer.curTexture.intValue() != this.getResourceId().intValue())
             Shape.bindTexture(this.getResourceId());
@@ -435,18 +436,18 @@ public class Shape implements Comparable<Shape> {
                 break;
             case R.drawable.button:
                 uvs = new float[] {
-                        0.0f    , 0.0f    ,// top left      0|//0.0f, 1.0f,// top left      0
-                        0.0f    , 1.0f    ,// bottom left   1|//0.0f, 0.0f,// bottom left   1
-                        0.5f    , 1.0f    ,// bottom right  2|//1.0f, 0.0f,// bottom right  2
-                        0.5f    , 0.0f     // top right     3|//1.0f, 1.0f // top right     3
+                        0.0f    , 1.0f    ,// top left      0|//0.0f, 1.0f,// top left      0
+                        0.0f    , 0.0f    ,// bottom left   1|//0.0f, 0.0f,// bottom left   1
+                        0.5f    , 0.0f    ,// bottom right  2|//1.0f, 0.0f,// bottom right  2
+                        0.5f    , 1.0f     // top right     3|//1.0f, 1.0f // top right     3
                 };
                 break;
             case R.drawable.cancelreload:
                 uvs = new float[] {
-                        0.0f    , 0.0f    ,
                         0.0f    , 1.0f    ,
-                        0.5f    , 1.0f    ,
+                        0.0f    , 0.0f    ,
                         0.5f    , 0.0f    ,
+                        0.5f    , 1.0f    ,
                         0.5f    , 1.0f    ,// top left      0|//0.0f, 1.0f,// top left      0
                         0.5f    , 0.0f    ,// bottom left   1|//0.0f, 0.0f,// bottom left   1
                         1.0f    , 0.0f    ,// bottom right  2|//1.0f, 0.0f,// bottom right  2

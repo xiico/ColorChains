@@ -150,6 +150,8 @@ public class Board extends Entity {
                 selectedGem = null;
                 GameView.disableTouch = true;
                 GameView.GLRenderer._boardReady = false;
+                showExit.visible  = false;
+                showReload.visible = false;
             }
 
             @Override
@@ -167,7 +169,10 @@ public class Board extends Entity {
             public void onTouchEnd(Object sender, MotionEvent evt) {
                 if(sender == "Cancel") {
                     GameView.GLRenderer._boardReady = true;
+                    showExit.visible  = true;
+                    showReload.visible = true;
                 } else {
+                    levelSelect.init(stages,GameView.board);
                     updateMarioTexture = true;
                     ((UI.InfoBox)UI.findControlById("infoBox")).visible = false;
                     progressBar.visible = false;
@@ -194,18 +199,21 @@ public class Board extends Entity {
 
             @Override
             public void onTouchEnd(Object sender, MotionEvent evt) {
-                showReload.visible = true;
+                reloadPuzzle.visible = true;
                 selectedGem = null;
                 GameView.disableTouch = true;
                 GameView.GLRenderer._boardReady = false;
+                showExit.visible  = false;
+                showReload.visible = false;
             }
 
             @Override
             public void onMove(Object sender, MotionEvent evt) {}
         });
         UI.addControl(showReload);
+        showReload.updateVertexBuffer = true;
         showReload.visible = false;
-        reloadPuzzle = new UI.Confirm("exitPuzzle","Are you sure you want to reload this puzzle?", (float) GameView.scaledDefaultSide, GameView.metrics.heightPixels / 2f);
+        reloadPuzzle = new UI.Confirm("exitPuzzle","Are you sure you want to \nreload this puzzle?", (float) GameView.scaledDefaultSide, GameView.metrics.heightPixels / 2f);
         reloadPuzzle.addUIListener(new UI.UIListener() {
             @Override
             public void onTouchStart(Object sender, MotionEvent evt) {}
@@ -214,10 +222,32 @@ public class Board extends Entity {
             public void onTouchEnd(Object sender, MotionEvent evt) {
                 if(sender == "Cancel") {
                     GameView.GLRenderer._boardReady = true;
+                    showExit.visible  = true;
+                    showReload.visible = true;
                 } else {
-                    loadStage(new Stage(moveHistory.get(0)), stageIndex);
+//                    String stage = moveHistory.size() > 0 ? moveHistory.get(0) : settings.getString("boardState", "");
+//                    loadStage(new Stage(stage), stageIndex);
+//                    showExit.visible  = true;
+//                    showReload.visible = true;
+
+                    //reloadStage();
+
+                    String stage = moveHistory.size() > 0 ? moveHistory.get(0) : settings.getString("boardState", "");
+                    loadStage(new Stage(stage), stageIndex);
+
+                    progressBar.reset();
+                    ((UI.InfoBox)UI.findControlById("infoBox")).setHighScore(getHighScore(curStage.id));
+                    curStage.moves = 0;
+                    GameView.board.levelComplete = false;
+                    GameView.board.selectedGem = null;
+                    GameView.board.chains = null;
+                    nextButton.visible = false;
+                    levelCompleted.visible = false;
+                    checkComplete = true;
+                    showExit.visible  = true;
+                    showReload.visible = true;
                 }
-                showReload.visible = false;
+                reloadPuzzle.visible = false;
             }
 
             @Override
@@ -241,6 +271,8 @@ public class Board extends Entity {
         levelSelect.visible = false;
         levelSelect.setWidth(GameView.screenW);
         levelSelect.setHeight(GameView.screenH);
+        levelSelect.offSetX = GameView.screenW / 2;
+        levelSelect.offSetY = GameView.screenH / 2;
 //        levelSelect.addUIListener(new UI.UIListener() {
 //            @Override
 //            public void onTouchStart(Object sender, MotionEvent evt) {
@@ -516,10 +548,10 @@ public class Board extends Entity {
             //progressBar.setValue(curStage.score / (float)curStage.targetScore);
             progressBar.setValue(this.getScoreMultiplier() / 2.1f);
             //if(curStage.score >= (float)curStage.targetScore) {
-            if(this.getScoreMultiplier() >= 1) {
+            //if(this.getScoreMultiplier() >= 1) {
                 levelCompleted.visible = true;
                 levelCompleted.transform.scaleIn(4,levelCompleted.scale,0.5f);
-            }
+            //}
             checkComplete = false;
             ((UI.InfoBox)UI.findControlById("infoBox")).transferScore();
         } else nextButton.visible = this.levelComplete && levelCompleted.canLoadNextLevel();
@@ -542,8 +574,6 @@ public class Board extends Entity {
         this.marioCol.draw();
         this.gemCol.draw();
         /********** Use EntityCollection **********/
-        showReload.draw();
-        showExit.draw();
     }
 
     float minValue = 1f;
@@ -553,7 +583,7 @@ public class Board extends Entity {
         //this.curStage.score += this.calculateScore();
         saveScore();
         //if (this.curStage.score >= this.curStage.targetScore) {
-        if (this.getScoreMultiplier() >= 1) {
+        if (this.getScoreMultiplier() >= 0) {
             //progressBar.setValue(curStage.score / (float)curStage.targetScore);
             this.levelComplete = false;
             loadNextLevel();
@@ -885,5 +915,7 @@ public class Board extends Entity {
         this.stageIndex = index;
         this.createEntities(this.curStage);
         BuildGemsCollections();
+        showReload.visible = true;
+        showExit.visible = true;
     }
 }

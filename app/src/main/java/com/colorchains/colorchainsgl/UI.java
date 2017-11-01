@@ -109,7 +109,7 @@ class UI {
         if(ctrl instanceof UIListener) {
             float rawX = evt.getRawX();
             float rawY = evt.getRawY();
-            RectF ctrlRect = new RectF(ctrl.offSetX + ctrl.getX() - (ctrl.getWidth() / 2), ctrl.offSetY + ctrl.getY() - (ctrl.getHeight() / 2), ctrl.offSetX + ctrl.getX() + ctrl.cacheWidth, ctrl.offSetY + ctrl.getY() + ctrl.cacheHeight);
+            RectF ctrlRect = new RectF(ctrl.offSetX + ctrl.getX() - (ctrl.getWidth() / 2), ctrl.offSetY + ctrl.getY() - (ctrl.getHeight() / 2), (ctrl.offSetX + ctrl.getX() - (ctrl.getWidth() / 2)) + ctrl.cacheWidth, (ctrl.offSetY + ctrl.getY() - (ctrl.getHeight() / 2)) + ctrl.cacheHeight);
             RectF touchRect = new RectF(rawX, rawY, rawX + 1, rawY + 1);
             if (touchRect.intersect(ctrlRect)) {
                 //((UIListener) ctrl).clicked(ctrl);
@@ -170,7 +170,7 @@ class UI {
             font.setY(this.getY());
             this.uvs = new float[8];
             for (int i = 0; i < 8 ; i++) {
-                uvs[i] = (super.uvs[(textureIndex*8)+i]);
+                uvs[i] = (super.uvs[(textureIndex * 8) + i]);
             }
             setUVBuffer(uvs);
         }
@@ -336,7 +336,7 @@ class UI {
         public void draw()
         {
             font.setX(this.getX() + (this.getWidth() / 2));
-            font.setY(this.getY() + (this.getHeight() / 2) - GameView.scaledDefaultSide);
+            font.setY(this.getY() + (this.getHeight() / 2) - (okButton.getHeight() * 1.5f));
             font.setText(this.text);
             changeProgram(font.mProgram.getProgramId(), font.vertexBuffer);
             font.draw();
@@ -524,8 +524,12 @@ class UI {
             this.title.setText(title);
         }
 
-        private void init(List<Stage> stages, Board board) {
+        public void init(List<Stage> stages, Board board) {
+            curPage = 0;
+            pagesView = null;
+            stageFonts = new ArrayList<>();
             LevelSelectPage stagePage = new LevelSelectPage(colSize, rowSize);
+            controls.clear();
             controls.add(stagePage);
             curStageFonts = new ArrayList<>();
             Integer lastHighScore = 0;
@@ -558,6 +562,7 @@ class UI {
                 }
             }
             setPaging(0,controls.size());
+            this.getCurPage().page.transform.fadeIn(0,1f,0.5f);
         }
 
         public void update(List<Stage> stages, Board board){
@@ -693,7 +698,7 @@ class UI {
                     pagesView.entities[col][row] = ctrl;
                 }
                 pagesView.setX((GameView.screenW / 2) + 12 - (total * 24f / 2));
-                pagesView.setY(((126*(int)GameView.scale)) + (GameView.scaledDefaultSide * 8f) + (4*GameView.scale));
+                pagesView.setY(getCurPage().page.offSetY + (120 * 5f));
             } else {
                 for (int i = 0; i < total; i++) {
                     int row = 0, col = i % total;
@@ -716,7 +721,7 @@ class UI {
             }
             // Add a user's movement to the tracker.
             mVelocityTracker.addMovement(evt);
-            touchOffsetX = evt.getX() - offSetX;
+            touchOffsetX = evt.getX() /*- offSetX*/;
             moveOffsetX = Math.round(evt.getRawX());
             dragging = true;
         }
