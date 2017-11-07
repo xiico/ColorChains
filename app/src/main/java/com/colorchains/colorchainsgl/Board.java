@@ -172,6 +172,7 @@ public class Board extends Entity {
                     showExit.visible  = true;
                     showReload.visible = true;
                 } else {
+                    curStage.moves = 0;
                     levelSelect.init(stages,GameView.board);
                     updateMarioTexture = true;
                     ((UI.InfoBox)UI.findControlById("infoBox")).visible = false;

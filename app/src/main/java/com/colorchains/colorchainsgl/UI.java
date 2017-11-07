@@ -505,6 +505,7 @@ class UI {
         private boolean dragging = false;
         private boolean changingPage = false;
         private float lastSpeed = 0;
+        public boolean enableAll = false;
 
         public LevelSelect(List<Stage> stages, Board board) {
             super("levelSelect", TYPE.LEVELSELECT, 0f, 0f, 0, 0);
@@ -543,8 +544,8 @@ class UI {
                 Button btn = new Button(stage.id, String.valueOf((index) + 1), col * GameView.metrics.widthPixels / (colSize + 1f), row * 120f, 0, 0);
                 //btn.addAnimation("idle", 0, 0, new Integer[]{0}, 0.5f, false);
                 btn.curAnimation = btn.addAnimation("idle", 0, 0, new Integer[]{0}, 0.5f, false);
-                btn.curAnimation.curFrame = high > 0 || (high == 0 && lastHighScore != 0) || index == 0 ? 0 : 1;
-                btn.enabled = btn.curAnimation.curFrame == 0 || (high == 0 && lastHighScore != 0) || index == 0;
+                btn.curAnimation.curFrame = high > 0 || (high == 0 && lastHighScore != 0) || index == 0 || enableAll ? 0 : 1;
+                btn.enabled = btn.curAnimation.curFrame == 0 || (high == 0 && lastHighScore != 0) || index == 0 || enableAll;
                 lastHighScore = high;
                 addLevel(btn, row, col, stagePage.page.entities);
                 if((i > 0 && i % ((colSize * rowSize) - 1) == 0) || index == stages.size() - 1){
