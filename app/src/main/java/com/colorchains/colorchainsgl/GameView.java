@@ -60,8 +60,13 @@ public class GameView extends GLSurfaceView {
         metrics = context.getResources().getDisplayMetrics();
         UI.init();
         Media.init();
-        Media.setBackGroundMusic(R.raw.title);
-
+        //Media.setBackGroundMusic(R.raw.title);
+        //Media.setBackGroundMusic(R.raw.file1);
+//        try {
+//            Media.playBGM();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
     }
 
     // Everything that needs to be updated goes in here
@@ -279,7 +284,7 @@ public class GameView extends GLSurfaceView {
                     backGround.setOffSetY(0);
                     backGround.doScale = false;
                     backGround.rotate = false;
-                    int randint = 0;
+                    int randint = 14;
                     if (GameView.cycleBG) {
                         Random r = new Random();
                         randint = Math.abs(r.nextInt()) % backGround.programs.size();

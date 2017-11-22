@@ -22,6 +22,9 @@ public class Stage {
     public Integer score;
     public Integer highScore;
     public Integer[] sets;
+    public Integer[] curSet;
+    public List<String> colorSet;
+    public Integer colorSetSize;
     public Integer moves;
     public Integer maxMoves;
     public Integer targetMoves;

@@ -3,6 +3,12 @@ package com.colorchains.colorchainsgl;
 import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.net.Uri;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by francisco.cnmarao on 17/04/2017.
@@ -12,6 +18,8 @@ public class Media {
     private static MediaPlayer bgMusic;
     private static AudioManager am;
     private static AudioManager.OnAudioFocusChangeListener afChangeListener;
+    public  static List<Uri> tracks = new ArrayList<>();
+    public static int curTrack = -1;
     public static void init() {
         am = (AudioManager) GameView.context.getSystemService(Context.AUDIO_SERVICE);
         am.requestAudioFocus(afChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
@@ -51,6 +59,48 @@ public class Media {
                         }
                     }
                 };
+        tracks.add(Uri.parse("android.resource://" + GameView.context.getPackageName() + "/" + R.raw.file1));
+        tracks.add(Uri.parse("android.resource://" + GameView.context.getPackageName() + "/" + R.raw.file2));
+        tracks.add(Uri.parse("android.resource://" + GameView.context.getPackageName() + "/" + R.raw.file3));
+        tracks.add(Uri.parse("android.resource://" + GameView.context.getPackageName() + "/" + R.raw.file4));
+        tracks.add(Uri.parse("android.resource://" + GameView.context.getPackageName() + "/" + R.raw.file5));
+        tracks.add(Uri.parse("android.resource://" + GameView.context.getPackageName() + "/" + R.raw.file6));
+
+        bgMusic = new MediaPlayer();
+        bgMusic.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            public void onCompletion(MediaPlayer mp) {
+                //finish(); // finish current activity
+                //mp.selectTrack(0);
+                if(playingPuzzleBGM) {
+                    if (curTrack + 1 >= tracks.size()) {
+                        Collections.shuffle(tracks);
+                        curTrack = -1;
+                    }
+                    curTrack++;
+                    playCurrentTrack(mp);
+                }
+            }
+        });
+        //song will be started after completion of preparing...
+        bgMusic.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+
+            @Override
+            public void onPrepared(MediaPlayer player) {
+                player.start();
+            }
+
+        });
+        setBackGroundMusic(R.raw.title);
+    }
+
+    public static void playCurrentTrack(MediaPlayer mp) {
+        try {
+            mp.reset();
+            mp.setDataSource(GameView.context, tracks.get(curTrack));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        mp.prepareAsync();
     }
 
     private static void release() {
@@ -59,13 +109,29 @@ public class Media {
     }
 
     public static void setBackGroundMusic(int bg){
-        bgMusic = MediaPlayer.create(GameView.context, bg/*R.raw.title*/);
+        try {
+            bgMusic.reset();
+            bgMusic.setDataSource(GameView.context, Uri.parse("android.resource://" + GameView.context.getPackageName() + "/" + bg));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        bgMusic.prepareAsync();
+        //bgMusic = MediaPlayer.create(GameView.context, bg/*R.raw.title*/);
     }
 
-    public static void playBGM() throws Exception {
+    public static boolean playingPuzzleBGM = false;
+    public static void playPuzzleBGM() throws Exception {
+        playingPuzzleBGM = true;
+        curTrack = 0;
+        Collections.shuffle(tracks);
         if(bgMusic == null) throw new Exception("Media Player not set!");
-        bgMusic.setLooping(true);
-        bgMusic.start();
+        playCurrentTrack(bgMusic);
+    }
+
+    public static void stopPuzzleBGM(){
+        playingPuzzleBGM = false;
+        bgMusic.pause();
+        bgMusic.reset();
     }
 
     public static void pause()
@@ -75,6 +141,7 @@ public class Media {
 
     public static void unpause()
     {
-        bgMusic.start();
+        if(bgMusic != null)
+            bgMusic.start();
     }
 }

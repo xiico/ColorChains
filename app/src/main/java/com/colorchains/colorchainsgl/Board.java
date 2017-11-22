@@ -12,11 +12,14 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 import static com.colorchains.colorchainsgl.GameView.GLRenderer.updateMarioTexture;
+import static com.colorchains.colorchainsgl.Media.playPuzzleBGM;
+import static com.colorchains.colorchainsgl.Media.playingPuzzleBGM;
 import static java.lang.Integer.parseInt;
 
 /**
@@ -181,6 +184,9 @@ public class Board extends Entity {
                     showExit.visible  = false;
                     showReload.visible = false;
                     confirm.visible = false;
+                    Collections.shuffle(Media.tracks);
+                    Media.stopPuzzleBGM();
+                    Media.setBackGroundMusic(R.raw.title);
                 }
                 exitPuzzle.visible = false;
             }
@@ -237,7 +243,7 @@ public class Board extends Entity {
                     loadStage(new Stage(stage), stageIndex);
 
                     progressBar.reset();
-                    ((UI.InfoBox)UI.findControlById("infoBox")).setHighScore(getHighScore(curStage.id));
+                    ((UI.InfoBox)UI.findControlById("infoBox")).setHighScore(getHighScore(curStage.id).highScore);
                     curStage.moves = 0;
                     GameView.board.levelComplete = false;
                     GameView.board.selectedGem = null;
@@ -295,12 +301,12 @@ public class Board extends Entity {
 
     private int calculateScore(boolean lastScore){
         Float score = 0f;
-        if (chains.size() == 0) return 0;
+        if (chains == null || chains.size() == 0) return 0;
         for (int index = 0; index < chains.size(); index++) {
             Chain chain = chains.get(index);
             float iScore = 0;
             for (int i = 0; i < chain.chained.size(); i++) {
-                iScore = ((i + 1) * 1.2f);
+                iScore = ((i + 1) * (float)Math.cbrt(i));
             }
             score += iScore * 10 * (chain.loop ? (int)Math.sqrt(chain.chained.size()) : 1) * (lastScore ? Math.max(getScoreMultiplier(),1f) : 1)/*( lastScore ? Math.max( 16 / (16 - Math.min((curStage.targetMoves - curStage.moves),15)) , 1) : 1 )*/;
         }
@@ -449,7 +455,36 @@ public class Board extends Entity {
     private TYPE getEntity(String type) {
         String color = "";
         if(type != null && type.trim().isEmpty())
-            color = String.valueOf(Math.round(Math.random() * 7));
+        {
+            if(curStage.sets != null) {
+                if (curStage.curSet == null) {
+                    curStage.colorSet = new ArrayList<>(); //new String[Arrays.asList(curStage.sets).indexOf(0) - 1];
+                    curStage.curSet = new Integer[8];
+                    curStage.colorSetSize = Arrays.asList(curStage.sets).indexOf(0);
+                    Integer setsCount = curStage.sets.length / 8;
+                    Integer selectedSet = (int) Math.floor(Math.random() * setsCount);
+                    for (int i = 0; i < 8; i++) {
+                        curStage.curSet[i] = curStage.sets[(selectedSet * 8) + i];
+                    }
+                }
+                color = String.valueOf(Math.round(Math.random() * 7));
+                Integer colorIndex = curStage.colorSet.indexOf(color);
+                if (colorIndex < 0) {
+                    if (curStage.colorSetSize < 0 || curStage.colorSet.size() < curStage.colorSetSize) {
+                        colorIndex = curStage.colorSet.size();
+                        curStage.colorSet.add(color);
+                    }
+                }
+                int loopCount = 0;
+                while (colorIndex < 0 || curStage.curSet[colorIndex] - 1 < 0) {
+                    color = String.valueOf(Math.round(Math.random() * 7));
+                    colorIndex = curStage.colorSet.indexOf(color);
+                    loopCount++;
+                    if(loopCount > 64) return null;
+                }
+                curStage.curSet[colorIndex]--;
+            } else color = String.valueOf(Math.round(Math.random() * 7));
+        }
         else if (type != null)
             color = type;
         switch (color) {
@@ -522,7 +557,7 @@ public class Board extends Entity {
                     ((UI.InfoBox)UI.findControlById("infoBox")).setTargetScore(curStage.targetScore);
                     //levelSelect.visible = true;
                 }
-                ((UI.InfoBox)UI.findControlById("infoBox")).setHighScore(getHighScore(curStage.id));
+                ((UI.InfoBox)UI.findControlById("infoBox")).setHighScore(getHighScore(curStage.id).highScore);
                 confirm.visible = false;
                 loadResult = "";
             }
@@ -540,6 +575,8 @@ public class Board extends Entity {
                 }
             }
             //progressBar.setValue(curStage.score / (float)curStage.targetScore);
+            showExit.visible  = !levelCompleted.visible;
+            showReload.visible = !levelCompleted.visible;
         }
         if(this.levelComplete && checkComplete){
             //GameView.GLRenderer._boardReady = false;
@@ -556,6 +593,7 @@ public class Board extends Entity {
             checkComplete = false;
             ((UI.InfoBox)UI.findControlById("infoBox")).transferScore();
         } else nextButton.visible = this.levelComplete && levelCompleted.canLoadNextLevel();
+
     }
     private boolean checkComplete = true;
 
@@ -595,7 +633,7 @@ public class Board extends Entity {
             reloadStage();
             progressBar.reset();
         }
-        ((UI.InfoBox)UI.findControlById("infoBox")).setHighScore(getHighScore(curStage.id));
+        ((UI.InfoBox)UI.findControlById("infoBox")).setHighScore(getHighScore(curStage.id).highScore);
         curStage.moves = 0;
         this.levelComplete = false;
         this.selectedGem = null;
@@ -675,14 +713,16 @@ public class Board extends Entity {
 
     private void saveScore(){
         SharedPreferences.Editor editor = settings.edit();
-        String stageScores = settings.getString(STAGE_SCORES + curStage.id,"{\"highScore\":0,\"scores\":[], \"moves\":[]}");
+        String stageScores = settings.getString(STAGE_SCORES + curStage.id,"{\"highScore\":0, \"highScoreMoves\":0, \"scores\":[], \"moves\":[]}");
         JSONObject obj;
         JSONArray scores = null;
         JSONArray moves = null;
         Integer highScore = null;
+        Integer highScoreMoves = 0;
         try {
             obj = new JSONObject(stageScores);
             highScore = Integer.parseInt(obj.getString("highScore"));
+            highScoreMoves = Integer.parseInt(obj.getString("highScoreMoves"));
             scores = obj.getJSONArray("scores");
             moves = obj.getJSONArray("moves");
             scores.put(calculateScore(true));
@@ -690,26 +730,34 @@ public class Board extends Entity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        if(curStage.score > curStage.highScore) {
+        if(curStage.score > highScore) {
             highScore = curStage.score;
+            highScoreMoves = curStage.moves;
         }
         editor.putString(STAGE_SCORES + curStage.id,
-                String.format("{\"highScore\":%s,\"scores\":%s, \"moves\":%s}", highScore, scores.toString(),moves.toString()));
+                String.format("{\"highScore\":%s,\"highScoreMoves\":%s, \"scores\":%s, \"moves\":%s}", highScore, highScoreMoves, scores.toString(),moves.toString()));
         editor.commit();
     }
 
-    public Integer getHighScore(String id){
+    public HighScore getHighScore(String id){
         String stageScores = settings.getString(STAGE_SCORES + id,"");
-        if(stageScores.length() == 0) return 0;
+        if(stageScores.length() == 0) return new HighScore();
         JSONObject obj;
-        Integer highScore = null;
+        HighScore highScore = new HighScore();
         try {
             obj = new JSONObject(stageScores);
-            highScore = Integer.parseInt(obj.getString("highScore"));
+            highScore.highScore = Integer.parseInt(obj.getString("highScore"));
+            highScore.moves =  obj.has("highScoreMoves") ? Integer.parseInt(obj.getString("highScoreMoves")) : 0;
         } catch (JSONException e) {
             e.printStackTrace();
         }
         return highScore;
+    }
+
+    class HighScore{
+        public Integer highScore = 0;
+        public Integer moves = 0;
+        public HighScore(){}
     }
 
     private void findChainTypes(){
@@ -862,7 +910,10 @@ public class Board extends Entity {
         levelSelect.visible = false;
         GameView.GLRenderer._boardReady = false;
         this.curStage = stages.get(index);
+        this.curStage.moves = 0;
+        this.curStage.score = 0;
         this.stageIndex = index;
+
         ((UI.InfoBox)UI.findControlById("infoBox")).setTitle(this.curStage.name);
         //levelSelect.update(stages,this);
         this.createEntities(this.curStage);
@@ -886,6 +937,12 @@ public class Board extends Entity {
         this.marioCol.buildTextureMap(100,10,10);
         GameView.GLRenderer._boardReady = true;
         ((UI.InfoBox)UI.findControlById("infoBox")).setChains(null);
+        chains = null;
+        try {
+            if(!playingPuzzleBGM) playPuzzleBGM();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void clearGems(){

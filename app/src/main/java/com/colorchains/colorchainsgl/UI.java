@@ -537,19 +537,19 @@ class UI {
             defaultOffsetX = (GameView.metrics.widthPixels / (colSize + 1f));
             defaultOffsetY = (GameView.metrics.heightPixels / 3);
             for (Stage stage : stages) {
-                Integer high = board.getHighScore(stage.id);
+                Board.HighScore highScore = board.getHighScore(stage.id);
                 int index = stages.indexOf(stage);
                 int i = index % (colSize * rowSize);
                 int row = (int)Math.floor(i / rowSize), col = i % colSize;
                 Button btn = new Button(stage.id, String.valueOf((index) + 1), col * GameView.metrics.widthPixels / (colSize + 1f), row * 120f, 0, 0);
                 //btn.addAnimation("idle", 0, 0, new Integer[]{0}, 0.5f, false);
                 btn.curAnimation = btn.addAnimation("idle", 0, 0, new Integer[]{0}, 0.5f, false);
-                btn.curAnimation.curFrame = high > 0 || (high == 0 && lastHighScore != 0) || index == 0 || enableAll ? 0 : 1;
-                btn.enabled = btn.curAnimation.curFrame == 0 || (high == 0 && lastHighScore != 0) || index == 0 || enableAll;
-                lastHighScore = high;
+                btn.curAnimation.curFrame = highScore.highScore > 0 || (highScore.highScore == 0 && lastHighScore != 0) || index == 0 || enableAll ? getButtonFrame(stage, highScore) : 0;
+                btn.enabled = btn.curAnimation.curFrame > 0 || (highScore.highScore == 0 && lastHighScore != 0) || index == 0 || enableAll;
+                lastHighScore = highScore.highScore;
                 addLevel(btn, row, col, stagePage.page.entities);
                 if((i > 0 && i % ((colSize * rowSize) - 1) == 0) || index == stages.size() - 1){
-                    ((LevelSelectPage)controls.get(controls.size() - 1)).page.buildTextureMap(2,2,1);
+                    ((LevelSelectPage)controls.get(controls.size() - 1)).page.buildTextureMap(5,5,1);
                     ((LevelSelectPage)controls.get(controls.size() - 1)).page.offSetX = GameView.metrics.widthPixels / (colSize + 1f);
                     ((LevelSelectPage)controls.get(controls.size() - 1)).page.offSetY = GameView.metrics.heightPixels / 3;
                     stageFonts.add(curStageFonts);
@@ -564,6 +564,14 @@ class UI {
             }
             setPaging(0,controls.size());
             this.getCurPage().page.transform.fadeIn(0,1f,0.5f);
+        }
+
+        private int getButtonFrame(Stage stage, Board.HighScore highScore) {
+            float ratio = highScore.moves > 0 ? (stage.targetMoves / (float)highScore.moves) : 0;
+            if(ratio < 1) return 1;
+            if(ratio >= 1 && ratio < 1.5) return 2;
+            if(ratio >= 1.5 && ratio < 2) return 3;
+            return 4;
         }
 
         public void update(List<Stage> stages, Board board){
@@ -635,7 +643,7 @@ class UI {
             ((LevelSelectPage)controls.get(curPage)).page.draw();
             changeProgram(stageFonts.get(curPage).get(0).mProgram.getProgramId(), stageFonts.get(curPage).get(0).vertexBuffer);
             for(Control btn: controls.get(curPage).controls){
-                if(btn.curAnimation.curFrame == 0){
+                if(btn.curAnimation.curFrame > 0){
                     Integer index = controls.get(curPage).controls.indexOf(btn);
                     Font font = stageFonts.get(curPage).get(index);
                     font.offSetX = getCurPage().page.offSetX;
@@ -771,7 +779,7 @@ class UI {
                 this.cacheWidth = GameView.screenW;
                 this.cacheHeight = GameView.screenH;
                 page = new EntityCollection(R.drawable.levelselect, new Entity[colSize][rowSize], rowSize, colSize);
-                page.setWidth(page.getWidth() / 2);
+                page.setWidth(page.getWidth() / 5);
             }
         }
     }
@@ -813,6 +821,34 @@ class UI {
                 "void main( void ) {\n" +
                 "  gl_FragColor = vec4(vec3(0.2,0.2,0.2), 0.4);\n" +
                 "}";
+        /*private static String fragmentShader =
+                "#ifdef GL_ES\n" +
+                        "precision mediump float;\n" +
+                        "#endif\n" +
+                        "\n" +
+                        "#extension GL_OES_standard_derivatives : enable\n" +
+                        "\n" +
+                        "uniform float time;\n" +
+                        "uniform vec2 mouse;\n" +
+                        "uniform vec2 resolution;\n" +
+                        "\n" +
+                        "\n" +
+                        "void main(){\n" +
+                        "\tvec2 pos = 2.0 * (gl_FragCoord.xy / resolution.xy) - 1.0;\n" +
+                        "\tpos.x *= resolution.x/resolution.y;\n" +
+                        "\tpos.y -= 4.4;\n" +
+                        "   \t\n" +
+                        "\tpos *= 40.0;\n" +
+                        "\t\n" +
+                        "\tfloat th = atan(pos.y, pos.x) + time / 2.;\n" +
+                        "\tfloat rays = smoothstep(.4, .6, sin(th * 7.) - .1);\n" +
+                        "\tfloat d =1. - smoothstep(0., 200., length(pos));\n" +
+                        "\trays *= d;\n" +
+                        "\tvec4 color = vec4(.6, .3, .0, 1.) * rays;\n" +
+                        "\tcolor.g += 1. - sqrt(length(pos)) / (10. + sin(th * 60.) * .1 + .2 * sin(th * 20.));\n" +
+                        "\tcolor.r += 1. - sqrt(length(pos)) / (10. + sin(th * 60.) * .1 + .2 * sin(th * 20.));\n" +
+                        "    \tgl_FragColor = color + vec4(.0, .0, .0, 1.);\n" +
+                        "}";*/
 
         public LevelCompleted(ProgressBar pb) {
             super("levelcomplete", TYPE.LEVELCOMPLETE, 0f, 0f, 0, 0);

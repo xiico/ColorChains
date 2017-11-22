@@ -39,7 +39,9 @@ public class Mario extends Gem {
 
     public synchronized static boolean RenderTiles(Board board)
     {
-        Mario.marioSeed = BitmapFactory.decodeResource(GameView.context.getResources(), Gem.getGemSprites(TYPE.MARIO));
+        BitmapFactory.Options opts = new BitmapFactory.Options();
+        opts.inScaled = false;
+        Mario.marioSeed = BitmapFactory.decodeResource(GameView.context.getResources(), Gem.getGemSprites(TYPE.MARIO),opts);
         Bitmap resizedBitmap = Bitmap.createScaledBitmap(marioSeed, GameView.scaledDefaultSide * 5, GameView.scaledDefaultSide, false);
         Bitmap.Config conf = Bitmap.Config.ARGB_8888; // see other conf types
         Bitmap bmp2 = Bitmap.createBitmap(GameView.scaledDefaultSide * 10, GameView.scaledDefaultSide * 10, conf); // this creates a MUTABLE bitmap

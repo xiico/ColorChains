@@ -464,9 +464,9 @@ public class BackGround extends Entity {
                     "\t\n" +
                     "    gl_FragColor = vec4( finalColor, 1.0 );\n" +
                     "}";
-    private static final String colorTunnel =
+    private static final String rainbow2 =
             "#ifdef GL_ES\n" +
-                    "precision highp float;\n" +
+                    "precision mediump float;\n" +
                     "#endif\n" +
                     "\n" +
                     "#extension GL_OES_standard_derivatives : enable\n" +
@@ -474,61 +474,244 @@ public class BackGround extends Entity {
                     "uniform float time;\n" +
                     "uniform vec2 resolution;\n" +
                     "\n" +
-                    "const float PI = 3.14159;\n" +
+                    "#define ROTATE_SPEED 0.2\n" +
+                    "#define MIX_SPEED 1.5\n" +
+                    "#define ZOOM 1.2\n" +
                     "\n" +
-                    "vec3 hsv(float h, float s, float v) {\n" +
-                    "\tfloat c = s * v;\n" +
-                    "\tfloat _ = mod(h * 6.0, 6.0);\n" +
-                    "\tvec3 C = vec3(c, c*(1.0 - abs(mod(_, 2.0) - 1.0)), 0.0);\n" +
-                    "\tif (_ < 1.0) {\n" +
-                    "\t\tC = vec3(C.x, C.y, C.z);\n" +
-                    "\t} else if (_ < 2.0) {\n" +
-                    "\t\tC = vec3(C.y, C.x, C.z);\n" +
-                    "\t} else if (_ < 3.0) {\n" +
-                    "\t\tC = vec3(C.z, C.x, C.y);\n" +
-                    "\t} else if (_ < 4.0) {\n" +
-                    "\t\tC = vec3(C.z, C.y, C.x);\n" +
-                    "\t} else if (_ < 5.0) {\n" +
-                    "\t\tC = vec3(C.y, C.z, C.x);\n" +
-                    "\t} else {\n" +
-                    "\t\tC = vec3(C.x, C.z, C.y);\n" +
-                    "\t}\n" +
-                    "\treturn C + (v - c);\n" +
+                    "#define SMOOTHERSTEP(x) ((x) * (x) * (x) * ((x) * ((x) * 6.0 - 15.0) + 10.0))\n" +
+                    "\n" +
+                    "vec3 bump3y(in vec3 x, in vec3 yoffset)\n" +
+                    "{\n" +
+                    "\tvec3 y = vec3(1.0) - x * x;\n" +
+                    "\ty = clamp(y - yoffset, 0.0, 1.9);\n" +
+                    "\treturn y;\n" +
                     "}\n" +
                     "\n" +
-                    "float map(vec3 p) {\n" +
-                    "\treturn 2.0 - length(p.xz);\n" +
+                    "vec3 spectral_zucconi(float x)\n" +
+                    "{\n" +
+                    "\tconst vec3 cs = vec3(3.54541723, 2.86670055, 2.29421995);\n" +
+                    "\tconst vec3 xs = vec3(0.69548916, 0.49416934, 0.28269708);\n" +
+                    "\tconst vec3 ys = vec3(0.02320775, 0.15936245, 0.53520021);\n" +
+                    "\n" +
+                    "\treturn bump3y(cs * (x - xs), ys);\n" +
                     "}\n" +
                     "\n" +
-                    "float noise(vec2 co){\n" +
-                    "    return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);\n" +
+                    "vec3 spectral_zucconi6(in float x)\n" +
+                    "{\n" +
+                    "\tconst vec3 c1 = vec3(3.54585104, 2.93225262, 2.41593945);\n" +
+                    "\tconst vec3 x1 = vec3(0.69549072, 0.49228336, 0.27699880);\n" +
+                    "\tconst vec3 y1 = vec3(0.02312639, 0.15225084, 0.52607955);\n" +
+                    "\n" +
+                    "\tconst vec3 c2 = vec3(3.90307140, 3.21182957, 3.96587128);\n" +
+                    "\tconst vec3 x2 = vec3(0.11748627, 0.86755042, 0.66077860);\n" +
+                    "\tconst vec3 y2 = vec3(0.84897130, 0.88445281, 0.73949448);\n" +
+                    "\n" +
+                    "\treturn\n" +
+                    "        bump3y(c1 * (x - x1), y1) +\n" +
+                    "        bump3y(c2 * (x - x2), y2);\n" +
+                    "}\n" +
+                    "\n" +
+                    "vec2 rotate(in vec2 point, in float rads)\n" +
+                    "{\n" +
+                    "\tfloat cs = cos(rads);\n" +
+                    "\tfloat sn = sin(rads);\n" +
+                    "\treturn point * mat2(cs, -sn, sn, cs);\n" +
                     "}\n" +
                     "\n" +
                     "void main( void ) {\n" +
-                    "\tvec2 p = (2.0 * gl_FragCoord.xy - resolution) / resolution.y;\n" +
-                    "\tvec3 cp = vec3(cos(time * 0.2), 0.0, sin(time * 0.45)) * 0.5;\n" +
-                    "\tvec3 cl = vec3(-sin(time), 10.0, cos(time));\n" +
-                    "\tvec3 cf = normalize(cl - cp);\n" +
-                    "\tvec3 cs = normalize(cross(cf, vec3(sin(time * 0.1), 0.0, cos(time * 0.1))));\n" +
-                    "\tvec3 cu = normalize(cross(cs, cf));\n" +
-                    "\tfloat focus = 0.5;\n" +
-                    "\tvec3 rd = normalize(cs * p.x + cu * p.y + cf * focus);\n" +
-                    "\tvec3 rp = cp;\n" +
-                    "\tfor (int i = 0; i < 64; ++i) {\n" +
-                    "\t\tfloat d = map(rp);\n" +
-                    "\t\tif (d < 0.001)\n" +
-                    "\t\t\tbreak;\n" +
-                    "\t\trp += rd * d;\n" +
-                    "\t}\n" +
-                    "\tfloat a = (atan(rp.z, rp.x)) * 16.0 / PI;\n" +
-                    "\tfloat ai = floor(a);\n" +
-                    "\tfloat af = fract(a);\n" +
-                    "\tfloat d = (rp.y + 0.5 * time) * 10.0;\n" +
-                    "\tfloat di = floor(d);\n" +
-                    "\tfloat df = fract(d);\n" +
-                    "\tfloat v = 32.0 * af * (1.0 - af) * df * (1.0 - df) * exp(-rp.y * 0.8);\n" +
-                    "\tgl_FragColor = vec4(hsv(noise(vec2(ai, di) * 0.01), 1.0, v), 1.0);\n" +
+                    "\tvec2 position = gl_FragCoord.xy / resolution.xy;\n" +
+                    "\tvec2 cpos = (position * 2.0) - 1.0;\n" +
+                    "\tvec2 rpos = rotate(cpos, time * ROTATE_SPEED);\n" +
+                    "\trpos *= ZOOM;\n" +
+                    "\tvec2 rposition = (rpos + 1.0) / 2.0;\n" +
+                    "\n" +
+                    "\tfloat w = (rposition.x + rposition.y) / 2.0;\n" +
+                    "\n" +
+                    "\tfloat period = mod(time * MIX_SPEED, 2.0);\n" +
+                    "\n" +
+                    "\tfloat reflectperiod = (period > 1.0) ? (2.0 - period) : period;\n" +
+                    "\n" +
+                    "\tvec3 s1 = spectral_zucconi(w);\n" +
+                    "\tvec3 s2 = spectral_zucconi6(w);\n" +
+                    "\n" +
+                    "\tvec3 color = mix(s1, s2, SMOOTHERSTEP(reflectperiod));\n" +
+                    "\n" +
+                    "\tfloat alpha = 1.0;\n" +
+                    "\tgl_FragColor = vec4(color, alpha);\n" +
                     "}";
+
+    private static final String colorBalls = "#ifdef GL_ES\n" +
+            "precision mediump float;\n" +
+            "#endif\n" +
+            "\n" +
+            "#extension GL_OES_standard_derivatives : enable\n" +
+            "\n" +
+            "uniform float time;\n" +
+            "uniform vec2 mouse;\n" +
+            "uniform vec2 resolution;\n" +
+            "\n" +
+            "vec4 draw_ball(vec2 ball_center, vec3 ball_color, float ball_rad, float freq, float fx, float fy, float rx, float ry){\n" +
+            "\tvec2 position = ( gl_FragCoord.xy / resolution.xy );\n" +
+            "\tfloat divider = resolution.x / resolution.y;\n" +
+            "\tvec2 center = ball_center;\n" +
+            "\tcenter.x += rx * cos(time * fx);\n" +
+            "\tcenter.y += ry * sin(time * fy);\n" +
+            "\tvec2 curpos = position - center;\n" +
+            "\tcurpos.y /= divider;\n" +
+            "\t\n" +
+            "\tfloat length_ = dot(curpos, curpos);\n" +
+            "\tfloat coly = 0.0;\n" +
+            "\tfloat r2 = ball_rad * ball_rad;\n" +
+            "\tcoly = r2 / length_;\n" +
+            "\treturn vec4(ball_color * coly * (sin(time * freq) + 2.0), 1.0);\n" +
+            "}\n" +
+            "\n" +
+            "void main( void ) {\n" +
+            "\t// 2d coordinates.\n" +
+            "\tgl_FragColor += draw_ball(vec2(0.5, 0.5), vec3(0.5, 0.05, 0.05), 0.05, 3.0, 3.0, 2.5, 0.1, 0.25);\n" +
+            "\tgl_FragColor += draw_ball(vec2(0.7, 0.5), vec3(0.05, 0.5, 0.05), 0.04, 4.0, 1.0, 4.5, 0.2, 0.1);\n" +
+            "\tgl_FragColor += draw_ball(vec2(0.3, 0.5), vec3(0.05, 0.05, 0.7), 0.04, 2.5, 5.0, 2.0, 0.1, 0.3);\n" +
+            "\tgl_FragColor += draw_ball(vec2(0.6, 0.5), vec3(0.05, 0.4, 0.05), 0.05, 3.5, 3.0, 2.0, 0.2, 0.3);\n" +
+            "\tgl_FragColor += draw_ball(vec2(0.25, 0.25), vec3(0.3, 0.23, 0.805), 0.04, 21.5, 1.0, 4.5, 0.2, 0.4);\n" +
+            "\tgl_FragColor += draw_ball(vec2(0.75, 0.45), vec3(0.3, 0.3, 0.085), 0.04, 2.5, 1.0, 4.5, 0.2, 0.4);\n" +
+            "\tgl_FragColor += draw_ball(vec2(0.45, 0.55), vec3(0.73, 0.53, 0.105), 0.04, 2.5, 1.0, 4.5, 0.2, 0.4);\n" +
+            "\tgl_FragColor += draw_ball(vec2(0.25, 0.65), vec3(0.53, 0.3, 0.205), 0.04, 2.5, 1.0, 4.5, 0.2, 0.4);\n" +
+            "\tgl_FragColor += draw_ball(vec2(0.55, 0.15), vec3(0.13, 0.73, 0.005), 0.04, 2.5, 1.0, 4.5, 0.2, 0.4);\n" +
+            "}";
+
+    private static final String wave = "#ifdef GL_ES\n" +
+            "precision mediump float;\n" +
+            "#endif\n" +
+            "\n" +
+            "uniform float time;\n" +
+            "uniform vec2 resolution;\n" +
+            "\n" +
+            "void main( void ) {\n" +
+            "\n" +
+            "\tvec2 uv = ( gl_FragCoord.xy / resolution.xy ) * 2.0 - 1.0;\n" +
+            "\n" +
+            "\tvec3 finalColor = vec3 ( 0.3, 0.5, 0.5 );\n" +
+            "\t\n" +
+            "\tfinalColor *= abs( 1.0 / (sin( uv.y + sin(uv.x+time) * .6) * 20.0) );\n" +
+            "\t\n" +
+            "\n" +
+            "\tgl_FragColor = vec4( finalColor, 1.0 );\n" +
+            "\n" +
+            "}";
+
+    private static final String waves2 = "#ifdef GL_ES\n" +
+            "precision mediump float;\n" +
+            "#endif\n" +
+            "\n" +
+            "#extension GL_OES_standard_derivatives : enable\n" +
+            "\n" +
+            "uniform float time;\n" +
+            "uniform vec2 mouse;\n" +
+            "uniform vec2 resolution;\n" +
+            "\n" +
+            "void main( void ) {\n" +
+            "\n" +
+            "\tvec2 pos = ( gl_FragCoord.xy / resolution.xy );\n" +
+            "\n" +
+            "\tfloat color_r = 0.0;\t\t\n" +
+            "\tfloat color_g = 0.0;\t\t\n" +
+            "\tfloat color_b = 0.0;\t\t\n" +
+            "\t\n" +
+            "\tfloat dist = (pos[1] - 0.4*sin((pos[0]+time/15.)*2.0) - 0.5);\n" +
+            "\tdist = abs(dist);\n" +
+            "\tcolor_r = pow(1.0 - dist, 5.0);\n" +
+            "\tfloat dist1 = (pos[1] - 0.5*sin((pos[0]+time/10.0)*2.0) - 0.5);\n" +
+            "\tdist1 = abs(dist1);\n" +
+            "\tcolor_g = pow(1.0 - dist1, 5.0);\n" +
+            "\tfloat dist2 = (pos[1] - 0.4*sin((pos[0]+time/5.)*2.0) - 0.5);\n" +
+            "\tdist2 = abs(dist2);\n" +
+            "\tcolor_b = pow(1.0 - dist2, 5.0);\n" +
+            "\t\n" +
+            "\tgl_FragColor = vec4( vec3( color_r, color_g, color_b ), 1.0 );\n" +
+            "}";
+
+    private static final String swirl2 = "#ifdef GL_ES\n" +
+            "precision highp float;\n" +
+            "#endif\n" +
+            "\n" +
+            "// Posted by Trisomie21\n" +
+            "// modified by @hintz\n" +
+            "\n" +
+            "uniform float time;\n" +
+            "uniform vec2 mouse;\n" +
+            "uniform vec2 resolution;\n" +
+            "\n" +
+            "void main(void)\n" +
+            "{\n" +
+            "\tfloat scale = resolution.y / 50.0;\n" +
+            "\tfloat ring = 10.0;\n" +
+            "\tfloat radius = resolution.x*1.0;\n" +
+            "\tfloat gap = scale*.1;\n" +
+            "\tvec2 pos = gl_FragCoord.xy - resolution.xy*.5;\n" +
+            "\t\n" +
+            "\tfloat d = length(pos);\n" +
+            "\t\n" +
+            "\t// Create the wiggle\n" +
+            "\td += .2*(sin(pos.y*0.25/scale+time/2.)*sin(pos.x*0.25/scale+time*.5))*scale*5.0;\n" +
+            "\t\n" +
+            "\t// Compute the distance to the closest ring\n" +
+            "\tfloat v = mod(d + radius/(ring*2.0), radius/ring);\n" +
+            "\tv = abs(v - radius/(ring*2.0));\n" +
+            "\t\n" +
+            "\tv = clamp(v-gap, 0.0, 1.0);\n" +
+            "\t\n" +
+            "\td /= radius;\n" +
+            "\tvec3 m = fract((d-1.0)*vec3(ring*-.5, -ring, ring*.25)*0.5);\n" +
+            "\t\n" +
+            "\tgl_FragColor = vec4(m*v, 1.0);\n" +
+            "}";
+
+    private static final String waves3 = "// Guyver\n" +
+            "#ifdef GL_ES\n" +
+            "precision mediump float;\n" +
+            "#endif\n" +
+            "\n" +
+            "\n" +
+            "uniform float time;\n" +
+            "uniform float lowFreq;\n" +
+            "uniform vec2 resolution;\n" +
+            "\n" +
+            "\n" +
+            "vec3 SUN_1 = vec3(0.0,0.5,1.0);\n" +
+            "vec3 SUN_2 = vec3(1.0,0.0,0.0);\n" +
+            "vec3 SUN_3 = vec3(0.1,1.0,0.753);\n" +
+            "vec3 SUN_4 = vec3(0.6,0.8,0.0);\n" +
+            "\n" +
+            "\n" +
+            "float sigmoid(float x)\n" +
+            "{\n" +
+            "\treturn 1.5/(1. + exp2(-x)) - 1.;\n" +
+            "}\n" +
+            "\n" +
+            "\n" +
+            "void main( void ) \n" +
+            "{\n" +
+            "\tvec2 position = gl_FragCoord.xy;\n" +
+            "\tvec2 aspect = vec2(resolution/resolution );\n" +
+            "\tposition -= 0.5*resolution;\n" +
+            "\tvec2 position2 = 0.5 + (position-0.5)/resolution*3.;\n" +
+            "\tposition *= .05;\n" +
+            "\tposition2 *= .05;\n" +
+            "\tfloat filter = sigmoid(pow(2.,7.5)*(length((position/resolution + 0.5)*aspect) - 0.015))*0.5 +0.5 +lowFreq*lowFreq;\n" +
+            "\tposition = mix(position, position2, filter) - 0.5;\n" +
+            "\n" +
+            "\tvec3 color = vec3(0.);\n" +
+            "\tfloat angle = atan(position.y,position.x);\n" +
+            "\tfloat d = length(position);\n" +
+            "\tfloat t = time * .5;\n" +
+            "\tcolor += 0.08/length(vec2(.05,0.5*position.y+sin(position.x*10.+t*-6.)))*SUN_3; \n" +
+            "\tcolor += 0.07/length(vec2(.06,1.0*position.y+sin(position.x*10.+t*-2.)))*SUN_1; // I'm sure there's an easier way to do this, this just happened to look nice and blurry.\n" +
+            "\tcolor += 0.06/length(vec2(.07,2.0*position.y+sin(position.x*10.+t*2.)))*SUN_2;\n" +
+            "\tcolor += 0.05/length(vec2(.08,4.0*position.y+sin(position.x*10.+t*6.)))*SUN_3;\n" +
+            "\tcolor += 0.04/length(vec2(.09,8.0*position.y+sin(position.x*10.+t*10.)))*SUN_4;" +
+            "\t\n" +
+            "\tgl_FragColor = vec4(color, 1.0);\n" +
+            "}";
 
     public BackGround() {
         //super(squareCoords,drawOrder,  vs_Image , fs_Image, resourceId);
@@ -549,7 +732,15 @@ public class BackGround extends Entity {
             programs.add(Shape.createProgram(vs_Image, greenWater, -1));
             //programs.add(Shape.createProgram(vs_Image, rainbow, -1));
             programs.add(Shape.createProgram(vs_Image, tunnel3, -1));
-            programs.add(Shape.createProgram(vs_Image, colorTunnel, -1));
+            programs.add(Shape.createProgram(vs_Image, rainbow2, -1));
+            programs.get(programs.size() - 1).setTimeLimit(360);
+            programs.add(Shape.createProgram(vs_Image, colorBalls, -1));
+            programs.get(programs.size() - 1).setTimeLimit(12);
+            programs.get(programs.size() - 1).setTimeStep(.001f);
+            programs.add(Shape.createProgram(vs_Image, wave, -1));
+            programs.add(Shape.createProgram(vs_Image, waves2, -1));
+            programs.add(Shape.createProgram(vs_Image, swirl2, -1));
+            programs.add(Shape.createProgram(vs_Image, waves3, -1));
         }
         if(resourceId == R.drawable.greengem ||
                 resourceId == R.drawable.redgem ||
