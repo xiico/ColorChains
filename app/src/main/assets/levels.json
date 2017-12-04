@@ -1265,6 +1265,138 @@
       "id": "54",
       "name": "Level Thirty Five",
       "tiles": [
+        "   MMMMM",
+        " M M   M",
+        " M   M M",
+        " MMM   M",
+        " MMM   M",
+        " M   M M",
+        " M M   M",
+        "   MMMMM"
+      ],
+      "customProperties": [],
+      "targetScore": 100,
+      "score": 0,
+      "highScore": 0,
+      "moves": 0,
+      "maxMoves": 0,
+      "targetMoves": 500,
+      "sets": []
+    },
+    {
+      "id": "55",
+      "name": "Level Thirty Five",
+      "tiles": [
+        "        ",
+        "   MM   ",
+        "M  MM  M",
+        "   MM   ",
+        "  MMMM  ",
+        "M      M",
+        "  MMMM  ",
+        "        "
+      ],
+      "customProperties": [],
+      "targetScore": 100,
+      "score": 0,
+      "highScore": 0,
+      "moves": 0,
+      "maxMoves": 0,
+      "targetMoves": 500,
+      "sets": []
+    },
+    {
+      "id": "56",
+      "name": "Level Thirty Five",
+      "tiles": [
+        "        ",
+        " M M    ",
+        " M   MM ",
+        " M M    ",
+        " M M    ",
+        " M   MM ",
+        " M M    ",
+        "        "
+      ],
+      "customProperties": [],
+      "targetScore": 100,
+      "score": 0,
+      "highScore": 0,
+      "moves": 0,
+      "maxMoves": 0,
+      "targetMoves": 500,
+      "sets": []
+    },
+    {
+      "id": "57",
+      "name": "Level Thirty Five",
+      "tiles": [
+        "        ",
+        " M M M M",
+        "        ",
+        "M M M M ",
+        "        ",
+        " M M M M",
+        "        ",
+        "M M M M "
+      ],
+      "customProperties": [],
+      "targetScore": 100,
+      "score": 0,
+      "highScore": 0,
+      "moves": 0,
+      "maxMoves": 0,
+      "targetMoves": 500,
+      "sets": []
+    },
+    {
+      "id": "58",
+      "name": "Level Thirty Five",
+      "tiles": [
+        "        ",
+        " M M M M",
+        "   M    ",
+        "M MMM M ",
+        "   M    ",
+        " M M M M",
+        " M   M M",
+        "MMMMMMMM"
+      ],
+      "customProperties": [],
+      "targetScore": 100,
+      "score": 0,
+      "highScore": 0,
+      "moves": 0,
+      "maxMoves": 0,
+      "targetMoves": 500,
+      "sets": []
+    },
+    {
+      "id": "59",
+      "name": "Level Thirty Five",
+      "tiles": [
+        "M      M",
+        " M M MMM",
+        "  M     ",
+        "M   M M ",
+        "   M M  ",
+        " MMM M M",
+        " M      ",
+        "MMM M M "
+      ],
+      "customProperties": [],
+      "targetScore": 100,
+      "score": 0,
+      "highScore": 0,
+      "moves": 0,
+      "maxMoves": 0,
+      "targetMoves": 500,
+      "sets": []
+    },
+    {
+      "id": "60",
+      "name": "Level Thirty Five",
+      "tiles": [
         "        ",
         "        ",
         "        ",
@@ -1284,7 +1416,7 @@
       "sets": []
     },
     {
-      "id": "55",
+      "id": "61",
       "name": "Level Thirty Five",
       "tiles": [
         "WWWWWWWW",

@@ -231,10 +231,12 @@ public class GameView extends GLSurfaceView {
 
         private void setUpEnvironment(int width, int height){
             GameView.is16x9 = metrics.heightPixels / (float)metrics.widthPixels >= 1.6f;
-            scale = Math.round(metrics.widthPixels / 360f);
+            //scale = Math.round(metrics.widthPixels / 360f);
+            scale = (metrics.widthPixels / 360f);
             GameView.defaultSide = GameView.is16x9 ? 42 : (metrics.widthPixels < 800 ? 46 : 48);
             GameView.defaultSide = (metrics.widthPixels <= 600 ? 36 : GameView.defaultSide);
             GameView.defaultSide = (metrics.widthPixels <= 540 ? 32 : GameView.defaultSide);
+            GameView.defaultSide = (metrics.widthPixels <= 480 ? 58 : GameView.defaultSide);
             if(metrics.widthPixels <= 600) UI.fontScaleBig = 6.0f;
             GameView.scaledDefaultSide = GameView.defaultSide * (int)scale;
             Shape.setPixelWidth(1f / width);

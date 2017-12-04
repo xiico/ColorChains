@@ -16,14 +16,12 @@ import java.util.List;
  */
 
 public class EntityCollection extends Shape{
-    float entityWidthGl, entityHeightGl;
     static float fontCoords[] = {
             -0.5f,  0.5f, 0.0f,  // top left      0
             -0.5f, -0.5f, 0.0f,  // bottom left   1
             0.5f, -0.5f, 0.0f,  // bottom right  2
             0.5f,  0.5f, 0.0f }; // top right     3
     public static short drawOrder[] = {0, 1, 2, 0, 2, 3}; // order to draw vertices
-    public float[][] uvMap;//textureMap
     //public boolean checkMario = false;
     public float[] transformationMatrix = new float[16];
     public static final String vs_Gem =
@@ -58,25 +56,29 @@ public class EntityCollection extends Shape{
         this.rowCount = rowCount;
         this.colCount = colCount;
     }
+
+    @Override
     public void buildTextureMap(Integer totalItems, Integer width, Integer height){
-        entityWidthGl = 1f / width;// colCount;
-        entityHeightGl = 1f / height;// rowCount;
-        uvMap = new float[totalItems][8];
-        for (int i = 0; i < totalItems; i++) {
-            int hPos = i;
-            float u = (hPos * entityWidthGl) % (entityWidthGl * width);
-            float v = (((int)Math.floor((hPos * entityWidthGl) / (entityWidthGl * width)) * entityHeightGl));
-            uvMap[i][0] = u;
-            uvMap[i][1] = v + entityHeightGl;
-            uvMap[i][2] = u;
-            uvMap[i][3] = v;
-            uvMap[i][4] = u + entityWidthGl;
-            uvMap[i][5] = v;
-            uvMap[i][6] = u + entityWidthGl;
-            uvMap[i][7] = v + entityHeightGl;
-        }
+//        entityWidthGl = 1f / width;// colCount;
+//        entityHeightGl = 1f / height;// rowCount;
+//        uvMap = new float[totalItems][8];
+//        for (int i = 0; i < totalItems; i++) {
+//            int hPos = i;
+//            float u = (hPos * entityWidthGl) % (entityWidthGl * width);
+//            float v = (((int)Math.floor((hPos * entityWidthGl) / (entityWidthGl * width)) * entityHeightGl));
+//            uvMap[i][0] = u;
+//            uvMap[i][1] = v + entityHeightGl;
+//            uvMap[i][2] = u;
+//            uvMap[i][3] = v;
+//            uvMap[i][4] = u + entityWidthGl;
+//            uvMap[i][5] = v;
+//            uvMap[i][6] = u + entityWidthGl;
+//            uvMap[i][7] = v + entityHeightGl;
+//        }
+        super.buildTextureMap(totalItems,width,height);
         setBuffers();
     }
+
     public FloatBuffer vertexBuffer;
     @Override
     public void setVertexBuffer(float[] coords){
@@ -108,7 +110,7 @@ public class EntityCollection extends Shape{
                 if(entity == null) continue;//{entity = new UI.Button("btn","",0f,0f,0,0); }
                 float posX = (entity.getX() / entity.getWidth()), posY = (entity.getY() / entity.getHeight());
                 Integer uvIndex;
-                uvIndex = getUVIndex(entity);
+                uvIndex = getUVIndex(entity);//Get current frame animation
                 if (uvIndex == null) continue;
 
                 for (int j = 0; j < 8; j++) {

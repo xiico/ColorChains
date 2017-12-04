@@ -168,11 +168,12 @@ class UI {
             font.setText(text);
             font.setX(this.getX());
             font.setY(this.getY());
-            this.uvs = new float[8];
-            for (int i = 0; i < 8 ; i++) {
-                uvs[i] = (super.uvs[(textureIndex * 8) + i]);
-            }
-            setUVBuffer(uvs);
+//            this.uvs = new float[8];
+//            for (int i = 0; i < 8 ; i++) {
+//                uvs[i] = (super.uvs[(textureIndex * 8) + i]);
+//            }
+//            setUVBuffer(uvs);
+            setAnimationIndex(textureIndex);
         }
 
         @Override
@@ -308,6 +309,10 @@ class UI {
             this.controls.add(okButton);
             this.controls.add(cancelButton);
             this.font = new Font(R.drawable.oldskol, 2.0f);
+            if(GameView.screenW <= 480) {
+                this.font.scale = 0.9f;
+                this.font.doScale = true;
+            }
         }
 
         // Assign the listener implementing events interface that will receive the events
@@ -514,8 +519,8 @@ class UI {
             this.stages = stages;
             this.cacheWidth = GameView.screenW;
             this.cacheHeight = GameView.screenH;
-            title = new Font(R.drawable.oldskol, 5);
-            title.setY(192);
+            title = new Font(R.drawable.oldskol, (GameView.screenW > 480 ? 5 : 4));
+            title.setY((GameView.screenW > 480 ? 192 : 124));
             title.setX(GameView.metrics.widthPixels / 2);
             title.setText("Level Select");
             init(stages, board);
@@ -541,7 +546,7 @@ class UI {
                 int index = stages.indexOf(stage);
                 int i = index % (colSize * rowSize);
                 int row = (int)Math.floor(i / rowSize), col = i % colSize;
-                Button btn = new Button(stage.id, String.valueOf((index) + 1), col * GameView.metrics.widthPixels / (colSize + 1f), row * 120f, 0, 0);
+                Button btn = new Button(stage.id, String.valueOf((index) + 1), col * GameView.metrics.widthPixels / (colSize + 1f), row * (GameView.screenW > 480 ? 120f : 96f), 0, 0);
                 //btn.addAnimation("idle", 0, 0, new Integer[]{0}, 0.5f, false);
                 btn.curAnimation = btn.addAnimation("idle", 0, 0, new Integer[]{0}, 0.5f, false);
                 btn.curAnimation.curFrame = highScore.highScore > 0 || (highScore.highScore == 0 && lastHighScore != 0) || index == 0 || enableAll ? getButtonFrame(stage, highScore) : 0;
@@ -675,17 +680,20 @@ class UI {
                 }
             });
 
-            Font fnt = new Font(R.drawable.oldskol, 3);
+            Font fnt = new Font(R.drawable.oldskol, GameView.screenW > 480 ? 3 : 2);
+            //fnt.scale = .75f;
+            //fnt.doScale = true;
             fnt.setText(stage.text);
             fnt.offSetX = defaultOffsetX;
             fnt.offSetY = defaultOffsetY;
             stage.offSetX = fnt.offSetX;
             stage.offSetY = fnt.offSetY;
             fnt.setX(stage.getX());
+
             fnt.setY(stage.getY());
             curStageFonts.add(fnt);
-            stage.cacheWidth = 92;
-            stage.cacheHeight = 92;
+            stage.cacheWidth = GameView.screenW > 480 ? 92 : 58;//92;
+            stage.cacheHeight = GameView.screenW > 480 ? 92 : 58;//92;
             entities[col][row] = stage;
             controls.get(controls.size() - 1).addControl(stage);
         }
@@ -707,7 +715,7 @@ class UI {
                     pagesView.entities[col][row] = ctrl;
                 }
                 pagesView.setX((GameView.screenW / 2) + 12 - (total * 24f / 2));
-                pagesView.setY(getCurPage().page.offSetY + (120 * 5f));
+                pagesView.setY(getCurPage().page.offSetY + ((GameView.screenW > 480 ? 120 : 96) * 5f));
             } else {
                 for (int i = 0; i < total; i++) {
                     int row = 0, col = i % total;
@@ -779,7 +787,8 @@ class UI {
                 this.cacheWidth = GameView.screenW;
                 this.cacheHeight = GameView.screenH;
                 page = new EntityCollection(R.drawable.levelselect, new Entity[colSize][rowSize], rowSize, colSize);
-                page.setWidth(page.getWidth() / 5);
+                page.setWidth(GameView.screenW > 480 ? page.getWidth() / 5 : 58);
+                if(GameView.screenW <= 480) page.setHeight(58);
             }
         }
     }

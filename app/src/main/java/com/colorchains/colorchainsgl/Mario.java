@@ -100,10 +100,10 @@ public class Mario extends Gem {
             int cacheWidth = GameView.scaledDefaultSide / 2;
             int cacheHeight = GameView.scaledDefaultSide / 2;
             c.drawBitmap(bmp, new Rect(cacheX, cacheY, cacheX + cacheWidth, cacheY + cacheHeight),
-                    new RectF(posX + (Mario.cachePosition[i / 2].x * GameView.scale),
-                            posY + ((float)Mario.cachePosition[i / 2].y * GameView.scale),
-                            posX + (Mario.cachePosition[i / 2].x * GameView.scale) + (GameView.scaledDefaultSide / 2),
-                            posY + ((float)Mario.cachePosition[i / 2].y * GameView.scale)+ (GameView.scaledDefaultSide / 2)), marioPaint);
+                    new RectF(posX + (Mario.cachePosition[i / 2].x * (int) GameView.scale),
+                            posY + ((float)Mario.cachePosition[i / 2].y * (int) GameView.scale),
+                            posX + (Mario.cachePosition[i / 2].x * (int) GameView.scale) + (GameView.scaledDefaultSide / 2),
+                            posY + ((float)Mario.cachePosition[i / 2].y * (int) GameView.scale)+ (GameView.scaledDefaultSide / 2)), marioPaint);
         }
     }
 }

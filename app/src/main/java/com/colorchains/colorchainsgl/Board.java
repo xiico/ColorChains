@@ -82,11 +82,11 @@ public class Board extends Entity {
         //App settings
         settings = this.context.getSharedPreferences(APP_STATES, 0);
 
-        this.border = 8 + (GameView.is16x9 ? 4 : 0);
+        this.border = 8 + (GameView.is16x9 && GameView.metrics.widthPixels > 480 ? 4 : 0);
         this.border = (GameView.metrics.widthPixels <= 600 ? this.border / 2 : this.border);
         this.border = (GameView.metrics.widthPixels <= 540 ? 7 : this.border);
         gemOffsetX = (border * (int)GameView.scale);
-        gemOffsetY = (126*(int)GameView.scale);
+        gemOffsetY = (150/*126*/*/*(int)*/GameView.scale);
         //Log.d("Board","border: " + this.border +",gemOffsetX: " + gemOffsetX + ",gemOffsetY: " + gemOffsetY);
         addControls();
         //UI.hide();
@@ -265,7 +265,7 @@ public class Board extends Entity {
 
         UI.InfoBox infoBox = new UI.InfoBox("infoBox", 0f, GameView.scale * 5);
         infoBox.setX((GameView.metrics.widthPixels / 2f) - (infoBox.getWidth() / 2));
-        infoBox.setY(42f);
+        infoBox.setY( GameView.scale >= 2 ? 42f : 0);
         infoBox.visible = false;
         UI.addControl(infoBox);
 

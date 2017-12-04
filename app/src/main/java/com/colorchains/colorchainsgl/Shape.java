@@ -251,6 +251,11 @@ public class Shape implements Comparable<Shape> {
         if(doScale) {
 //            if (scale <= minScale || scale >= maxScale) scaleStep = scaleStep * -1;
 //            scale += scaleStep;
+            // Set filtering
+//            GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER,
+//                    GLES20.GL_LINEAR);
+//            GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER,
+//                    GLES20.GL_LINEAR);
             Matrix.scaleM(this.mMVPMatrix, 0, getWidth() * scale, getHeight() * scale, 1);
         } else Matrix.scaleM(this.mMVPMatrix, 0, this.getWidth(), this.getHeight(), 1);
 
@@ -412,6 +417,7 @@ public class Shape implements Comparable<Shape> {
     // Geometric variables
     public static float vertices[];
     public float uvs[];
+    public float uvToBuffer[];
     public ShortBuffer drawListBuffer;
     public FloatBuffer uvBuffer;
 
@@ -547,6 +553,29 @@ public class Shape implements Comparable<Shape> {
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textures.get(resourceId).textureId);
     }
 
+
+    float entityWidthGl, entityHeightGl;
+    public float[][] uvMap;//textureMap
+    public void buildTextureMap(Integer totalItems, Integer width, Integer height){
+        entityWidthGl = 1f / width;// colCount;
+        entityHeightGl = 1f / height;// rowCount;
+        uvMap = new float[totalItems][8];
+        for (int i = 0; i < totalItems; i++) {
+            int hPos = i;
+            float u = (hPos * entityWidthGl) % (entityWidthGl * width);
+            float v = (((int)Math.floor((hPos * entityWidthGl) / (entityWidthGl * width)) * entityHeightGl));
+            uvMap[i][0] = u;
+            uvMap[i][1] = v + entityHeightGl;
+            uvMap[i][2] = u;
+            uvMap[i][3] = v;
+            uvMap[i][4] = u + entityWidthGl;
+            uvMap[i][5] = v;
+            uvMap[i][6] = u + entityWidthGl;
+            uvMap[i][7] = v + entityHeightGl;
+        }
+        //setBuffers();
+    }
+
     public float getWidth() {
         return width;
     }
@@ -561,6 +590,14 @@ public class Shape implements Comparable<Shape> {
 
     public void setHeight(float height) {
         this.height = height;
+    }
+
+    public void setAnimationIndex(Integer AnimationIndex){
+        uvToBuffer = new float[8];
+        for (int i = 0; i < 8 ; i++) {
+            uvToBuffer[i] = (uvs[(AnimationIndex * 8) + i]);
+        }
+        setUVBuffer(uvToBuffer);
     }
 
     public class TextureInfo{
