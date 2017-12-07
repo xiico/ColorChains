@@ -210,6 +210,7 @@ public class Shape implements Comparable<Shape> {
                 GLES20.glUniform2f(resolution, this.getWidth(), this.getHeight());
                 int color = GLES20.glGetUniformLocation(mProgram.getProgramId(), "color");
                 GLES20.glUniform4f(color, this.color[0], this.color[1], this.color[2], this.color[3]);
+                ((UI.ProgressBar)this).updateBar();
                 int value = GLES20.glGetUniformLocation(mProgram.getProgramId(), "value");
                 GLES20.glUniform1f(value, ((UI.ProgressBar)this).getValue());
             } else {
@@ -556,6 +557,13 @@ public class Shape implements Comparable<Shape> {
 
     float entityWidthGl, entityHeightGl;
     public float[][] uvMap;//textureMap
+
+    /**
+     *
+     * @param totalItems Total number of items in the uvMap
+     * @param width Number of items in the horizontal axe
+     * @param height Number of items in the vertical axe
+     */
     public void buildTextureMap(Integer totalItems, Integer width, Integer height){
         entityWidthGl = 1f / width;// colCount;
         entityHeightGl = 1f / height;// rowCount;
@@ -595,7 +603,8 @@ public class Shape implements Comparable<Shape> {
     public void setAnimationIndex(Integer AnimationIndex){
         uvToBuffer = new float[8];
         for (int i = 0; i < 8 ; i++) {
-            uvToBuffer[i] = (uvs[(AnimationIndex * 8) + i]);
+            //uvToBuffer[i] = (uvs[(AnimationIndex * 8) + i]);
+            uvToBuffer[i] = uvMap[AnimationIndex][i];
         }
         setUVBuffer(uvToBuffer);
     }

@@ -55,6 +55,8 @@ public class Board extends Entity {
     private UI.Confirm reloadPuzzle;
     private UI.LevelCompleted levelCompleted;
 
+    private UI.Stars stars;
+
     public boolean clearChains = false;
     private static final String APP_STATES = "appStates";
     private static final String BOARD_STATE = "boardState";
@@ -250,6 +252,7 @@ public class Board extends Entity {
                     GameView.board.chains = null;
                     nextButton.visible = false;
                     levelCompleted.visible = false;
+                    stars.visible = false;
                     checkComplete = true;
                     showExit.visible  = true;
                     showReload.visible = true;
@@ -297,6 +300,13 @@ public class Board extends Entity {
 //            }
 //        });
         UI.addControl(levelSelect);
+
+        stars = new UI.Stars();
+        stars.setX(GameView.screenW / 2);
+        stars.setY((GameView.screenH / 2) + 68);
+        stars.visible = false;
+        stars.setStars(0);
+        UI.addControl(stars);
     }
 
     private int calculateScore(boolean lastScore){
@@ -306,7 +316,7 @@ public class Board extends Entity {
             Chain chain = chains.get(index);
             float iScore = 0;
             for (int i = 0; i < chain.chained.size(); i++) {
-                iScore = ((i + 1) * (float)Math.cbrt(i));
+                iScore = ((i + 1) * (float)Math.cbrt(i)) * (i > 4 ? 4f/i : 1);
             }
             score += iScore * 10 * (chain.loop ? (int)Math.sqrt(chain.chained.size()) : 1) * (lastScore ? Math.max(getScoreMultiplier(),1f) : 1)/*( lastScore ? Math.max( 16 / (16 - Math.min((curStage.targetMoves - curStage.moves),15)) , 1) : 1 )*/;
         }
@@ -589,10 +599,17 @@ public class Board extends Entity {
             //if(this.getScoreMultiplier() >= 1) {
                 levelCompleted.visible = true;
                 levelCompleted.transform.scaleIn(4,levelCompleted.scale,0.5f);
+                stars.visible = true;
             //}
             checkComplete = false;
             ((UI.InfoBox)UI.findControlById("infoBox")).transferScore();
         } else nextButton.visible = this.levelComplete && levelCompleted.canLoadNextLevel();
+        if(this.levelComplete) {
+            if(progressBar.getValue() < .5f) stars.setStars(0);
+            else if(progressBar.getValue() >= .5f && progressBar.getValue() < .75f) stars.setStars(1);
+            else if(progressBar.getValue() >= .75f && progressBar.getValue() < 1f) stars.setStars(2);
+            else stars.setStars(3);
+        }
 
     }
     private boolean checkComplete = true;
@@ -640,6 +657,7 @@ public class Board extends Entity {
         this.chains = null;
         nextButton.visible = false;
         levelCompleted.visible = false;
+        stars.visible = false;
         checkComplete = true;
     }
 
@@ -681,6 +699,7 @@ public class Board extends Entity {
                 }
                 if(chain.complete && this.contactPoints(chain.chained.get(0), chain).indexOf(chain.chained.get(chain.count - 1)) >= 0) chain.loop = true;
             }
+            trySave = 0;
             saveState();
             ((UI.InfoBox)UI.findControlById("infoBox")).setScore(curStage.score);
             ((UI.InfoBox)UI.findControlById("infoBox")).setPuzzleScore(calculateScore(false));
@@ -702,13 +721,23 @@ public class Board extends Entity {
         return false;
     }
 
+    int trySave = 0;
     private void saveState(){
-        String boardState = this.boardToJSON();
-        moveHistory.add(boardState);
-        SharedPreferences.Editor editor = settings.edit();
-        editor.putString("boardState", boardState);
-        editor.putInt("stageIndex", this.stageIndex);
-        editor.commit();
+
+        try{
+            String boardState = this.boardToJSON();
+            moveHistory.add(boardState);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putString("boardState", boardState);
+            editor.putInt("stageIndex", this.stageIndex);
+            editor.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+            if(e.getClass().equals(java.lang.NullPointerException.class) && trySave < 20){
+                trySave++;
+                saveState();
+            }
+        }
     }
 
     private void saveScore(){

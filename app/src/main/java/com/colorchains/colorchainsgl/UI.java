@@ -173,6 +173,7 @@ class UI {
 //                uvs[i] = (super.uvs[(textureIndex * 8) + i]);
 //            }
 //            setUVBuffer(uvs);
+            buildTextureMap(2,2,1);
             setAnimationIndex(textureIndex);
         }
 
@@ -261,10 +262,13 @@ class UI {
         }
 
         public float getValue(){
+            return _value;
+        }
+
+        public void updateBar(){
             if(tempValue > _value) _value += 0.006f;
             if(tempValue < _value) _value -= 0.006f;
             if(Math.abs(tempValue - _value) <= 0.006) _value = tempValue;
-            return _value;
         }
 
         @Override
@@ -492,6 +496,39 @@ class UI {
         }
     }
 
+    public static class Stars extends Control{
+        private int stars = 1;
+        float flStars = 0;
+        public Stars() {
+            super("title", TYPE.STARS, 0f, 0f, 0, 0);
+            //this.cacheHeight = (int)this.getHeight() / 4;
+            this.setHeight(this.getHeight() / 4);
+            buildTextureMap(4,1,4);
+            //uvs = uvMap[stars];
+            setAnimationIndex(stars);
+            setOffSetX(0);
+            setOffSetY(0);
+        }
+
+//        @Override
+//        public void draw()
+//        {
+//            if(flStars+.01f <= 4)
+//                flStars+=.01f;
+//            else
+//                flStars =  0;
+//            setAnimationIndex((int)flStars);
+//            super.draw();
+//        }
+
+        public void setStars(int stars) {
+            if(stars < 0) this.stars = 0;
+            else if (stars > 3) this.stars = 3;
+            else this.stars = stars;
+            setAnimationIndex(this.stars);
+        }
+    }
+
     static class LevelSelect extends Control implements UIListener{
         //EntityCollection stageCol;
         int colSize = 5;
@@ -510,7 +547,7 @@ class UI {
         private boolean dragging = false;
         private boolean changingPage = false;
         private float lastSpeed = 0;
-        public boolean enableAll = false;
+        public boolean enableAll = true;
 
         public LevelSelect(List<Stage> stages, Board board) {
             super("levelSelect", TYPE.LEVELSELECT, 0f, 0f, 0, 0);
@@ -692,8 +729,13 @@ class UI {
 
             fnt.setY(stage.getY());
             curStageFonts.add(fnt);
-            stage.cacheWidth = GameView.screenW > 480 ? 92 : 58;//92;
-            stage.cacheHeight = GameView.screenW > 480 ? 92 : 58;//92;
+            if(GameView.screenW <= 800) {
+                stage.cacheWidth = GameView.screenW > 480 ? 92 : 58;//92;
+                stage.cacheHeight = GameView.screenW > 480 ? 92 : 58;//92;
+            } else {
+                stage.cacheWidth = (int)(92f * 1.25f);
+                stage.cacheHeight = (int)(92f * 1.25f);
+            }
             entities[col][row] = stage;
             controls.get(controls.size() - 1).addControl(stage);
         }
@@ -787,8 +829,13 @@ class UI {
                 this.cacheWidth = GameView.screenW;
                 this.cacheHeight = GameView.screenH;
                 page = new EntityCollection(R.drawable.levelselect, new Entity[colSize][rowSize], rowSize, colSize);
-                page.setWidth(GameView.screenW > 480 ? page.getWidth() / 5 : 58);
-                if(GameView.screenW <= 480) page.setHeight(58);
+                if(GameView.screenW <= 800) {
+                    page.setWidth(GameView.screenW > 480 ? page.getWidth() / 5 : 58);
+                    if (GameView.screenW <= 480) page.setHeight(58);
+                } else {
+                    page.setWidth(92f*1.25f);
+                    page.setHeight(92f*1.25f);
+                }
             }
         }
     }
@@ -869,11 +916,15 @@ class UI {
             font = new Font(R.drawable.oldskol, fontScaleBig);
             setText("Level\nCompleted!");
             font.vAlign = Font.VerticalAlignment.BOTTOM;
+            if(GameView.screenW > 800){
+                font.doScale = true;
+                font.scale = 1.5f;
+            }
             this.setX(GameView.metrics.widthPixels / 2);
             this.setY(GameView.metrics.heightPixels / 2);
             font.setText(text);
             font.setX(this.getX());
-            font.setY(this.getY());
+            font.setY(this.getY() - 60);
             _pb = pb;
             this.visible = false;
         }

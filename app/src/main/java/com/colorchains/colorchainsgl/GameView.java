@@ -263,6 +263,10 @@ public class GameView extends GLSurfaceView {
                 /********************/
                 if(!testProgram) {
                     title = new UI.Title();
+                    if(GameView.screenW > 768){
+                        title.doScale = true;
+                        title.scale = 1.5f;
+                    }
                     title.setX(width / 2);
                     title.setY(height / 2);
                     UI.addControl(title);

@@ -29,5 +29,6 @@ public enum TYPE {
     LEVELCOMPLETE,
     LEVELSELECT,
     PAGING,
-    CANCELRELOAD
+    CANCELRELOAD,
+    STARS,
 }

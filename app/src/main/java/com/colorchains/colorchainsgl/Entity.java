@@ -122,6 +122,8 @@ public abstract class Entity extends Shape {
                 return R.drawable.paging;
             case CANCELRELOAD:
                 return R.drawable.cancelreload;
+            case STARS:
+                return R.drawable.stars;
             default:
                 return -1;
         }
