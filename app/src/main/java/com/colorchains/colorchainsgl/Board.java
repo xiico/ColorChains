@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Random;
 
 import static com.colorchains.colorchainsgl.GameView.GLRenderer.updateMarioTexture;
 import static com.colorchains.colorchainsgl.Media.playPuzzleBGM;
@@ -189,6 +190,7 @@ public class Board extends Entity {
                     Collections.shuffle(Media.tracks);
                     Media.stopPuzzleBGM();
                     Media.setBackGroundMusic(R.raw.title);
+                    GameView.GLRenderer.SetRandomBackGround(-1);
                 }
                 exitPuzzle.visible = false;
             }
@@ -450,6 +452,7 @@ public class Board extends Entity {
     }
     //</editor-fold>
 
+    Random r = new Random();
     private void addEntity(String row, TYPE type, int i, int k, Integer cx, Integer cy, Integer idx) {
         this.entities[i][k] = (Gem)Entity.create(i + "-" + k, type, (float)GameView.scaledDefaultSide * k, (float)GameView.scaledDefaultSide * i, cx, cy, this);
         if(this.entities[i][k] == null) return;
@@ -459,7 +462,8 @@ public class Board extends Entity {
         //if (this.entities[i][k].setYs) this.entities[i][k].setYs(null, null);
         if (this.entities[i][k].type == TYPE.MARIO) this.marioBuffer.add(this.entities[i][k]);
         //if((this.entities[i][k]).id.equals("3-5") && this.entities[i][k].type != TYPE.MARIO) this.entities[i][k].doScale = this.entities[i][k].rotate = true;
-        if((this.entities[i][k]).id.equals("4-4") && this.entities[i][k].type != TYPE.MARIO) this.entities[i][k].transform.scaleIn(4f,this.entities[i][k].scale,0.5f);
+        if(Math.abs(r.nextInt()) % 5 == 0//(this.entities[i][k]).id.equals("4-4")
+                && this.entities[i][k].type != TYPE.MARIO) this.entities[i][k].transform.scaleIn(4f,this.entities[i][k].scale,0.5f);
     }
 
     private TYPE getEntity(String type) {
@@ -594,7 +598,7 @@ public class Board extends Entity {
             this.curStage.score += this.calculateScore(true);
             //this.curStage.score = this.curStage.score * Math.max( 16 / (16 - Math.min((curStage.targetMoves - curStage.moves),15)) , 1);
             //progressBar.setValue(curStage.score / (float)curStage.targetScore);
-            progressBar.setValue(this.getScoreMultiplier() / 2.1f);
+            progressBar.setValue(this.getScoreMultiplier() / 2f);
             //if(curStage.score >= (float)curStage.targetScore) {
             //if(this.getScoreMultiplier() >= 1) {
                 levelCompleted.visible = true;
@@ -733,10 +737,10 @@ public class Board extends Entity {
             editor.commit();
         } catch (Exception e) {
             e.printStackTrace();
-            if(e.getClass().equals(java.lang.NullPointerException.class) && trySave < 20){
-                trySave++;
-                saveState();
-            }
+//            if(e.getClass().equals(java.lang.NullPointerException.class) && trySave < 20){
+//                trySave++;
+//                saveState();
+//            }
         }
     }
 
@@ -770,12 +774,12 @@ public class Board extends Entity {
 
     public HighScore getHighScore(String id){
         String stageScores = settings.getString(STAGE_SCORES + id,"");
-        if(stageScores.length() == 0) return new HighScore();
+        //if(stageScores.length() == 0) return new HighScore();
         JSONObject obj;
         HighScore highScore = new HighScore();
         try {
-            obj = new JSONObject(stageScores);
-            highScore.highScore = Integer.parseInt(obj.getString("highScore"));
+            obj = new JSONObject(stageScores.length() != 0 ? stageScores : "{\"highScore\":0}");
+            highScore.highScore = stageScores.length() != 0 ? Integer.parseInt(obj.getString("highScore")) : this.stages.get(Integer.parseInt(id)).highScore;
             highScore.moves =  obj.has("highScoreMoves") ? Integer.parseInt(obj.getString("highScoreMoves")) : 0;
         } catch (JSONException e) {
             e.printStackTrace();
@@ -939,6 +943,7 @@ public class Board extends Entity {
         levelSelect.visible = false;
         GameView.GLRenderer._boardReady = false;
         this.curStage = stages.get(index);
+        this.curStage.curSet = null;
         this.curStage.moves = 0;
         this.curStage.score = 0;
         this.stageIndex = index;

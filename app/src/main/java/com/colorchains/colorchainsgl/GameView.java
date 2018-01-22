@@ -126,7 +126,7 @@ public class GameView extends GLSurfaceView {
 //                GameView.renderer.backGround.index++;
 //            } else GameView.renderer.backGround.index = 0;
 //        }
-        GameView.renderer.backGround.mProgram = GameView.renderer.backGround.programs.get(GameView.renderer.backGround.index);
+
         /***********/
 
         if(GameView.paused) GameView.paused = false;
@@ -209,7 +209,7 @@ public class GameView extends GLSurfaceView {
         public static final float[] mViewMatrix = new float[16];
         public static Integer curProgram = -1;
         public static Integer curTexture = -1;
-        public BackGround backGround;
+        public static BackGround backGround;
         public UI.Title title;
         public static volatile boolean _boardReady = false;
         public static volatile boolean updateMarioTexture = false;
@@ -290,12 +290,7 @@ public class GameView extends GLSurfaceView {
                     backGround.setOffSetY(0);
                     backGround.doScale = false;
                     backGround.rotate = false;
-                    int randint = 14;
-                    if (GameView.cycleBG) {
-                        Random r = new Random();
-                        randint = Math.abs(r.nextInt()) % backGround.programs.size();
-                    }
-                    backGround.index = randint;
+                    SetRandomBackGround(0);
 
                     /******* end onSurfaceChanged GL2 **********/
                     w = metrics.widthPixels;//600
@@ -307,6 +302,17 @@ public class GameView extends GLSurfaceView {
                     UI.addControl(levelSelect);
                 }
             }
+        }
+
+        public static void SetRandomBackGround(int bgIndex) {
+            int randint = 14;
+            if (GameView.cycleBG) {
+                Random r = new Random();
+                randint = Math.abs(r.nextInt()) % backGround.programs.size();
+            }
+            backGround.index = randint;
+            if(bgIndex < 0)
+                GameView.renderer.backGround.mProgram = GameView.renderer.backGround.programs.get(GameView.renderer.backGround.index);
         }
 
         public String loadJSONFromAsset(String fileName) {

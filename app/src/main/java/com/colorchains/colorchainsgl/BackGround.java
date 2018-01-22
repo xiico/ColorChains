@@ -132,12 +132,12 @@ public class BackGround extends Entity {
                     "    col += ball(p, 1.0, 2.0, 0.1, 0.2);\n" +
                     "    col += ball(p, 1.5, 2.5, 0.2, 0.3);\n" +
                     "    col += ball(p, 2.0, 3.0, 0.3, 0.4);\n" +
-                    "    col += ball(p, 2.5, 3.5, 0.4, 0.5);\n" +
-                    "    col += ball(p, 3.0, 4.0, 0.5, 0.6);\t\n" +
-                    "    col += ball(p, 1.5, 0.5, 0.6, 0.7);\n" +
-                    "    col += ball(p, 0.5, 3.1, 1.6, 0.9);\n" +
-                    "    col += ball(p, 0.5, 2.1, 1.0, 0.0);\n" +
-                    "    col += ball(p, 0.3, 1.9, 0.9, 0.99);\n" +
+//                    "    col += ball(p, 2.5, 3.5, 0.4, 0.5);\n" +
+//                    "    col += ball(p, 3.0, 4.0, 0.5, 0.6);\t\n" +
+//                    "    col += ball(p, 1.5, 0.5, 0.6, 0.7);\n" +
+//                    "    col += ball(p, 0.5, 3.1, 1.6, 0.9);\n" +
+//                    "    col += ball(p, 0.5, 2.1, 1.0, 0.0);\n" +
+//                    "    col += ball(p, 0.3, 1.9, 0.9, 0.99);\n" +
                     "\t\n" +
                     "    col *= 0.3;\t\n" +
                     "\t\n" +
@@ -292,14 +292,14 @@ public class BackGround extends Entity {
                     "\n" +
                     "void main( void ) {\n" +
                     "\tvec2 pos = gl_FragCoord.xy / resolution.xy;\n" +
-                    "\tpos.y -= 0.3;\n" +
+                    "\tpos.y -= 0.6;\n" +
                     "\tvec3 c = vec3(0,0,0);\n" +
                     "\tc = mix(vec3(0,1,1), vec3(0,0.1,0.1), pos.y);\n" +
-                    "\tfloat v = sin((pos.x + time*0.2) * 5.0)*0.05 + sin((pos.x * 3.0+ time*0.1) * 5.0)*0.05;\n" +
+                    "\tfloat v = sin((pos.x + time*0.2) * 5.0)*0.2 + sin((pos.x * 3.0+ time*0.1) * 5.0)*0.2;\n" +
                     "\tif(pos.y < v){\n" +
                     "\t\tc = mix(c, vec3(0,0.5,0.5), 0.2);\n" +
                     "\t}\n" +
-                    "\tv = sin((pos.x + time*0.1) * 5.0)*0.05 + sin((pos.x * 3.0+ time*0.05) * 5.0)*0.05;\n" +
+                    "\tv = sin((pos.x + time*0.1) * 5.0)*0.1 + sin((pos.x * 3.0+ time*0.05) * 5.0)*0.1;\n" +
                     "\tif(pos.y < v){\n" +
                     "\t\tc = mix(c, vec3(0,0.5,0.5), 0.2);\n" +
                     "\t}\n" +
@@ -313,7 +313,7 @@ public class BackGround extends Entity {
                     "        uniform vec2      resolution;\n" +
                     "        uniform vec2      mouse;\n" +
                     "\n" +
-                    "        #define MAX_ITER 3\n" +
+                    "        #define MAX_ITER 1\n" +
                     "\n" +
                     "        void main( void )\n" +
                     "        {\n" +
@@ -330,7 +330,6 @@ public class BackGround extends Entity {
                     "\n" +
                     "                i = p + vec2(cos(t - i.x) + sin(t + i.y),\n" +
                     "                sin(t - i.y) + cos(t + i.x));\n" +
-                    "\t\t    \n" +
                     "                c += 1.0/length(vec2(p.x / (sin(i.x+t)/inten),\n" +
                     "                p.y / (cos(i.y+t)/inten)));\n" +
                     "            }\n" +
@@ -379,22 +378,6 @@ public class BackGround extends Entity {
                     "uniform vec2 mouse;\n" +
                     "uniform vec2 resolution;\n" +
                     "\n" +
-                    "#define HorizontalAmplitude\t\t1.50\n" +
-                    "#define VerticleAmplitude\t\t0.50\n" +
-                    "\n" +
-                    "#define HorizontalSpeed\t\t\t0.90\n" +
-                    "#define VerticleSpeed\t\t\t0.50\n" +
-                    "\n" +
-                    "#define ParticleMinSize\t\t\t1.46\n" +
-                    "#define ParticleMaxSize\t\t\t1.71\n" +
-                    "\n" +
-                    "#define ParticleBreathingSpeed\t\t0.30\n" +
-                    "#define ParticleColorChangeSpeed\t0.70\n" +
-                    "\n" +
-                    "#define ParticleCount\t\t\t2.0\n" +
-                    "#define ParticleColor1\t\t\tvec3(9.0, 5.0, 3.0)\n" +
-                    "#define ParticleColor2\t\t\tvec3(1.0, 3.0, 9.0)\n" +
-                    "\n" +
                     "\n" +
                     "vec3 checkerBoard( vec2 uv, vec2 pp )\n" +
                     "{\n" +
@@ -411,7 +394,7 @@ public class BackGround extends Entity {
                     "    float po = 1.0;\n" +
                     "    float px = pow( p.x*p.x, po );\n" +
                     "    float py = pow( p.y*p.y, po );\n" +
-                    "    float r  = pow( px + py, 1.0/(2.0*po) );    \n" +
+                    "    float r  = pow( px + py, 1.0/(4.0*po) );    \n" +
                     "    vec2 uvp = vec2( 1.0/r + (time*scrollSpeed), a + (time*rotateSpeed));\t\n" +
                     "    vec3 finalColor = checkerBoard( uvp, p ).xyz;\n" +
                     "    finalColor *= r;\n" +
@@ -419,48 +402,13 @@ public class BackGround extends Entity {
                     "    return finalColor;\n" +
                     "}\n" +
                     "\n" +
-                    "vec3 particles( vec2 uv )\n" +
-                    "{\n" +
-                    "\tvec2 pos = uv * 2.0 - 1.0;\n" +
-                    "\tpos.x *= (resolution.x / resolution.y);\n" +
-                    "\t\n" +
-                    "\tvec3 c = vec3( 0, 0, 0 );\n" +
-                    "\t\n" +
-                    "\tfor( float i = 1.0; i < ParticleCount+1.0; ++i )\n" +
-                    "\t{\n" +
-                    "\t\tfloat cs = cos( time * HorizontalSpeed * (i/ParticleCount) ) * HorizontalAmplitude;\n" +
-                    "\t\tfloat ss = sin( time * VerticleSpeed   * (i/ParticleCount) ) * VerticleAmplitude;\n" +
-                    "\t\tvec2 origin = vec2( cs , ss );\n" +
-                    "\t\t\n" +
-                    "\t\tfloat t = sin( time * ParticleBreathingSpeed * i ) * 0.5 + 0.5;\n" +
-                    "\t\tfloat particleSize = mix( ParticleMinSize, ParticleMaxSize, t );\n" +
-                    "\t\tfloat d = clamp( sin( length( pos - origin )  + particleSize ), 0.0, particleSize);\n" +
-                    "\t\t\n" +
-                    "\t\tfloat t2 = sin( time * ParticleColorChangeSpeed * i ) * 0.5 + 0.5;\n" +
-                    "\t\tvec3 color = mix( ParticleColor1, ParticleColor2, t2 );\n" +
-                    "\t\tc += color * pow( d, 70.0 );\n" +
-                    "\t}\n" +
-                    "\t\n" +
-                    "\treturn c;\n" +
-                    "}\n" +
                     "\n" +
                     "void main(void)\n" +
                     "{\n" +
                     "    vec2 uv = gl_FragCoord.xy / resolution.xy;\n" +
-                    "    float timeSpeedX = time * 0.2;\n" +
-                    "    float timeSpeedY = time * 0.2;\n" +
-                    "//    vec2 p = uv + vec2( -0.50+cos(timeSpeedX)*0.2, -0.5-sin(timeSpeedY)*0.3 );\n" +
                     "    vec2 p = uv + vec2( -0.5, -0.5 );\n" +
                     "\n" +
-                    "    vec3 finalColor = tunnel( p , 1.0, 0.0);\n" +
-                    "\n" +
-                    "\n" +
-                    "    timeSpeedX = time * 1.30001;\n" +
-                    "    timeSpeedY = time * 1.20001;\n" +
-                    "    p = uv + vec2( -0.50+cos(timeSpeedX)*0.2, -0.5-sin(timeSpeedY)*0.3 );\n" +
-                    "    \n" +
-                    "\t\n" +
-                    "\tfinalColor += particles( uv );\n" +
+                    "    vec3 finalColor = tunnel( p , 0.1, 0.0);\n" +
                     "\t\n" +
                     "    gl_FragColor = vec4( finalColor, 1.0 );\n" +
                     "}";
@@ -541,7 +489,7 @@ public class BackGround extends Entity {
                     "}";
 
     private static final String colorBalls = "#ifdef GL_ES\n" +
-            "precision mediump float;\n" +
+            "precision highp float;\n" +
             "#endif\n" +
             "\n" +
             "#extension GL_OES_standard_derivatives : enable\n" +
@@ -571,12 +519,12 @@ public class BackGround extends Entity {
             "\tgl_FragColor += draw_ball(vec2(0.5, 0.5), vec3(0.5, 0.05, 0.05), 0.05, 3.0, 3.0, 2.5, 0.1, 0.25);\n" +
             "\tgl_FragColor += draw_ball(vec2(0.7, 0.5), vec3(0.05, 0.5, 0.05), 0.04, 4.0, 1.0, 4.5, 0.2, 0.1);\n" +
             "\tgl_FragColor += draw_ball(vec2(0.3, 0.5), vec3(0.05, 0.05, 0.7), 0.04, 2.5, 5.0, 2.0, 0.1, 0.3);\n" +
-            "\tgl_FragColor += draw_ball(vec2(0.6, 0.5), vec3(0.05, 0.4, 0.05), 0.05, 3.5, 3.0, 2.0, 0.2, 0.3);\n" +
-            "\tgl_FragColor += draw_ball(vec2(0.25, 0.25), vec3(0.3, 0.23, 0.805), 0.04, 21.5, 1.0, 4.5, 0.2, 0.4);\n" +
-            "\tgl_FragColor += draw_ball(vec2(0.75, 0.45), vec3(0.3, 0.3, 0.085), 0.04, 2.5, 1.0, 4.5, 0.2, 0.4);\n" +
-            "\tgl_FragColor += draw_ball(vec2(0.45, 0.55), vec3(0.73, 0.53, 0.105), 0.04, 2.5, 1.0, 4.5, 0.2, 0.4);\n" +
-            "\tgl_FragColor += draw_ball(vec2(0.25, 0.65), vec3(0.53, 0.3, 0.205), 0.04, 2.5, 1.0, 4.5, 0.2, 0.4);\n" +
-            "\tgl_FragColor += draw_ball(vec2(0.55, 0.15), vec3(0.13, 0.73, 0.005), 0.04, 2.5, 1.0, 4.5, 0.2, 0.4);\n" +
+//            "\tgl_FragColor += draw_ball(vec2(0.6, 0.5), vec3(0.05, 0.4, 0.05), 0.05, 3.5, 3.0, 2.0, 0.2, 0.3);\n" +
+//            "\tgl_FragColor += draw_ball(vec2(0.25, 0.25), vec3(0.3, 0.23, 0.805), 0.04, 21.5, 1.0, 4.5, 0.2, 0.4);\n" +
+//            "\tgl_FragColor += draw_ball(vec2(0.75, 0.45), vec3(0.3, 0.3, 0.085), 0.04, 2.5, 1.0, 4.5, 0.2, 0.4);\n" +
+//            "\tgl_FragColor += draw_ball(vec2(0.45, 0.55), vec3(0.73, 0.53, 0.105), 0.04, 2.5, 1.0, 4.5, 0.2, 0.4);\n" +
+//            "\tgl_FragColor += draw_ball(vec2(0.25, 0.65), vec3(0.53, 0.3, 0.205), 0.04, 2.5, 1.0, 4.5, 0.2, 0.4);\n" +
+//            "\tgl_FragColor += draw_ball(vec2(0.55, 0.15), vec3(0.13, 0.73, 0.005), 0.04, 2.5, 1.0, 4.5, 0.2, 0.4);\n" +
             "}";
 
     private static final String wave = "#ifdef GL_ES\n" +
@@ -733,10 +681,10 @@ public class BackGround extends Entity {
             //programs.add(Shape.createProgram(vs_Image, rainbow, -1));
             programs.add(Shape.createProgram(vs_Image, tunnel3, -1));
             programs.add(Shape.createProgram(vs_Image, rainbow2, -1));
-            programs.get(programs.size() - 1).setTimeLimit(360);
+            programs.get(programs.size() - 1).setTimeLimit((float) (Math.PI*2f));
             programs.add(Shape.createProgram(vs_Image, colorBalls, -1));
-            programs.get(programs.size() - 1).setTimeLimit(12);
-            programs.get(programs.size() - 1).setTimeStep(.001f);
+            programs.get(programs.size() - 1).setTimeLimit((float) (Math.PI*2f));
+            programs.get(programs.size() - 1).setTimeStep(.005f);
             programs.add(Shape.createProgram(vs_Image, wave, -1));
             programs.add(Shape.createProgram(vs_Image, waves2, -1));
             programs.add(Shape.createProgram(vs_Image, swirl2, -1));

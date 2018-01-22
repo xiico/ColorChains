@@ -14,6 +14,8 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.microedition.khronos.opengles.GL10;
@@ -262,7 +264,7 @@ class UI {
         }
 
         public float getValue(){
-            return _value;
+            return _value + 0.04f;
         }
 
         public void updateBar(){
@@ -445,16 +447,30 @@ class UI {
             GameView.GLRenderer.updateVertexBuffer(puzzleTitle.vertexBuffer);
             puzzleTitle.draw();
 
+            String[] colors = new String[]{"YELLOWGEM","WHITEGEM","REDGEM","PURPLEGEM", "ORANGEGEM", "GREENGEM", "CYANGEM", "BLUEGEM"};
             if(chains != null && chainsLabels.size() == 0){
-                for (Chain chn: chains) {
+                for (int i = 0; i < 8; i++) {
                     chainsLabels.add(new Font(R.drawable.oldskol, 3f));
                     Font chainsLabel = chainsLabels.get(chainsLabels.size() - 1);
                     chainsLabel.hAlign = Font.HorizontalAlignment.CENTER;
 
-                    int index = chains.indexOf(chn);
+                    int index = i;//chains.indexOf(chn);
+                    int line = (int)Math.floor(index / 4);
+                    chainsLabel.setText("0");
+
+                    chainsLabel.setX(this.getX() - (this.getWidth() / 2) + 248 + (64 / 2 ) + ((index % 4) * 64));
+                    chainsLabel.setY(this.getY() - (this.getHeight() / 2) + 32 + (68 / 2 ) + (line * 68));//56
+                }
+                for (Chain chn: chains) {
+                    //chainsLabels.add(new Font(R.drawable.oldskol, 3f));
+                    Font chainsLabel = chainsLabels.get(Arrays.asList(colors).indexOf(chn.id));
+                    //chainsLabel.hAlign = Font.HorizontalAlignment.CENTER;
+
+                    int index = Arrays.asList(colors).indexOf(chn.id);//chains.indexOf(chn);
                     int line = (int)Math.floor(index / 4);
                     chainsLabel.setText(chn.count.toString());
-                    if(chn.id == "WHITEGEM")
+                    boolean allWhite = true;
+                    if(chn.id == "WHITEGEM" || allWhite)
                         chainsLabel.color = new float[]{235f/255,235f/255,235f/255,1};//W
                     else if(chn.id == "BLUEGEM")
                         chainsLabel.color = new float[]{47f/255,130f/255,255f/255,1};//B
@@ -470,6 +486,8 @@ class UI {
                         chainsLabel.color = new float[]{255f/255,50f/255,50f/255,1};//R
                     else if(chn.id == "GREENGEM")
                         chainsLabel.color = new float[]{60f/255,216f/255,0,1};//G
+
+
                     chainsLabel.setX(this.getX() - (this.getWidth() / 2) + 248 + (64 / 2 ) + ((index % 4) * 64));
                     chainsLabel.setY(this.getY() - (this.getHeight() / 2) + 32 + (68 / 2 ) + (line * 68));//56
                 }
@@ -547,7 +565,7 @@ class UI {
         private boolean dragging = false;
         private boolean changingPage = false;
         private float lastSpeed = 0;
-        public boolean enableAll = true;
+        public boolean enableAll = false;
 
         public LevelSelect(List<Stage> stages, Board board) {
             super("levelSelect", TYPE.LEVELSELECT, 0f, 0f, 0, 0);
