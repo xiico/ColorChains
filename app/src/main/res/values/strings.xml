@@ -1,3 +1,9 @@
 <resources>
-    <string name="app_name">ColorChainsGL</string>
+    <string name="app_name" translatable="false">Color Chains</string>
+    <string name="continue_game" translatable="true">There is a previously saved game.\nDo you want to continue it?</string>
+    <string name="exit_game" translatable="true">exit</string>
+    <string name="confirm_exit" translatable="true">Are you sure you want to exit?</string>
+    <string name="confirm_reload" translatable="true">Are you sure you want to \nreload this puzzle?</string>
+    <string name="button_next" translatable="true">Next</string>
+    <string name="button_cancel" translatable="true">"Cancel"</string>
 </resources>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="continue_game">Existe um jogo salvo anteriormente. \nDeseja continua-lo?</string>
+    <string name="exit_game">Sair</string>
+    <string name="confirm_exit">Tem certeza que deseja sair?</string>
+    <string name="confirm_reload">Tem certeza que quer \nreiniciar o jogo?</string>
+    <string name="button_next">Proximo</string>
+    <string name="button_cancel">Cancelar</string>
+    <string name="app_name">Color Chains - Free</string>
+</resources>

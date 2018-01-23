@@ -100,7 +100,7 @@ public class Board extends Entity {
     }
 
     public void addControls(){
-        nextButton = new UI.Button("next","Next",
+        nextButton = new UI.Button("next",context.getResources().getString(R.string.button_next),
                 gemOffsetX + (GameView.scaledDefaultSide * 7) + (this.getWidth() / 2),
                 gemOffsetY + (GameView.scaledDefaultSide * 8.5f) + (20 * GameView.scale) ,0,0);
         UI.addControl(nextButton);
@@ -129,7 +129,7 @@ public class Board extends Entity {
         progressBar.visible = false;
 
         confirm = new UI.Confirm("confirm",
-                "There is a previously saved game.\nDo you want to continue it?", (float) GameView.scaledDefaultSide, GameView.metrics.heightPixels / 2f);
+                context.getResources().getString(R.string.continue_game), (float) GameView.scaledDefaultSide, GameView.metrics.heightPixels / 2f);
         confirm.addUIListener(new UI.UIListener() {
             @Override
             public void onTouchStart(Object sender, MotionEvent evt) {}
@@ -143,7 +143,7 @@ public class Board extends Entity {
         UI.addControl(confirm);
         confirm.visible = false;
 
-        showExit = new UI.Button("exit","",
+        showExit = new UI.Button(context.getResources().getString(R.string.exit_game),"",
                 gemOffsetX + (GameView.scaledDefaultSide * .5f) + (this.getWidth() / 2),
                 gemOffsetY + (GameView.scaledDefaultSide * 8.5f) + (20 * GameView.scale) ,0,0, TYPE.CANCELRELOAD, 0);
         showExit.addUIListener(new UI.UIListener() {
@@ -166,14 +166,14 @@ public class Board extends Entity {
         UI.addControl(showExit);
         showExit.visible = false;
 
-        exitPuzzle = new UI.Confirm("exitPuzzle","Are you sure you want to exit?", (float) GameView.scaledDefaultSide, GameView.metrics.heightPixels / 2f);
+        exitPuzzle = new UI.Confirm("exitPuzzle",context.getResources().getString(R.string.confirm_exit), (float) GameView.scaledDefaultSide, GameView.metrics.heightPixels / 2f);
         exitPuzzle.addUIListener(new UI.UIListener() {
             @Override
             public void onTouchStart(Object sender, MotionEvent evt) {}
 
             @Override
             public void onTouchEnd(Object sender, MotionEvent evt) {
-                if(sender == "Cancel") {
+                if(sender == context.getResources().getString(R.string.button_cancel)) {
                     GameView.GLRenderer._boardReady = true;
                     showExit.visible  = true;
                     showReload.visible = true;
@@ -224,14 +224,14 @@ public class Board extends Entity {
         UI.addControl(showReload);
         showReload.updateVertexBuffer = true;
         showReload.visible = false;
-        reloadPuzzle = new UI.Confirm("exitPuzzle","Are you sure you want to \nreload this puzzle?", (float) GameView.scaledDefaultSide, GameView.metrics.heightPixels / 2f);
+        reloadPuzzle = new UI.Confirm("exitPuzzle",context.getResources().getString(R.string.confirm_reload), (float) GameView.scaledDefaultSide, GameView.metrics.heightPixels / 2f);
         reloadPuzzle.addUIListener(new UI.UIListener() {
             @Override
             public void onTouchStart(Object sender, MotionEvent evt) {}
 
             @Override
             public void onTouchEnd(Object sender, MotionEvent evt) {
-                if(sender == "Cancel") {
+                if(sender == context.getResources().getString(R.string.button_cancel)) {
                     GameView.GLRenderer._boardReady = true;
                     showExit.visible  = true;
                     showReload.visible = true;
@@ -565,7 +565,7 @@ public class Board extends Entity {
                     if(!levelSelect.visible) levelSelect.getCurPage().page.transform.fadeIn(0,1f,0.5f);
                     levelSelect.visible = true;
 
-                    if(loadResult.equals("Cancel")) return;
+                    if(loadResult.equals(context.getResources().getString(R.string.button_cancel))) return;
                     stageIndex = Integer.parseInt(loadResult);
                     loadStage(stageIndex);
                     ((UI.InfoBox)UI.findControlById("infoBox")).setTargetScore(curStage.targetScore);

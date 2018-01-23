@@ -310,7 +310,7 @@ class UI {
             this.setWidth(GameView.metrics.widthPixels - (GameView.scaledDefaultSide * 2));
             okButton = new Button("okButton","OK", this.getX() + (this.getWidth() / 2f) - 152f /*- (152f * 1.5f)*/, this.getY() + (this.getHeight() * .4f), 0, 0);
             okButton.addUIListener(this);
-            cancelButton = new Button("cancelButton","Cancel", this.getX() + (this.getWidth() / 2f) + 152f /*+  (152f * .5f)*/, this.getY() + (this.getHeight() * .4f), 0, 0);
+            cancelButton = new Button("cancelButton",GameView.context.getResources().getString(R.string.button_cancel), this.getX() + (this.getWidth() / 2f) + 152f /*+  (152f * .5f)*/, this.getY() + (this.getHeight() * .4f), 0, 0);
             cancelButton.addUIListener(this);
             this.controls.add(okButton);
             this.controls.add(cancelButton);
@@ -782,7 +782,7 @@ class UI {
                     pagesView.entities[col][row].curAnimation.curFrame = i == selected ? 1 : 0;
                 }
             }
-            pagesView.buildTextureMap(total,2,1);
+            pagesView.buildTextureMap(2,2,1);
         }
 
         private VelocityTracker mVelocityTracker = null;
