@@ -305,7 +305,7 @@ public class GameView extends GLSurfaceView {
         }
 
         public static void SetRandomBackGround(int bgIndex) {
-            int randint = 14;
+            int randint = 15;
             if (GameView.cycleBG) {
                 Random r = new Random();
                 randint = Math.abs(r.nextInt()) % backGround.programs.size();

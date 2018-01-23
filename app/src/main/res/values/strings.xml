@@ -5,5 +5,6 @@
     <string name="confirm_exit" translatable="true">Are you sure you want to exit?</string>
     <string name="confirm_reload" translatable="true">Are you sure you want to \nreload this puzzle?</string>
     <string name="button_next" translatable="true">Next</string>
-    <string name="button_cancel" translatable="true">"Cancel"</string>
+    <string name="button_cancel" translatable="true">Cancel</string>
+    <string name="level_select" translatable="true">Level Select</string>
 </resources>

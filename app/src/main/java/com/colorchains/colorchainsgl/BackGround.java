@@ -666,29 +666,29 @@ public class BackGround extends Entity {
         super("gb", TYPE.BACKGROUND, GameView.metrics.widthPixels/2f, GameView.metrics.heightPixels/2f, 0, 0);
         if(programs.size() == 0)
         {
-            programs.add(Shape.createProgram(vs_Image, fs_Image, -1));
+            programs.add(Shape.createProgram(vs_Image, fs_Image, -1));//0
             //programs.add(Shape.createProgram(vs_Image, fs_Image_effect, -1));
             //programs.add(Shape.createProgram(vs_Image, effect, -1));
-            programs.add(Shape.createProgram(vs_Image, effect3, -1));
+            programs.add(Shape.createProgram(vs_Image, effect3, -1));//1
             //programs.add(Shape.createProgram(vs_Image, effect2, -1));
-            programs.add(Shape.createProgram(vs_Image, swirl, -1));
-            programs.add(Shape.createProgram(vs_Image, balls, -1));
-            programs.add(Shape.createProgram(vs_Image, river, -1));
-            programs.add(Shape.createProgram(vs_Image, tunnel2, -1));
-            programs.add(Shape.createProgram(vs_Image, hive, -1));
-            programs.add(Shape.createProgram(vs_Image, waves, -1));
-            programs.add(Shape.createProgram(vs_Image, greenWater, -1));
+            programs.add(Shape.createProgram(vs_Image, swirl, -1));//2
+            programs.add(Shape.createProgram(vs_Image, balls, -1));//3
+            programs.add(Shape.createProgram(vs_Image, river, -1));//4
+            programs.add(Shape.createProgram(vs_Image, tunnel2, -1));//5
+            programs.add(Shape.createProgram(vs_Image, hive, -1));//6
+            programs.add(Shape.createProgram(vs_Image, waves, -1));//7
+            programs.add(Shape.createProgram(vs_Image, greenWater, -1));//8
             //programs.add(Shape.createProgram(vs_Image, rainbow, -1));
-            programs.add(Shape.createProgram(vs_Image, tunnel3, -1));
-            programs.add(Shape.createProgram(vs_Image, rainbow2, -1));
+            programs.add(Shape.createProgram(vs_Image, tunnel3, -1));//9
+            programs.add(Shape.createProgram(vs_Image, rainbow2, -1));//10
             programs.get(programs.size() - 1).setTimeLimit((float) (Math.PI*2f));
-            programs.add(Shape.createProgram(vs_Image, colorBalls, -1));
+            programs.add(Shape.createProgram(vs_Image, colorBalls, -1));//11
             programs.get(programs.size() - 1).setTimeLimit((float) (Math.PI*2f));
             programs.get(programs.size() - 1).setTimeStep(.005f);
-            programs.add(Shape.createProgram(vs_Image, wave, -1));
-            programs.add(Shape.createProgram(vs_Image, waves2, -1));
-            programs.add(Shape.createProgram(vs_Image, swirl2, -1));
-            programs.add(Shape.createProgram(vs_Image, waves3, -1));
+            programs.add(Shape.createProgram(vs_Image, wave, -1));//12
+            programs.add(Shape.createProgram(vs_Image, waves2, -1));//13
+            programs.add(Shape.createProgram(vs_Image, swirl2, -1));//14
+            programs.add(Shape.createProgram(vs_Image, waves3, -1));//15
         }
         if(resourceId == R.drawable.greengem ||
                 resourceId == R.drawable.redgem ||

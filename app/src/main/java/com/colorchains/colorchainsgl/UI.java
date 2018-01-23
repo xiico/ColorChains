@@ -16,6 +16,7 @@ import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.microedition.khronos.opengles.GL10;
@@ -365,6 +366,7 @@ class UI {
         private List<Font> chainsLabels = new ArrayList<>();
         private List<Chain> chains;
         private Font puzzleTitle;
+        private HashMap<String, Integer > mapColors = new HashMap<>();
         public InfoBox(String id, Float x, Float y) {
             super(id, TYPE.INFOBOX, x, y, 0, 0);
             highScoreNumber = new Font(R.drawable.oldskol, 4.0f);
@@ -465,6 +467,7 @@ class UI {
                     //chainsLabels.add(new Font(R.drawable.oldskol, 3f));
                     Font chainsLabel = chainsLabels.get(Arrays.asList(colors).indexOf(chn.id));
                     //chainsLabel.hAlign = Font.HorizontalAlignment.CENTER;
+                    mapColors.put(chainsLabel.id,chains.indexOf(chn));
 
                     int index = Arrays.asList(colors).indexOf(chn.id);//chains.indexOf(chn);
                     int line = (int)Math.floor(index / 4);
@@ -493,6 +496,11 @@ class UI {
                 }
             } else {
                 for (Font label: chainsLabels) {
+                    if(mapColors.get(label.id) != null && chains.get(mapColors.get(label.id)).complete)
+                        label.color = new float[]{60f/255,216f/255,0,1};//G
+                    else
+                        label.color = new float[]{235f/255,235f/255,235f/255,1};//W
+
                     GameView.GLRenderer.updateVertexBuffer(label.vertexBuffer);
                     label.draw();
                 }
@@ -577,7 +585,7 @@ class UI {
             title = new Font(R.drawable.oldskol, (GameView.screenW > 480 ? 5 : 4));
             title.setY((GameView.screenW > 480 ? 192 : 124));
             title.setX(GameView.metrics.widthPixels / 2);
-            title.setText("Level Select");
+            title.setText(GameView.context.getResources().getString(R.string.level_select));
             init(stages, board);
         }
 
@@ -714,7 +722,13 @@ class UI {
             GameView.GLRenderer.updateVertexBuffer(title.vertexBuffer);
             title.draw();
 
-            pagesView.draw();
+            if(controls.size() > 1)
+                pagesView.draw();
+
+            if(GameView.renderer.backGround.index != 7){
+                GameView.renderer.backGround.index = 7;
+                GameView.renderer.backGround.mProgram = GameView.renderer.backGround.programs.get(GameView.renderer.backGround.index);
+            }
         }
 
         private void addLevel(Button stage, Integer row, Integer col, Entity[][] entities){
@@ -725,8 +739,10 @@ class UI {
 
                 @Override
                 public void onTouchEnd(Object sender, MotionEvent evt) {
-                    if(Math.abs(lastSpeed) < 1 )
+                    if(Math.abs(lastSpeed) < 1 ) {
                         GameView.board.loadResult = ((Button) sender).id;
+                        GameView.GLRenderer.SetRandomBackGround(-1);
+                    }
                 }
 
                 @Override

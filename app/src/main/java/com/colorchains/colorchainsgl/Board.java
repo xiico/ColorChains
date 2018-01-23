@@ -190,7 +190,7 @@ public class Board extends Entity {
                     Collections.shuffle(Media.tracks);
                     Media.stopPuzzleBGM();
                     Media.setBackGroundMusic(R.raw.title);
-                    GameView.GLRenderer.SetRandomBackGround(-1);
+                    //GameView.GLRenderer.SetRandomBackGround(-1);
                 }
                 exitPuzzle.visible = false;
             }
@@ -695,6 +695,7 @@ public class Board extends Entity {
                     Gem element = chain.elements.get(0);
                     if (chain.count == 1) {
                         chain.checks = 1;
+                        chain.complete = true;
                         chain.chained.add(chain.elements.remove(chain.elements.indexOf(element)));
                         element.checked = true;
                         continue;

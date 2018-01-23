@@ -2,7 +2,7 @@
   "stages": [
     {
       "id": "0",
-      "name": "High Score",
+      "name": "Level One",
       "tiles": [
         "MMMMMMMM",
         "MMMMMMMM",
@@ -25,7 +25,7 @@
     },
     {
       "id": "1",
-      "name": "Level One",
+      "name": "Level Two",
       "tiles": [
         "MMMMMMMM",
         "MMMMMMMM",
@@ -48,7 +48,7 @@
     },
     {
       "id": "2",
-      "name": "Level Two - 2",
+      "name": "Level Three",
       "tiles": [
         "MMMMMMMM",
         "MMMMMMMM",
@@ -71,7 +71,76 @@
     },
     {
       "id": "3",
-      "name": "Level Three - 3",
+      "name": "Level Four",
+      "tiles": [
+        "MMMMMMMM",
+        "MMMMMMMM",
+        "MMMMMMMM",
+        "MMMMMMMM",
+        "MMRRWWMM",
+        "MMRRRRMM",
+        "MMMMMMMM",
+        "MMMMMMMM"
+      ],
+      "customProperties": [],
+      "targetScore": 1000,
+      "score": 0,
+      "highScore": 0,
+      "moves": 0,
+      "maxMoves": 0,
+      "targetMoves": 30,
+      "sets": [],
+      "defaultTargetScore": 1000
+    },
+    {
+      "id": "4",
+      "name": "Level Five",
+      "tiles": [
+        "MMMMMMMM",
+        "MMMMMMMM",
+        "MMGGGMMM",
+        "MMGGRMMM",
+        "MMGGGMMM",
+        "MMMMMMMM",
+        "MMMMMMMM",
+        "MMMMMMMM"
+      ],
+      "customProperties": [],
+      "targetScore": 1000,
+      "score": 0,
+      "highScore": 0,
+      "moves": 0,
+      "maxMoves": 0,
+      "targetMoves": 46,
+      "sets": [],
+      "defaultTargetScore": 1000
+    },
+    {
+      "id": "5",
+      "name": "Level Six",
+      "tiles": [
+        "MMMMMMMM",
+        "MMMMMMMM",
+        "MPGGMMMM",
+        "MPPPMRMM",
+        "MPBPMMMM",
+        "MPPPMCMM",
+        "MMMMMMMM",
+        "MMMMMMMM"
+      ],
+      "customProperties": [],
+      "targetScore": 1000,
+      "score": 0,
+      "highScore": 0,
+      "moves": 0,
+      "maxMoves": 0,
+      "targetMoves": 80,
+      "sets": [],
+      "defaultTargetScore": 2000
+    },
+    {
+      "id": "6",
+      "name": "Level Seven",
       "tiles": [
         "MMMMMMMM",
         "MMMMMMMM",
@@ -93,8 +162,8 @@
       "defaultTargetScore": 1000
     },
     {
-      "id": "4",
-      "name": "Level Four - 4",
+      "id": "7",
+      "name": "Level Eight",
       "tiles": [
         "MMMMMMMM",
         "MMM  MMM",
@@ -116,8 +185,8 @@
       "defaultTargetScore": 1000
     },
     {
-      "id": "5",
-      "name": "Level Five - 5",
+      "id": "8",
+      "name": "Level Nine",
       "tiles": [
         "MMMMMMMM",
         "MMM  MMM",
@@ -139,8 +208,8 @@
       "defaultTargetScore": 2000
     },
     {
-      "id": "6",
-      "name": "Level Six - 6",
+      "id": "9",
+      "name": "Level Ten",
       "tiles": [
         "MM MMMMM",
         "MM  MMMM",
@@ -162,8 +231,8 @@
       "defaultTargetScore": 3000
     },
     {
-      "id": "7",
-      "name": "Level Nine - 7",
+      "id": "10",
+      "name": "Level Eleven",
       "tiles": [
         "MMMMMMMM",
         "   MM   ",
@@ -181,75 +250,6 @@
       "moves": 0,
       "maxMoves": 0,
       "targetMoves": 194,
-      "sets": [],
-      "defaultTargetScore": 5000
-    },
-    {
-      "id": "8",
-      "name": "Level Twelve - 8",
-      "tiles": [
-        "MM    MM",
-        "MMM  MMM",
-        "MMM  MMM",
-        "MMM  MMM",
-        "M      M",
-        "        ",
-        "        ",
-        "MMMMMMMM"
-      ],
-      "customProperties": [],
-      "targetScore": 1000,
-      "score": 0,
-      "highScore": 0,
-      "moves": 0,
-      "maxMoves": 0,
-      "targetMoves": 123,
-      "sets": [],
-      "defaultTargetScore": 5000
-    },
-    {
-      "id": "9",
-      "name": "Level Thirteen - 9",
-      "tiles": [
-        "        ",
-        "MMM  MMM",
-        "MMM  MMM",
-        "M      M",
-        "        ",
-        "   MM   ",
-        "  MMMM  ",
-        "MMMMMMMM"
-      ],
-      "customProperties": [],
-      "targetScore": 1000,
-      "score": 0,
-      "highScore": 0,
-      "moves": 0,
-      "maxMoves": 0,
-      "targetMoves": 177,
-      "sets": [],
-      "defaultTargetScore": 5000
-    },
-    {
-      "id": "10",
-      "name": "Level Ten - 10",
-      "tiles": [
-        "MMMMMMMM",
-        "        ",
-        "        ",
-        "MMM  MMM",
-        "M      M",
-        "        ",
-        "        ",
-        "MMMMMMMM"
-      ],
-      "customProperties": [],
-      "targetScore": 1000,
-      "score": 0,
-      "highScore": 0,
-      "moves": 0,
-      "maxMoves": 0,
-      "targetMoves": 208,
       "sets": [],
       "defaultTargetScore": 5000
     },

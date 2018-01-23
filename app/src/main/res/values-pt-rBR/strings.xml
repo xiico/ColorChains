@@ -7,4 +7,5 @@
     <string name="button_next">Proximo</string>
     <string name="button_cancel">Cancelar</string>
     <string name="app_name">Color Chains - Free</string>
+    <string name="level_select" translatable="true">Selecione a Fase</string>
 </resources>
