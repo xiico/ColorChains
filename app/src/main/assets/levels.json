@@ -209,7 +209,7 @@
     },
     {
       "id": "9",
-      "name": "Level Ten",
+      "name": "Shuriken",
       "tiles": [
         "MM MMMMM",
         "MM  MMMM",
@@ -255,7 +255,7 @@
     },
     {
       "id": "11",
-      "name": "Level Fourteen - 11",
+      "name": "Bars",
       "tiles": [
         "MMMMMMMM",
         "        ",
@@ -278,7 +278,7 @@
     },
     {
       "id": "12",
-      "name": "Level Eight - 12",
+      "name": "Risk",
       "tiles": [
         "M      M",
         "MMM  MMM",
@@ -301,7 +301,7 @@
     },
     {
       "id": "13",
-      "name": "Level Seven - 13",
+      "name": "Friday",
       "tiles": [
         "        ",
         " MM  MM ",
@@ -324,7 +324,7 @@
     },
     {
       "id": "14",
-      "name": "Level Eleven - 14",
+      "name": "Hat",
       "tiles": [
         "MMMMMMMM",
         "M      M",
@@ -347,7 +347,7 @@
     },
     {
       "id": "15",
-      "name": "Level Five - 15",
+      "name": "XV",
       "tiles": [
         "MMM  MMM",
         "MM    MM",
@@ -370,7 +370,7 @@
     },
     {
       "id": "16",
-      "name": "Level Fifteen - 16",
+      "name": "Personal",
       "tiles": [
         "   MM MM",
         "   MM MM",
@@ -393,7 +393,7 @@
     },
     {
       "id": "17",
-      "name": "Level Sixteen - 17",
+      "name": "XVII",
       "tiles": [
         "    MMMM",
         "    MMMM",
@@ -416,7 +416,7 @@
     },
     {
       "id": "18",
-      "name": "Level Seventeen - 18",
+      "name": "Zed",
       "tiles": [
         "MMMMMMMM",
         "      MM",
@@ -439,7 +439,7 @@
     },
     {
       "id": "19",
-      "name": "Level Eighteen - 19",
+      "name": "F1",
       "tiles": [
         "        ",
         "MMM  MMM",
@@ -462,7 +462,7 @@
     },
     {
       "id": "20",
-      "name": "Level Nineteen - 20",
+      "name": "Blox",
       "tiles": [
         "        ",
         "MM  MMM ",
@@ -485,7 +485,7 @@
     },
     {
       "id": "21",
-      "name": "Level Twenty - 21",
+      "name": "Lux",
       "tiles": [
         "        ",
         "    M   ",
@@ -508,7 +508,7 @@
     },
     {
       "id": "22",
-      "name": "Level Twenty One - 22",
+      "name": "X",
       "tiles": [
         "   MM   ",
         "   MM   ",
@@ -531,7 +531,7 @@
     },
     {
       "id": "23",
-      "name": "Level Twenty Two - 23",
+      "name": "23",
       "tiles": [
         "        ",
         "M M M M ",
@@ -554,7 +554,7 @@
     },
     {
       "id": "24",
-      "name": "Level Twenty Three - 24",
+      "name": "iG",
       "tiles": [
         "        ",
         "  MMMMM ",
@@ -577,7 +577,7 @@
     },
     {
       "id": "25",
-      "name": "Level Twenty Four - 25",
+      "name": "Shuriken2",
       "tiles": [
         "   MM   ",
         " MMMM M ",
@@ -600,7 +600,7 @@
     },
     {
       "id": "26",
-      "name": "Level Twenty Five - 26",
+      "name": "Center",
       "tiles": [
         "        ",
         "        ",
@@ -623,7 +623,7 @@
     },
     {
       "id": "27",
-      "name": "Level Twenty Six - 27",
+      "name": "Corners",
       "tiles": [
         "        ",
         " M    M ",
@@ -646,7 +646,7 @@
     },
     {
       "id": "28",
-      "name": "Level Twenty Seven - 28",
+      "name": "X2",
       "tiles": [
         "   MM   ",
         "        ",
@@ -669,7 +669,7 @@
     },
     {
       "id": "29",
-      "name": "Level Twenty Eight - 29",
+      "name": "Maze",
       "tiles": [
         "M   MMMM",
         "  M     ",
@@ -692,7 +692,7 @@
     },
     {
       "id": "30",
-      "name": "Level Twenty Nine - 30",
+      "name": "Slash",
       "tiles": [
         "     MMM",
         " M    MM",
@@ -715,7 +715,7 @@
     },
     {
       "id": "31",
-      "name": "Level Thirty - 31",
+      "name": "Gears",
       "tiles": [
         "     MMM",
         "MM      ",
@@ -741,7 +741,7 @@
     },
     {
       "id": "32",
-      "name": "Level Thirty One - 32",
+      "name": "Axel",
       "tiles": [
         "        ",
         " MMMMMM ",
@@ -763,7 +763,7 @@
     },
     {
       "id": "33",
-      "name": "Level Thirty Two - 33",
+      "name": "Bumper",
       "tiles": [
         "MM      ",
         "MM   M  ",
@@ -785,7 +785,7 @@
     },
     {
       "id": "34",
-      "name": "Level Thirty Three - 34",
+      "name": "Blender",
       "tiles": [
         "      MM",
         "     MMM",
@@ -807,7 +807,7 @@
     },
     {
       "id": "35",
-      "name": "Level Thirty Four - 35",
+      "name": "[]",
       "tiles": [
         "        ",
         " MMM    ",
@@ -829,7 +829,7 @@
     },
     {
       "id": "36",
-      "name": "Level Five - 36",
+      "name": "Exgn",
       "tiles": [
         "MMM  MMM",
         "MM    MM",
@@ -857,7 +857,7 @@
     },
     {
       "id": "37",
-      "name": "Level Five - 37",
+      "name": "Y",
       "tiles": [
         "        ",
         " M    M ",
@@ -884,7 +884,7 @@
     },
     {
       "id": "38",
-      "name": "Level Five - 38",
+      "name": "X3",
       "tiles": [
         "        ",
         " M    M ",
@@ -912,7 +912,7 @@
     },
     {
       "id": "39",
-      "name": "Level Five - 39",
+      "name": "39",
       "tiles": [
         "MMMM    ",
         "MM      ",
@@ -938,7 +938,7 @@
     },
     {
       "id": "40",
-      "name": "Level Thirty Five - 40",
+      "name": "++",
       "tiles": [
         "        ",
         "  M     ",
@@ -964,7 +964,7 @@
     },
     {
       "id": "41",
-      "name": "Level Thirty Five - 41",
+      "name": "Coffee?",
       "tiles": [
         "MMM     ",
         "        ",
@@ -990,7 +990,7 @@
     },
     {
       "id": "42",
-      "name": "Level Thirty Five - 42",
+      "name": "The Answer",
       "tiles": [
         "      MM",
         "        ",
@@ -1016,7 +1016,7 @@
     },
     {
       "id": "43",
-      "name": "Level Thirty Five - 43",
+      "name": "KO",
       "tiles": [
         " MMMMMM ",
         "        ",
@@ -1042,7 +1042,7 @@
     },
     {
       "id": "44",
-      "name": "Level Thirty Five - 44",
+      "name": "Pins",
       "tiles": [
         "M       ",
         "M MMMM  ",
@@ -1068,7 +1068,7 @@
     },
     {
       "id": "45",
-      "name": "Level Thirty Five - 45",
+      "name": "Lil boy",
       "tiles": [
         "        ",
         "    M   ",
@@ -1094,7 +1094,7 @@
     },
     {
       "id": "46",
-      "name": "Level Thirty Five - 46",
+      "name": "Clouds",
       "tiles": [
         "      MM",
         "    MM  ",
@@ -1120,7 +1120,7 @@
     },
     {
       "id": "47",
-      "name": "Level Thirty Five - 47",
+      "name": "Name it!",
       "tiles": [
         "        ",
         " M      ",
@@ -1146,7 +1146,7 @@
     },
     {
       "id": "48",
-      "name": "Level Thirty Five - 48",
+      "name": "Game of life",
       "tiles": [
         "   MM   ",
         "        ",
@@ -1173,7 +1173,7 @@
     },
     {
       "id": "49",
-      "name": "Level Thirty Five - 49",
+      "name": "Legs",
       "tiles": [
         "   MM   ",
         "   MM   ",
@@ -1200,7 +1200,7 @@
     },
     {
       "id": "50",
-      "name": "Level Thirty Five - 50",
+      "name": "I",
       "tiles": [
         "   M    ",
         "     M  ",
@@ -1226,7 +1226,7 @@
     },
     {
       "id": "51",
-      "name": "Level Thirty Five - 51",
+      "name": "Legal",
       "tiles": [
         "        ",
         " M  MM  ",
@@ -1253,7 +1253,7 @@
     },
     {
       "id": "52",
-      "name": "Level Thirty Five - 52",
+      "name": "Get better",
       "tiles": [
         "  M     ",
         "   M    ",
@@ -1279,7 +1279,7 @@
     },
     {
       "id": "53",
-      "name": "Level Thirty Five - 53",
+      "name": "Duck",
       "tiles": [
         "MM    MM",
         "   MM MM",
@@ -1305,7 +1305,7 @@
     },
     {
       "id": "54",
-      "name": "Level Thirty Five - 54",
+      "name": "Invaders",
       "tiles": [
         "   MMMMM",
         " M M   M",
@@ -1332,7 +1332,7 @@
     },
     {
       "id": "55",
-      "name": "Level Thirty Five - 55",
+      "name": "Guitar",
       "tiles": [
         "        ",
         "   MM   ",
@@ -1358,7 +1358,7 @@
     },
     {
       "id": "56",
-      "name": "Level Thirty Five - 56",
+      "name": "Fighter",
       "tiles": [
         "        ",
         " M M    ",
@@ -1384,7 +1384,7 @@
     },
     {
       "id": "57",
-      "name": "Level Thirty Five - 57",
+      "name": "Falling",
       "tiles": [
         "        ",
         " M M M M",
@@ -1410,7 +1410,7 @@
     },
     {
       "id": "58",
-      "name": "Level Thirty Five - 58",
+      "name": "Mega",
       "tiles": [
         "        ",
         " M M M M",
@@ -1436,7 +1436,7 @@
     },
     {
       "id": "59",
-      "name": "Level Thirty Five - 59",
+      "name": "Complex",
       "tiles": [
         "       M",
         " M M MMM",
@@ -1462,7 +1462,7 @@
     },
     {
       "id": "60",
-      "name": "Level Thirty Five - 60",
+      "name": "Stairs",
       "tiles": [
         "        ",
         " M M M  ",
@@ -1488,7 +1488,7 @@
     },
     {
       "id": "61",
-      "name": "Level Thirty Five - 61",
+      "name": "Retiring",
       "tiles": [
         "        ",
         "  MM MM ",
@@ -1510,7 +1510,7 @@
     },
     {
       "id": "62",
-      "name": "Level Thirty Five - 62",
+      "name": "MM",
       "tiles": [
         "MM      ",
         "   MMM  ",
@@ -1536,7 +1536,7 @@
     },
     {
       "id": "63",
-      "name": "Level Thirty Five - 63",
+      "name": "FE",
       "tiles": [
         "  M   M ",
         "    M   ",
@@ -1562,7 +1562,7 @@
     },
     {
       "id": "64",
-      "name": "Level Thirty Five - 64",
+      "name": "X X",
       "tiles": [
         "        ",
         "  M   M ",
@@ -1589,7 +1589,7 @@
     },
     {
       "id": "65",
-      "name": "Level Thirty Five - 65",
+      "name": "Boat",
       "tiles": [
         "    M   ",
         "      M ",
@@ -1615,7 +1615,7 @@
     },
     {
       "id": "66",
-      "name": "Level Thirty Five - 66",
+      "name": "Menino",
       "tiles": [
         "        ",
         "   MM   ",
@@ -1641,7 +1641,7 @@
     },
     {
       "id": "67",
-      "name": "Level Thirty Five - 67",
+      "name": "TV",
       "tiles": [
         " M    M ",
         " MM  MM ",
@@ -1667,7 +1667,7 @@
     },
     {
       "id": "68",
-      "name": "Level Thirty Five - 68",
+      "name": "Maze2",
       "tiles": [
         "M    M  ",
         "MMMM MM ",
@@ -1693,7 +1693,7 @@
     },
     {
       "id": "69",
-      "name": "Level Thirty Five - 69",
+      "name": "LLLL",
       "tiles": [
         "  M     ",
         "  M     ",
@@ -1719,7 +1719,7 @@
     },
     {
       "id": "70",
-      "name": "Level Thirty Five - 70",
+      "name": "Nights",
       "tiles": [
         "  MM  MM",
         "      MM",
@@ -1745,7 +1745,7 @@
     },
     {
       "id": "71",
-      "name": "Level Thirty Five - 71",
+      "name": "J1",
       "tiles": [
         "        ",
         " M    M ",
@@ -1771,7 +1771,7 @@
     },
     {
       "id": "72",
-      "name": "Level Thirty Five - 72",
+      "name": "Port",
       "tiles": [
         "        ",
         " MMMMMM ",
@@ -1793,7 +1793,7 @@
     },
     {
       "id": "73",
-      "name": "Level Thirty Five - 73",
+      "name": "My Name",
       "tiles": [
         "        ",
         " MMMMMM ",
@@ -1819,7 +1819,7 @@
     },
     {
       "id": "74",
-      "name": "Level Thirty Five - 74",
+      "name": "Phones",
       "tiles": [
         "  M  M  ",
         "  MM M  ",
@@ -1845,7 +1845,7 @@
     },
     {
       "id": "75",
-      "name": "Level Thirty Five - 75",
+      "name": "Seventy Five",
       "tiles": [
         "MM   M  ",
         " MM  M  ",
@@ -1871,7 +1871,7 @@
     },
     {
       "id": "76",
-      "name": "Level Thirty Five - 76",
+      "name": "Cross",
       "tiles": [
         "MMMMMMMM",
         "    M   ",
@@ -1897,7 +1897,7 @@
     },
     {
       "id": "77",
-      "name": "Level Thirty Five - 77",
+      "name": "Kilo",
       "tiles": [
         "   MM   ",
         "MM MMMM ",
@@ -1923,7 +1923,7 @@
     },
     {
       "id": "78",
-      "name": "Level Thirty Five - 78",
+      "name": "Machine",
       "tiles": [
         "   MM   ",
         " M MM M ",
@@ -1949,7 +1949,7 @@
     },
     {
       "id": "79",
-      "name": "Level Thirty Five - 79",
+      "name": "Star",
       "tiles": [
         "        ",
         " M    M ",
@@ -1975,7 +1975,7 @@
     },
     {
       "id": "80",
-      "name": "Level Thirty Five - 80",
+      "name": "Snake",
       "tiles": [
         "        ",
         "MM    MM",
@@ -2001,7 +2001,7 @@
     },
     {
       "id": "81",
-      "name": "Level Thirty Five - 81",
+      "name": "Dog",
       "tiles": [
         "    MMM ",
         " MM     ",
@@ -2027,7 +2027,7 @@
     },
     {
       "id": "82",
-      "name": "Level Thirty Five - 82",
+      "name": "Worm",
       "tiles": [
         "        ",
         "        ",
@@ -2053,7 +2053,7 @@
     },
     {
       "id": "83",
-      "name": "Level Thirty Five - 83",
+      "name": "Process",
       "tiles": [
         "     M  ",
         "  MM M  ",
@@ -2079,7 +2079,7 @@
     },
     {
       "id": "84",
-      "name": "Level Thirty Five - 84",
+      "name": "Horse",
       "tiles": [
         "        ",
         " MM  MM ",
@@ -2105,7 +2105,7 @@
     },
     {
       "id": "85",
-      "name": "Level Thirty Five - 85",
+      "name": "Torres",
       "tiles": [
         "        ",
         "MM MM MM",
@@ -2131,7 +2131,7 @@
     },
     {
       "id": "86",
-      "name": "Level Thirty Five - 86",
+      "name": "MxM",
       "tiles": [
         "        ",
         " MM  MM ",
@@ -2157,7 +2157,7 @@
     },
     {
       "id": "87",
-      "name": "Level Thirty Five - 87",
+      "name": "VV",
       "tiles": [
         "M      M",
         "MM    MM",
@@ -2183,7 +2183,7 @@
     },
     {
       "id": "88",
-      "name": "Level Thirty Five - 88",
+      "name": "B+",
       "tiles": [
         "MM    MM",
         "MM    MM",
@@ -2209,7 +2209,7 @@
     },
     {
       "id": "89",
-      "name": "Level Thirty Five - 89",
+      "name": "Small Shuriken",
       "tiles": [
         "        ",
         "  M     ",
@@ -2235,7 +2235,7 @@
     },
     {
       "id": "90",
-      "name": "Level Thirty Five - 90",
+      "name": "Blob",
       "tiles": [
         "        ",
         " M    M ",
@@ -2261,7 +2261,7 @@
     },
     {
       "id": "91",
-      "name": "Level Thirty Five - 91",
+      "name": "G-",
       "tiles": [
         "        ",
         "   MM   ",
@@ -2287,7 +2287,7 @@
     },
     {
       "id": "92",
-      "name": "Level Thirty Five - 92",
+      "name": "B One",
       "tiles": [
         "        ",
         " MMMMMM ",
@@ -2313,7 +2313,7 @@
     },
     {
       "id": "93",
-      "name": "Level Thirty Five - 93",
+      "name": "Keep Walking",
       "tiles": [
         "        ",
         "M MMMM M",
@@ -2339,7 +2339,7 @@
     },
     {
       "id": "94",
-      "name": "Level Thirty Five - 94",
+      "name": "M+",
       "tiles": [
         " M    M ",
         " M MMMM ",
@@ -2365,7 +2365,7 @@
     },
     {
       "id": "95",
-      "name": "Level Thirty Five - 95",
+      "name": "Ellinha",
       "tiles": [
         "M   M   ",
         "  M   M ",
@@ -2387,7 +2387,7 @@
     },
     {
       "id": "96",
-      "name": "Level Thirty Five - 96",
+      "name": "Get more",
       "tiles": [
         "   MM   ",
         "MM    MM",
@@ -2413,7 +2413,7 @@
     },
     {
       "id": "97",
-      "name": "Level Thirty Five - 97",
+      "name": "Tri",
       "tiles": [
         " M    M ",
         "   MM   ",
@@ -2439,7 +2439,7 @@
     },
     {
       "id": "98",
-      "name": "Level Thirty Five - 98",
+      "name": "Empty",
       "tiles": [
         "        ",
         "        ",
@@ -2461,7 +2461,7 @@
     },
     {
       "id": "99",
-      "name": "Level Thirty Five - 99",
+      "name": "Max Score",
       "tiles": [
         "WWWWWWWW",
         "WRRRRRRW",

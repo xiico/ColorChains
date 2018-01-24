@@ -117,7 +117,7 @@
     },
     {
       "id": "5",
-      "name": "Level Five - 5",
+      "name": "Level Six",
       "tiles": [
         "MMMMMMMM",
         "MMMMMMMM",
@@ -140,7 +140,7 @@
     },
     {
       "id": "6",
-      "name": "Level Six - 6",
+      "name": "Level Seven",
       "tiles": [
         "MM MMMMM",
         "MM  MMMM",
@@ -163,7 +163,7 @@
     },
     {
       "id": "7",
-      "name": "Level Nine - 7",
+      "name": "Level Eight",
       "tiles": [
         "MMMMMMMM",
         "   MM   ",
@@ -186,7 +186,7 @@
     },
     {
       "id": "8",
-      "name": "Level Twelve - 8",
+      "name": "Level Nine",
       "tiles": [
         "MM    MM",
         "MMM  MMM",
@@ -209,7 +209,7 @@
     },
     {
       "id": "9",
-      "name": "Level Thirteen - 9",
+      "name": "Level Nine",
       "tiles": [
         "        ",
         "MMM  MMM",
@@ -232,7 +232,7 @@
     },
     {
       "id": "10",
-      "name": "Level Ten - 10",
+      "name": "Shuriken",
       "tiles": [
         "MMMMMMMM",
         "        ",
@@ -255,7 +255,7 @@
     },
     {
       "id": "11",
-      "name": "Level Fourteen - 11",
+      "name": "Bars",
       "tiles": [
         "MMMMMMMM",
         "        ",
@@ -278,7 +278,7 @@
     },
     {
       "id": "12",
-      "name": "Level Eight - 12",
+      "name": "Risk",
       "tiles": [
         "M      M",
         "MMM  MMM",
@@ -301,7 +301,7 @@
     },
     {
       "id": "13",
-      "name": "Level Seven - 13",
+      "name": "Friday",
       "tiles": [
         "        ",
         " MM  MM ",
@@ -324,7 +324,7 @@
     },
     {
       "id": "14",
-      "name": "Level Eleven - 14",
+      "name": "Hat",
       "tiles": [
         "MMMMMMMM",
         "M      M",
@@ -347,7 +347,7 @@
     },
     {
       "id": "15",
-      "name": "Level Five - 15",
+      "name": "XV",
       "tiles": [
         "MMM  MMM",
         "MM    MM",
@@ -370,7 +370,7 @@
     },
     {
       "id": "16",
-      "name": "Level Fifteen - 16",
+      "name": "Personal",
       "tiles": [
         "   MM MM",
         "   MM MM",
@@ -393,7 +393,7 @@
     },
     {
       "id": "17",
-      "name": "Level Sixteen - 17",
+      "name": "XVII",
       "tiles": [
         "    MMMM",
         "    MMMM",
@@ -416,7 +416,7 @@
     },
     {
       "id": "18",
-      "name": "Level Seventeen - 18",
+      "name": "Zed",
       "tiles": [
         "MMMMMMMM",
         "      MM",
@@ -439,7 +439,7 @@
     },
     {
       "id": "19",
-      "name": "Level Eighteen - 19",
+      "name": "F1",
       "tiles": [
         "        ",
         "MMM  MMM",
@@ -462,7 +462,7 @@
     },
     {
       "id": "20",
-      "name": "Level Nineteen - 20",
+      "name": "Blox",
       "tiles": [
         "        ",
         "MM  MMM ",
@@ -485,7 +485,7 @@
     },
     {
       "id": "21",
-      "name": "Level Twenty - 21",
+      "name": "Lux",
       "tiles": [
         "        ",
         "    M   ",
@@ -508,7 +508,7 @@
     },
     {
       "id": "22",
-      "name": "Level Twenty One - 22",
+      "name": "X",
       "tiles": [
         "   MM   ",
         "   MM   ",
@@ -531,7 +531,7 @@
     },
     {
       "id": "23",
-      "name": "Level Twenty Two - 23",
+      "name": "23",
       "tiles": [
         "        ",
         "M M M M ",
@@ -554,16 +554,16 @@
     },
     {
       "id": "24",
-      "name": "Level Twenty Three - 24",
+      "name": "Empty",
       "tiles": [
         "        ",
-        "  MMMMM ",
         "        ",
-        "MM     M",
-        "M     MM",
         "        ",
-        " MMMMMM ",
-        "  MMMM  "
+        "        ",
+        "        ",
+        "        ",
+        "        ",
+        "        "
       ],
       "customProperties": [],
       "targetScore": 1000,
