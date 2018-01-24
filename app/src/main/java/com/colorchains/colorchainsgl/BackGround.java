@@ -146,33 +146,30 @@ public class BackGround extends Entity {
 
     public static final String river =
             "precision mediump float;\n" +
-                    "\n" +
                     "uniform float time;\n" +
                     "uniform vec2 resolution;\n" +
-                    "\n" +
                     "float sinx(float x) {\n" +
-                    "\tfloat v=sin(x);\n" +
-                    "\treturn sign(v)*pow(abs(v),0.6);\n" +
-                    "}\n" +
-                    "\n" +
-                    "void main( void ) {\n" +
-                    "\tvec2 position = (2.0 * gl_FragCoord.xy - resolution.xy) / min(resolution.x, resolution.y);\n" +
-                    "\n" +
-                    "\tvec3 origin = vec3(4.0 * sin(time / 3.0), 0.0, -time * 2.0);\n" +
-                    "\tvec3 dir = normalize(vec3(position.x, -position.y, -1.0));\n" +
-                    "\tdir.yz = vec2(dir.y - dir.z, dir.z + dir.y) / sqrt(2.0);\n" +
-                    "\n" +
-                    "\tvec3 allcol = vec3(0.0);\n" +
-                    "\tfor(int i = 1; i <= 3; i++) {\n" +
-                    "\t\tfloat dist = (3.0 + float(2 * i)) / dir.y;\n" +
-                    "\t\tif(dist > 0.0) {\n" +
-                    "\t\t\tvec3 pos = dir * dist + origin;\n" +
-                    "\t\t\tfloat c = pow(abs(sin(pos.x * 0.14 + float(i * i) + 0.6*sinx(pos.z / 3.0 * float(i + 3)))), 4.0) * 20.0 / dist / dist;\n" +
-                    "\t\t\tvec3 col = vec3(1.0, 1.5, 2.0) * c;\n" +
-                    "\t\t\tallcol += col;\n" +
-                    "\t\t}\n" +
-                    "\t}\n" +
-                    "\tgl_FragColor = vec4(allcol, 0.4);\n" +
+                    " float v=sin(x);\n" +
+                    " return sign(v)*pow(abs(v),0.6);\n" +
+                    "}" +
+                    "void main( void ) {" +
+                    " vec2 position = (2.0 * gl_FragCoord.xy - resolution.xy) / min(resolution.x, resolution.y);\n" +
+                    " " +
+                    " vec3 origin = vec3(4.0 * sin(time / 3.0), 0.0, -time * 2.0);\n" +
+                    " vec3 dir = normalize(vec3(position.x, -position.y, -1.0));\n" +
+                    " dir.yz = vec2(dir.y - dir.z, dir.z + dir.y) / sqrt(2.0);\n" +
+                    " " +
+                    " vec3 allcol = vec3(0.0);\n" +
+                    " for(int i = 1; i <= 3; i++) {\n" +
+                    "  float dist = (3.0 + float(2 * i)) / dir.y;\n" +
+                    "  if(dist > 0.0) {\n" +
+                    "   vec3 pos = dir * dist + origin;\n" +
+                    "   float c = pow(abs(sin(pos.x * 0.14 + float(i * i) + 0.6*sinx(pos.z / 3.0 * float(i + 3)))), 4.0) * 20.0 / dist / dist;\n" +
+                    "   vec3 col = vec3(1.0, 1.5, 2.0) * c;\n" +
+                    "   allcol += col;\n" +
+                    "  }" +
+                    " }" +
+                    " gl_FragColor = vec4(allcol, 0.4);\n" +
                     "}";
 
     public static final String tunnel2 =
@@ -672,23 +669,44 @@ public class BackGround extends Entity {
             programs.add(Shape.createProgram(vs_Image, effect3, -1));//1
             //programs.add(Shape.createProgram(vs_Image, effect2, -1));
             programs.add(Shape.createProgram(vs_Image, swirl, -1));//2
+
             programs.add(Shape.createProgram(vs_Image, balls, -1));//3
+            programs.get(programs.size() - 1).setTimeLimit((float) (Math.PI*4f));
+
             programs.add(Shape.createProgram(vs_Image, river, -1));//4
-            programs.add(Shape.createProgram(vs_Image, tunnel2, -1));//5
-            programs.add(Shape.createProgram(vs_Image, hive, -1));//6
-            programs.add(Shape.createProgram(vs_Image, waves, -1));//7
-            programs.add(Shape.createProgram(vs_Image, greenWater, -1));//8
-            //programs.add(Shape.createProgram(vs_Image, rainbow, -1));
-            programs.add(Shape.createProgram(vs_Image, tunnel3, -1));//9
-            programs.add(Shape.createProgram(vs_Image, rainbow2, -1));//10
-            programs.get(programs.size() - 1).setTimeLimit((float) (Math.PI*2f));
-            programs.add(Shape.createProgram(vs_Image, colorBalls, -1));//11
-            programs.get(programs.size() - 1).setTimeLimit((float) (Math.PI*2f));
+            programs.get(programs.size() - 1).setTimeLimit((float) (Math.PI*6f));
+
+            //programs.add(Shape.createProgram(vs_Image, tunnel2, -1));//5
+
+            programs.add(Shape.createProgram(vs_Image, hive, -1));//5
+            programs.get(programs.size() - 1).setTimeLimit((float) (Math.PI*4f));
+
+            programs.add(Shape.createProgram(vs_Image, waves, -1));//6
+            programs.get(programs.size() - 1).setTimeLimit((float) (Math.PI*8f));
+            //programs.get(programs.size() - 1).setTimeStep(.1f);
+
+            programs.add(Shape.createProgram(vs_Image, greenWater, -1));//7
+
+            programs.add(Shape.createProgram(vs_Image, tunnel3, -1));//8
+            programs.get(programs.size() - 1).setTimeLimit((float) (Math.PI*7.6f));
+            //programs.get(programs.size() - 1).setTimeStep(.01f);
+
+            programs.add(Shape.createProgram(vs_Image, rainbow2, -1));//9
+            programs.get(programs.size() - 1).setTimeLimit((float) (Math.PI*10f));
+
+            programs.add(Shape.createProgram(vs_Image, colorBalls, -1));//10
+            programs.get(programs.size() - 1).setTimeLimit((float) (Math.PI*4f));
             programs.get(programs.size() - 1).setTimeStep(.005f);
-            programs.add(Shape.createProgram(vs_Image, wave, -1));//12
-            programs.add(Shape.createProgram(vs_Image, waves2, -1));//13
-            programs.add(Shape.createProgram(vs_Image, swirl2, -1));//14
-            programs.add(Shape.createProgram(vs_Image, waves3, -1));//15
+
+            programs.add(Shape.createProgram(vs_Image, wave, -1));//11
+
+            programs.add(Shape.createProgram(vs_Image, waves2, -1));//12
+            programs.get(programs.size() - 1).setTimeLimit((float) (Math.PI*30f));
+            //programs.get(programs.size() - 1).setTimeStep(.1f);
+
+            programs.add(Shape.createProgram(vs_Image, swirl2, -1));//13
+
+            programs.add(Shape.createProgram(vs_Image, waves3, -1));//14
         }
         if(resourceId == R.drawable.greengem ||
                 resourceId == R.drawable.redgem ||

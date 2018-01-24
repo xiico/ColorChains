@@ -496,7 +496,7 @@ class UI {
                 }
             } else {
                 for (Font label: chainsLabels) {
-                    if(mapColors.get(label.id) != null && chains.get(mapColors.get(label.id)).complete)
+                    if(mapColors!= null && mapColors.get(label.id) != null && chains.get(mapColors.get(label.id)).complete)
                         label.color = new float[]{60f/255,216f/255,0,1};//G
                     else
                         label.color = new float[]{235f/255,235f/255,235f/255,1};//W
@@ -725,9 +725,8 @@ class UI {
             if(controls.size() > 1)
                 pagesView.draw();
 
-            if(GameView.renderer.backGround.index != 7){
-                GameView.renderer.backGround.index = 7;
-                GameView.renderer.backGround.mProgram = GameView.renderer.backGround.programs.get(GameView.renderer.backGround.index);
+            if(GameView.renderer.backGround.index != 6){
+                GameView.GLRenderer.SetBackGround(6);
             }
         }
 
@@ -741,7 +740,7 @@ class UI {
                 public void onTouchEnd(Object sender, MotionEvent evt) {
                     if(Math.abs(lastSpeed) < 1 ) {
                         GameView.board.loadResult = ((Button) sender).id;
-                        GameView.GLRenderer.SetRandomBackGround(-1);
+                        GameView.GLRenderer.SetBackGround(-1);
                     }
                 }
 

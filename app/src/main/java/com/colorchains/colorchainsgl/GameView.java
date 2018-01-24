@@ -290,7 +290,7 @@ public class GameView extends GLSurfaceView {
                     backGround.setOffSetY(0);
                     backGround.doScale = false;
                     backGround.rotate = false;
-                    SetRandomBackGround(0);
+                    SetBackGround(0);
 
                     /******* end onSurfaceChanged GL2 **********/
                     w = metrics.widthPixels;//600
@@ -304,7 +304,11 @@ public class GameView extends GLSurfaceView {
             }
         }
 
-        public static void SetRandomBackGround(int bgIndex) {
+        /**
+         *
+         * @param bgIndex Set the background index (-1 to random)
+         */
+        public static void SetBackGround(int bgIndex) {
             int randint = 15;
             if (GameView.cycleBG) {
                 Random r = new Random();
@@ -313,6 +317,7 @@ public class GameView extends GLSurfaceView {
             backGround.index = randint;
             if(bgIndex < 0)
                 GameView.renderer.backGround.mProgram = GameView.renderer.backGround.programs.get(GameView.renderer.backGround.index);
+            else GameView.renderer.backGround.mProgram = GameView.renderer.backGround.programs.get(GameView.renderer.backGround.index = bgIndex);
         }
 
         public String loadJSONFromAsset(String fileName) {

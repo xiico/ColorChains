@@ -142,6 +142,75 @@
       "id": "6",
       "name": "Level Seven",
       "tiles": [
+        "MMMMMMMM",
+        "MMMMMMMM",
+        "MM    MM",
+        "MM    MM",
+        "MM    MM",
+        "MM    MM",
+        "MMMMMMMM",
+        "MMMMMMMM"
+      ],
+      "customProperties": [],
+      "targetScore": 1000,
+      "score": 0,
+      "highScore": 0,
+      "moves": 0,
+      "maxMoves": 0,
+      "targetMoves": 30,
+      "sets": [],
+      "defaultTargetScore": 1000
+    },
+    {
+      "id": "7",
+      "name": "Level Eight",
+      "tiles": [
+        "MMMMMMMM",
+        "MMM  MMM",
+        "MMM  MMM",
+        "M      M",
+        "M      M",
+        "MMM  MMM",
+        "MMM  MMM",
+        "MMMMMMMM"
+      ],
+      "customProperties": [],
+      "targetScore": 1000,
+      "score": 0,
+      "highScore": 0,
+      "moves": 0,
+      "maxMoves": 0,
+      "targetMoves": 46,
+      "sets": [],
+      "defaultTargetScore": 1000
+    },
+    {
+      "id": "8",
+      "name": "Level Nine",
+      "tiles": [
+        "MMMMMMMM",
+        "MMM  MMM",
+        "MM    MM",
+        "M      M",
+        "M      M",
+        "MM    MM",
+        "MMM  MMM",
+        "MMMMMMMM"
+      ],
+      "customProperties": [],
+      "targetScore": 1000,
+      "score": 0,
+      "highScore": 0,
+      "moves": 0,
+      "maxMoves": 0,
+      "targetMoves": 80,
+      "sets": [],
+      "defaultTargetScore": 2000
+    },
+    {
+      "id": "9",
+      "name": "Shuriken",
+      "tiles": [
         "MM MMMMM",
         "MM  MMMM",
         "MM      ",
@@ -162,8 +231,8 @@
       "defaultTargetScore": 3000
     },
     {
-      "id": "7",
-      "name": "Level Eight",
+      "id": "10",
+      "name": "Level Eleven",
       "tiles": [
         "MMMMMMMM",
         "   MM   ",
@@ -181,75 +250,6 @@
       "moves": 0,
       "maxMoves": 0,
       "targetMoves": 194,
-      "sets": [],
-      "defaultTargetScore": 5000
-    },
-    {
-      "id": "8",
-      "name": "Level Nine",
-      "tiles": [
-        "MM    MM",
-        "MMM  MMM",
-        "MMM  MMM",
-        "MMM  MMM",
-        "M      M",
-        "        ",
-        "        ",
-        "MMMMMMMM"
-      ],
-      "customProperties": [],
-      "targetScore": 1000,
-      "score": 0,
-      "highScore": 0,
-      "moves": 0,
-      "maxMoves": 0,
-      "targetMoves": 123,
-      "sets": [],
-      "defaultTargetScore": 5000
-    },
-    {
-      "id": "9",
-      "name": "Level Nine",
-      "tiles": [
-        "        ",
-        "MMM  MMM",
-        "MMM  MMM",
-        "M      M",
-        "        ",
-        "   MM   ",
-        "  MMMM  ",
-        "MMMMMMMM"
-      ],
-      "customProperties": [],
-      "targetScore": 1000,
-      "score": 0,
-      "highScore": 0,
-      "moves": 0,
-      "maxMoves": 0,
-      "targetMoves": 177,
-      "sets": [],
-      "defaultTargetScore": 5000
-    },
-    {
-      "id": "10",
-      "name": "Shuriken",
-      "tiles": [
-        "MMMMMMMM",
-        "        ",
-        "        ",
-        "MMM  MMM",
-        "M      M",
-        "        ",
-        "        ",
-        "MMMMMMMM"
-      ],
-      "customProperties": [],
-      "targetScore": 1000,
-      "score": 0,
-      "highScore": 0,
-      "moves": 0,
-      "maxMoves": 0,
-      "targetMoves": 208,
       "sets": [],
       "defaultTargetScore": 5000
     },
