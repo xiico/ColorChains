@@ -533,6 +533,7 @@ public class Board extends Entity {
         }
     }
 
+    private boolean autoLoad = true;
     @Override
     public void update(){
         if(this.clearChains) {
@@ -540,6 +541,14 @@ public class Board extends Entity {
             this.clearChains = false;
         }
         UI.update();
+        if(Timer.ticks > 180 && !GameView.started && autoLoad){
+            GameView.started = true;
+            GameView.renderer.title.visible = false;
+        }
+        if(Timer.ticks > 360 && autoLoad){
+            autoLoad = false;
+            loadResult = "24";
+        }
         if(!GameView.started) {
             return;
         } else {

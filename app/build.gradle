@@ -7,8 +7,8 @@ android {
         applicationId "com.colorchains.colorchainsgl"
         minSdkVersion 16
         targetSdkVersion 25
-        versionCode 1
-        versionName "1.0"
+        versionCode 3
+        versionName "0.9"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -21,11 +21,11 @@ android {
     productFlavors {
         free {
             applicationIdSuffix ".free"
-            versionNameSuffix "-free"
+            versionNameSuffix ".1"
         }
         full {
             applicationIdSuffix ".full"
-            versionNameSuffix "-full"
+            versionNameSuffix ".1"
         }
     }
 }

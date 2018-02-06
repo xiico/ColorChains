@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">Color Chains</string>
+    <string name="app_name">Color Chains</string>
     <string name="continue_game" translatable="true">There is a previously saved game.\nDo you want to continue it?</string>
     <string name="exit_game" translatable="true">exit</string>
     <string name="confirm_exit" translatable="true">Are you sure you want to exit?</string>
