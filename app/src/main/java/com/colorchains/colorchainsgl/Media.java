@@ -86,11 +86,13 @@ public class Media {
 
             @Override
             public void onPrepared(MediaPlayer player) {
-                player.start();
+                if(GameView.playBGM)
+                    player.start();
             }
 
         });
-        setBackGroundMusic(R.raw.title);
+        if(GameView.playBGM)
+            setBackGroundMusic(R.raw.title);
     }
 
     public static void playCurrentTrack(MediaPlayer mp) {
@@ -109,6 +111,7 @@ public class Media {
     }
 
     public static void setBackGroundMusic(int bg){
+
         try {
             bgMusic.reset();
             bgMusic.setDataSource(GameView.context, Uri.parse("android.resource://" + GameView.context.getPackageName() + "/" + bg));
@@ -121,6 +124,12 @@ public class Media {
 
     public static boolean playingPuzzleBGM = false;
     public static void playPuzzleBGM() throws Exception {
+        if(!GameView.playBGM) {
+            if(playingPuzzleBGM){
+                stopPuzzleBGM();
+            }
+            return;
+        }
         playingPuzzleBGM = true;
         curTrack = 0;
         Collections.shuffle(tracks);

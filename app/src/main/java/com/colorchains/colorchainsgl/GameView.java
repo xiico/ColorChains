@@ -1,6 +1,7 @@
 package com.colorchains.colorchainsgl;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Point;
@@ -47,6 +48,10 @@ public class GameView extends GLSurfaceView {
     private FloatBuffer vertexBuffer;
     public static boolean cycleBG = true;
     static Board board;
+    public static boolean playBGM = true;
+    public static final String PLAY_BGM = "playBGM";
+    private static final String APP_STATES = "appStates";
+    public static SharedPreferences settings;
     public GameView(Context context) {
         super(context);
 
@@ -57,6 +62,10 @@ public class GameView extends GLSurfaceView {
         renderer = new GLRenderer();
         setRenderer(renderer);
         GameView.context = context;
+
+        //App settings
+        settings = this.context.getSharedPreferences(APP_STATES, 0);
+        GameView.playBGM = GameView.settings.getBoolean(GameView.PLAY_BGM, true);
         metrics = context.getResources().getDisplayMetrics();
         UI.init();
         Media.init();
@@ -95,6 +104,7 @@ public class GameView extends GLSurfaceView {
     @Override
     public boolean onTouchEvent(MotionEvent motionEvent) {
 
+        if(board != null && board.autoLoad) board.autoLoad = false;
         switch (motionEvent.getAction() & MotionEvent.ACTION_MASK) {
 
             // Player has touched the screen
@@ -147,7 +157,10 @@ public class GameView extends GLSurfaceView {
         Integer row = (int)Math.floor((rawY - board.gemOffsetY) / GameView.scaledDefaultSide);
         Integer col = (int)Math.floor((rawX - board.gemOffsetX) / GameView.scaledDefaultSide);
         //Log.d("TOUCH_START","row: " + row +",col: " + col + ",rawX: " + rawX + ",rawY: " + rawY + ", gemOffsetY: " + board.gemOffsetY + ", gemOffsetX: " + board.gemOffsetX + ", ds: " + GameView.scaledDefaultSide);
-        if(!GameView.GLRenderer._boardReady || row >= board.entities.length || col >= board.entities[0].length || row < 0 || col < 0) return;
+        if(!GameView.GLRenderer._boardReady || row >= board.entities.length || col >= board.entities[0].length || row < 0 || col < 0) {
+            board.selectedGem = null;
+            return;
+        }
         Gem entity = board.entities[row][col];
         board.selectedGem = entity;
         //entity.selected = true;
@@ -167,7 +180,7 @@ public class GameView extends GLSurfaceView {
         //Log.d("TOUCH_END","row: " + row +",col: " + col + ",rawX: " + rawX + ",rawY: " + rawY + ", gemOffsetY: " + board.gemOffsetY + ", gemOffsetX: " + board.gemOffsetX + ", ds: " + GameView.scaledDefaultSide);
         //if(board.selectedGem != null) Log.d("selectedGem: " + ((Gem)board.selectedGem).id,"getRow(): " + ((Gem)board.selectedGem).getRow() + ", getCol(): " + ((Gem)board.selectedGem).getCol());
         //if(evt != null) return;
-        if(!GameView.GLRenderer._boardReady || row >= board.entities.length || col >= board.entities[0].length || row < 0 || col < 0) return;
+        if(!GameView.GLRenderer._boardReady /*|| row >= board.entities.length || col >= board.entities[0].length || row < 0 || col < 0*/) return;
         if (board.selectedGem == null || !board.selectedGem.getClass().getName().endsWith("Gem")) return;
         float diffRow = Math.abs(row - ((Gem)board.selectedGem).getRow());
         float diffCol = Math.abs(col - ((Gem)board.selectedGem).getCol());
@@ -235,7 +248,7 @@ public class GameView extends GLSurfaceView {
             scale = (metrics.widthPixels / 360f);
             GameView.defaultSide = GameView.is16x9 ? 42 : (metrics.widthPixels < 800 ? 46 : 48);
             GameView.defaultSide = (metrics.widthPixels <= 600 ? 36 : GameView.defaultSide);
-            GameView.defaultSide = (metrics.widthPixels <= 540 ? 32 : GameView.defaultSide);
+            GameView.defaultSide = (metrics.widthPixels <= 540 ? 64/*32*/ : GameView.defaultSide);
             GameView.defaultSide = (metrics.widthPixels <= 480 ? 58 : GameView.defaultSide);
             if(metrics.widthPixels <= 600) UI.fontScaleBig = 6.0f;
             GameView.scaledDefaultSide = GameView.defaultSide * (int)scale;
@@ -357,16 +370,16 @@ public class GameView extends GLSurfaceView {
                         if (!GameView.disableTouch) board.parseBoard();
                     }
                 }
-
-                if (GameView.showFPS) {
-                    changeProgram(font.mProgram.getProgramId(), font.vertexBuffer);
-                    font.setText(String.valueOf(Timer.fps));
-                    font.draw();
-                }
             }
 
             UI.update();
             UI.draw();
+
+            if (GameView.showFPS) {
+                changeProgram(font.mProgram.getProgramId(), font.vertexBuffer);
+                font.setText(String.valueOf(Timer.fps));
+                font.draw();
+            }
         }
         public static int loadShader(int type, String shaderCode) {
             // create a vertex shader type (GLES20.GL_VERTEX_SHADER)

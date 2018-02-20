@@ -31,4 +31,5 @@ public enum TYPE {
     PAGING,
     CANCELRELOAD,
     STARS,
+    AUDIOCONTROL,
 }

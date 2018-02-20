@@ -45,6 +45,7 @@ class UI {
 
     static void addControl(Control ctrl){
         mainContainer.controls.add(ctrl);
+        ctrl.updateVertexBuffer = true;
     }
 
     static void update() {
@@ -301,6 +302,7 @@ class UI {
         private Button cancelButton;
         public float border = 2;
         private Font font;
+        private float padding = 1.5f;
 
         public Confirm(String id, String text, Float x, Float y) {
             super(id, TYPE.CONFIRM, x, y, GameView.scaledDefaultSide * 3, GameView.scaledDefaultSide * 2);
@@ -319,6 +321,12 @@ class UI {
             if(GameView.screenW <= 480) {
                 this.font.scale = 0.9f;
                 this.font.doScale = true;
+                this.padding = 1.5f;
+            }
+            if(GameView.screenW > 800) {
+                this.font.scale = 1.6f;
+                this.font.doScale = true;
+                this.padding = 2f;
             }
         }
 
@@ -348,7 +356,7 @@ class UI {
         public void draw()
         {
             font.setX(this.getX() + (this.getWidth() / 2));
-            font.setY(this.getY() + (this.getHeight() / 2) - (okButton.getHeight() * 1.5f));
+            font.setY(this.getY() + (this.getHeight() / 2) - (okButton.getHeight() * padding));
             font.setText(this.text);
             changeProgram(font.mProgram.getProgramId(), font.vertexBuffer);
             font.draw();

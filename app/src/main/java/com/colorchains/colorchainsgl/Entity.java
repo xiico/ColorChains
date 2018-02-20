@@ -124,6 +124,8 @@ public abstract class Entity extends Shape {
                 return R.drawable.cancelreload;
             case STARS:
                 return R.drawable.stars;
+            case AUDIOCONTROL:
+                return R.drawable.audio;
             default:
                 return -1;
         }

@@ -56,14 +56,14 @@ public class Board extends Entity {
     private UI.Confirm reloadPuzzle;
     private UI.LevelCompleted levelCompleted;
 
+    private UI.Button audioControl;
+
     private UI.Stars stars;
 
     public boolean clearChains = false;
-    private static final String APP_STATES = "appStates";
     private static final String BOARD_STATE = "boardState";
     private static final String STAGE_INDEX = "stageIndex";
     private static final String STAGE_SCORES = "stageScores.";
-    public SharedPreferences settings;
     private Integer stageIndex;
     public String loadResult = "";
     private UI.Font loading;
@@ -81,9 +81,6 @@ public class Board extends Entity {
         loading.setX(GameView.metrics.widthPixels / 2);
         loading.setY(GameView.metrics.heightPixels / 2);
         stages = Stage.getStageList(loadJSONFromAsset("levels.json"));
-
-        //App settings
-        settings = this.context.getSharedPreferences(APP_STATES, 0);
 
         this.border = 8 + (GameView.is16x9 && GameView.metrics.widthPixels > 480 ? 4 : 0);
         this.border = (GameView.metrics.widthPixels <= 600 ? this.border / 2 : this.border);
@@ -143,6 +140,32 @@ public class Board extends Entity {
         UI.addControl(confirm);
         confirm.visible = false;
 
+
+        audioControl = new UI.Button("audioControl","",
+                gemOffsetX + (GameView.scaledDefaultSide * 4f) + (this.getWidth() / 2),
+                gemOffsetY + (GameView.scaledDefaultSide * 8.5f) + (20 * GameView.scale) ,0,0, TYPE.AUDIOCONTROL, GameView.playBGM ? 0 : 1);
+        audioControl.addUIListener(new UI.UIListener() {
+            @Override
+            public void onTouchStart(Object sender, MotionEvent evt) {}
+
+            @Override
+            public void onTouchEnd(Object sender, MotionEvent evt) {
+                GameView.playBGM = !GameView.playBGM;
+                saveAudioPref();
+                try {
+                    playPuzzleBGM();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                ((UI.Button) sender).setAnimationIndex(GameView.playBGM ? 0 : 1);
+            }
+
+            @Override
+            public void onMove(Object sender, MotionEvent evt) {}
+        });
+        UI.addControl(audioControl);
+        audioControl.visible = false;
+
         showExit = new UI.Button(context.getResources().getString(R.string.exit_game),"",
                 gemOffsetX + (GameView.scaledDefaultSide * .5f) + (this.getWidth() / 2),
                 gemOffsetY + (GameView.scaledDefaultSide * 8.5f) + (20 * GameView.scale) ,0,0, TYPE.CANCELRELOAD, 0);
@@ -158,6 +181,7 @@ public class Board extends Entity {
                 GameView.GLRenderer._boardReady = false;
                 showExit.visible  = false;
                 showReload.visible = false;
+                audioControl.visible = false;
             }
 
             @Override
@@ -177,6 +201,7 @@ public class Board extends Entity {
                     GameView.GLRenderer._boardReady = true;
                     showExit.visible  = true;
                     showReload.visible = true;
+                    audioControl.visible = true;
                 } else {
                     curStage.moves = 0;
                     levelSelect.init(stages,GameView.board);
@@ -185,11 +210,13 @@ public class Board extends Entity {
                     progressBar.visible = false;
                     levelSelect.visible = true;
                     showExit.visible  = false;
+                    audioControl.visible = false;
                     showReload.visible = false;
                     confirm.visible = false;
                     Collections.shuffle(Media.tracks);
                     Media.stopPuzzleBGM();
-                    Media.setBackGroundMusic(R.raw.title);
+                    if(GameView.playBGM)
+                        Media.setBackGroundMusic(R.raw.title);
                     //GameView.GLRenderer.SetRandomBackGround(-1);
                 }
                 exitPuzzle.visible = false;
@@ -222,7 +249,7 @@ public class Board extends Entity {
             public void onMove(Object sender, MotionEvent evt) {}
         });
         UI.addControl(showReload);
-        showReload.updateVertexBuffer = true;
+        //showReload.updateVertexBuffer = true;
         showReload.visible = false;
         reloadPuzzle = new UI.Confirm("exitPuzzle",context.getResources().getString(R.string.confirm_reload), (float) GameView.scaledDefaultSide, GameView.metrics.heightPixels / 2f);
         reloadPuzzle.addUIListener(new UI.UIListener() {
@@ -243,7 +270,7 @@ public class Board extends Entity {
 
                     //reloadStage();
 
-                    String stage = moveHistory.size() > 0 ? moveHistory.get(0) : settings.getString("boardState", "");
+                    String stage = moveHistory.size() > 0 ? moveHistory.get(0) : GameView.settings.getString(BOARD_STATE, "");
                     loadStage(new Stage(stage), stageIndex);
 
                     progressBar.reset();
@@ -533,7 +560,7 @@ public class Board extends Entity {
         }
     }
 
-    private boolean autoLoad = true;
+    public boolean autoLoad = true;
     @Override
     public void update(){
         if(this.clearChains) {
@@ -554,7 +581,7 @@ public class Board extends Entity {
         } else {
             if (!loaded){
                 loaded = true;
-                String boardState = settings.getString(BOARD_STATE,"");
+                String boardState = GameView.settings.getString(BOARD_STATE,"");
                 if(boardState.length() > 0) {
                     confirm.visible = true;
                 } else {
@@ -565,8 +592,8 @@ public class Board extends Entity {
             } else if (confirm.visible || levelSelect.visible) {
                 if(loadResult.equals("")) return;
                 if (loadResult.equals("OK")) {
-                    stageIndex = settings.getInt(STAGE_INDEX, 0);
-                    loadStage(new Stage(settings.getString("boardState", "")), stageIndex);
+                    stageIndex = GameView.settings.getInt(STAGE_INDEX, 0);
+                    loadStage(new Stage(GameView.settings.getString(BOARD_STATE, "")), stageIndex);
                     ((UI.InfoBox)UI.findControlById("infoBox")).setTargetScore(curStage.targetScore);
                     ((UI.InfoBox)UI.findControlById("infoBox")).setTitle(this.curStage.name);
                 } else {
@@ -600,6 +627,7 @@ public class Board extends Entity {
             //progressBar.setValue(curStage.score / (float)curStage.targetScore);
             showExit.visible  = !levelCompleted.visible;
             showReload.visible = !levelCompleted.visible;
+            audioControl.visible = !levelCompleted.visible;
         }
         if(this.levelComplete && checkComplete){
             //GameView.GLRenderer._boardReady = false;
@@ -741,9 +769,9 @@ public class Board extends Entity {
         try{
             String boardState = this.boardToJSON();
             moveHistory.add(boardState);
-            SharedPreferences.Editor editor = settings.edit();
-            editor.putString("boardState", boardState);
-            editor.putInt("stageIndex", this.stageIndex);
+            SharedPreferences.Editor editor = GameView.settings.edit();
+            editor.putString(BOARD_STATE, boardState);
+            editor.putInt(STAGE_INDEX, this.stageIndex);
             editor.commit();
         } catch (Exception e) {
             e.printStackTrace();
@@ -755,8 +783,8 @@ public class Board extends Entity {
     }
 
     private void saveScore(){
-        SharedPreferences.Editor editor = settings.edit();
-        String stageScores = settings.getString(STAGE_SCORES + curStage.id,"{\"highScore\":0, \"highScoreMoves\":0, \"scores\":[], \"moves\":[]}");
+        SharedPreferences.Editor editor = GameView.settings.edit();
+        String stageScores = GameView.settings.getString(STAGE_SCORES + curStage.id,"{\"highScore\":0, \"highScoreMoves\":0, \"scores\":[], \"moves\":[]}");
         JSONObject obj;
         JSONArray scores = null;
         JSONArray moves = null;
@@ -782,8 +810,18 @@ public class Board extends Entity {
         editor.commit();
     }
 
+    private void saveAudioPref(){
+        try{
+            SharedPreferences.Editor editor = GameView.settings.edit();
+            editor.putBoolean(GameView.PLAY_BGM, GameView.playBGM);
+            editor.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public HighScore getHighScore(String id){
-        String stageScores = settings.getString(STAGE_SCORES + id,"");
+        String stageScores = GameView.settings.getString(STAGE_SCORES + id,"");
         //if(stageScores.length() == 0) return new HighScore();
         JSONObject obj;
         HighScore highScore = new HighScore();
@@ -966,6 +1004,7 @@ public class Board extends Entity {
         /******* EntityCollection *********/
         showReload.visible = true;
         showExit.visible = true;
+        audioControl.visible = true;
     }
 
     private void BuildGemsCollections() {
@@ -1019,5 +1058,6 @@ public class Board extends Entity {
         BuildGemsCollections();
         showReload.visible = true;
         showExit.visible = true;
+        audioControl.visible = true;
     }
 }
