@@ -723,7 +723,7 @@ public class Board extends Entity {
 
     boolean parseBoard(){
         if (chains == null && (selectedGem == null || ((Gem)selectedGem).moveTo == null )) {
-            if(selectedGem != null) curStage.moves++;
+            //if(selectedGem != null) curStage.moves++;
             this.chains = new ArrayList<>();
             this.findChainTypes();
             for (Chain chain : chains) {

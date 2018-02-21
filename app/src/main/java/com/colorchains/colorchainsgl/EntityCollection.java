@@ -121,7 +121,7 @@ public class EntityCollection extends Shape{
                 }
 
                 /******************** test transformations **************************/
-                if(entity.rotate || entity.doScale) {
+                if(entity.transform.rotate || entity.doScale) {
                     vertexData[(i * 12) + 0] = -0.5f;   //x
                     vertexData[(i * 12) + 1] = 0.5f;  //y
                     vertexData[(i * 12) + 3] = -0.5f;   //x
@@ -131,9 +131,15 @@ public class EntityCollection extends Shape{
                     vertexData[(i * 12) + 9] = 0.5f;   //x
                     vertexData[(i * 12) + 10] = 0.5f;  //y
                     /*** roatation ***/
-                    if(entity.rotate) {
-                        long time = SystemClock.uptimeMillis() % 16000L;
-                        entity.angle = 0.72f * ((int) time) * this.angularSpeed;
+                    if(entity.transform.rotate) {
+                        /*long time = SystemClock.uptimeMillis() % 16000L;
+                        entity.transform.angle = 0.72f *  ((int) time) * this.transform.angularSpeed;*/
+                        if(entity.transform.angle + entity.transform.angularSpeed > 360) entity.transform.angle = 0;
+                            entity.transform.angle += entity.transform.angularSpeed;
+                        if(entity.transform.wobble) {
+                            if(Math.abs(entity.transform.angle) >  entity.transform.wobbleAngle)
+                                entity.transform.angularSpeed *= -1;
+                        }
                     }
                     /*** scale ***/
 //                    if(gem.doScale) {
@@ -141,7 +147,7 @@ public class EntityCollection extends Shape{
 //                            gem.scaleStep = gem.scaleStep * -1;
 //                        gem.scale += gem.scaleStep;
 //                    }
-                    transformationMatrix = Shape.doTransformations(0, 0, entity.scale, entity.scale, entity.angle, 1);
+                    transformationMatrix = Shape.doTransformations(0, 0, entity.scale, entity.scale, entity.transform.angle, entity.transform.direction);
                     float[] result = new float[4];
                     for (int j = 0; j < 12; j += 3) {
                         float[] data = new float[]{vertexData[(i * 12) + j + 0],

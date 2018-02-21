@@ -502,15 +502,20 @@ class UI {
                     chainsLabel.setX(this.getX() - (this.getWidth() / 2) + 248 + (64 / 2 ) + ((index % 4) * 64));
                     chainsLabel.setY(this.getY() - (this.getHeight() / 2) + 32 + (68 / 2 ) + (line * 68));//56
                 }
-            } else {
-                for (Font label: chainsLabels) {
-                    if(mapColors!= null && mapColors.get(label.id) != null && chains.get(mapColors.get(label.id)).complete)
-                        label.color = new float[]{60f/255,216f/255,0,1};//G
-                    else
-                        label.color = new float[]{235f/255,235f/255,235f/255,1};//W
+            } else if(chains != null) {
+                try {
+                    for (Font label: chainsLabels) {
+                        if(mapColors!= null && mapColors.get(label.id) != null && chains.get(mapColors.get(label.id)).complete)
+                            label.color = new float[]{60f/255,216f/255,0,1};//G
+                        else
+                            label.color = new float[]{235f/255,235f/255,235f/255,1};//W
 
-                    GameView.GLRenderer.updateVertexBuffer(label.vertexBuffer);
-                    label.draw();
+                        GameView.GLRenderer.updateVertexBuffer(label.vertexBuffer);
+                        label.draw();
+                    }
+                } catch (Exception e) {
+                    //error while drawing, not really a problem, just wait until the other thread finishes.
+                    e.printStackTrace();
                 }
             }
         }

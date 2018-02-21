@@ -35,24 +35,24 @@ public class Shape implements Comparable<Shape> {
     private float width = 0;
     private float height = 0;
     public float scale = 1;
-    public float angle = 0;
+    //public float angle = 0;
     float stepScale = 0.05f;
     private float x = 0;
     private float y = 0;
     public static HashMap<Integer,TextureInfo> textures = new HashMap<>();
-    public float angularSpeed = 0.25f;
+    //public float angularSpeed = 0.25f;
     public float minScale = 0.75f;//0.75f;
     public float maxScale = 1.25f;//1.25f
     public float scaleStep = 0.025f;
     public float offSetX = 0;
     public float offSetY = 0;
     public boolean doScale = false;
-    public boolean rotate = false;
+    //public boolean rotate = false;
     public boolean useStaticVBO = false;
     public String id;
     public float charAngle = 0;
     public List<ProgramInfo> programs = new ArrayList<>();
-    public float direction = -1f;
+    //public float direction = -1f;
     public boolean bounce = true;
     public float minBounce = 320f;
     public float maxBounce = 10f;
@@ -261,12 +261,12 @@ public class Shape implements Comparable<Shape> {
         } else Matrix.scaleM(this.mMVPMatrix, 0, this.getWidth(), this.getHeight(), 1);
 
         // Create a rotation transformation for the triangle
-        if(rotate){
+        if(this.transform.rotate){
             long time = SystemClock.uptimeMillis() % 4000L;
-            float angle = 0.090f * ((int) time) * this.angularSpeed;
-            Matrix.setRotateM(this.mRotationMatrix, 0, angle, 0, 0, this.direction);
+            this.transform.angle = 0.090f * ((int) time) * this.transform.angularSpeed;
+            Matrix.setRotateM(this.mRotationMatrix, 0, this.transform.angle, 0, 0, this.transform.direction);
         } else {
-            Matrix.setRotateM(mRotationMatrix, 0, 0, 0, 0, this.direction);
+            Matrix.setRotateM(mRotationMatrix, 0, 0, 0, 0, this.transform.direction);
         }
 
         // Combine the rotation matrix with the projection and camera view

@@ -209,7 +209,9 @@ public class Gem extends Entity {
                     board.entities[this.moveTo.y][this.moveTo.x] = this;
                 }
                 this.movingSpeed = Math.abs(this.movingSpeed);
-                if(!board.selectedGem.equals(this)) board.parseBoard = true;
+                //if(!board.selectedGem.equals(this)) board.parseBoard = true;
+                //if(board.selectedGem == null) board.parseBoard = true;
+                board.parseBoard = true;
                 this.moveTo = null;
                 //return
             }

@@ -158,14 +158,31 @@ public class GameView extends GLSurfaceView {
         Integer col = (int)Math.floor((rawX - board.gemOffsetX) / GameView.scaledDefaultSide);
         //Log.d("TOUCH_START","row: " + row +",col: " + col + ",rawX: " + rawX + ",rawY: " + rawY + ", gemOffsetY: " + board.gemOffsetY + ", gemOffsetX: " + board.gemOffsetX + ", ds: " + GameView.scaledDefaultSide);
         if(!GameView.GLRenderer._boardReady || row >= board.entities.length || col >= board.entities[0].length || row < 0 || col < 0) {
+            if(board.selectedGem != null) board.selectedGem.transform.stopWobble();
             board.selectedGem = null;
             return;
         }
         Gem entity = board.entities[row][col];
-        board.selectedGem = entity;
-        //entity.selected = true;
-        //if(((Gem)board.selectedGem).curAnimation != null) ((Gem)board.selectedGem).curAnimation.play();
-        if(((Gem)board.selectedGem).curAnimation != null) ((Gem)board.selectedGem).transform.scaleOut(0.75f,1.05f,0.4f); //.scaleIn();
+        if(board.selectedGem == null) {
+            board.selectedGem = entity;
+            if(board.selectedGem.getClass().getName().endsWith("Gem")) {
+                entity.transform.wobble();
+            }
+            //entity.selected = true;
+            //if(((Gem)board.selectedGem).curAnimation != null) ((Gem)board.selectedGem).curAnimation.play();
+            if(((Gem)board.selectedGem).curAnimation != null) ((Gem)board.selectedGem).transform.scaleOut(0.75f,1.05f,0.4f); //.scaleIn();
+        } else {
+            float diffRow = Math.abs(row - ((Gem)board.selectedGem).getRow());
+            float diffCol = Math.abs(col - ((Gem)board.selectedGem).getCol());
+            if (diffRow != diffCol || (diffRow != 0 && diffCol != 0)) {
+                if (Math.abs(diffCol - diffRow) > 1 || (diffRow != 0 && diffCol != 0)) {
+                    ((Gem) board.selectedGem).transform.stopWobble();
+                    board.selectedGem = entity;
+                    entity.transform.wobble();
+                    if(((Gem)board.selectedGem).curAnimation != null) ((Gem)board.selectedGem).transform.scaleOut(0.75f,1.05f,0.4f); //.scaleIn();
+                }
+            }
+        }
     }
 
     public void touchEnd(MotionEvent evt) {
@@ -207,6 +224,9 @@ public class GameView extends GLSurfaceView {
         entity.moveTo.y = ((Gem)board.selectedGem).getRow();
         entity.moveTo.x = ((Gem)board.selectedGem).getCol();
         board.clearChains = true;
+        ((Gem) board.selectedGem).transform.stopWobble();
+        board.selectedGem = null;
+        board.curStage.moves++;
     }
 
 
@@ -302,7 +322,7 @@ public class GameView extends GLSurfaceView {
                     backGround.setOffSetX(0);
                     backGround.setOffSetY(0);
                     backGround.doScale = false;
-                    backGround.rotate = false;
+                    backGround.transform.rotate = false;
                     SetBackGround(0);
 
                     /******* end onSurfaceChanged GL2 **********/
