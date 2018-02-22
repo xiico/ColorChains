@@ -505,7 +505,7 @@ class UI {
             } else if(chains != null) {
                 try {
                     for (Font label: chainsLabels) {
-                        if(mapColors!= null && mapColors.get(label.id) != null && chains.get(mapColors.get(label.id)).complete)
+                        if((mapColors!= null && mapColors.get(label.id) != null && chains.get(mapColors.get(label.id)).complete) || label.text.equals("0"))
                             label.color = new float[]{60f/255,216f/255,0,1};//G
                         else
                             label.color = new float[]{235f/255,235f/255,235f/255,1};//W

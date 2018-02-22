@@ -164,22 +164,25 @@ public class GameView extends GLSurfaceView {
         }
         Gem entity = board.entities[row][col];
         if(board.selectedGem == null) {
-            board.selectedGem = entity;
-            if(board.selectedGem.getClass().getName().endsWith("Gem")) {
+            if(entity.getClass().getName().endsWith("Gem")) {
+                board.selectedGem = entity;
                 entity.transform.wobble();
+                //entity.selected = true;
+                //if(((Gem)board.selectedGem).curAnimation != null) ((Gem)board.selectedGem).curAnimation.play();
+                if(((Gem)board.selectedGem).curAnimation != null) ((Gem)board.selectedGem).transform.scaleOut(0.75f,1.05f,0.4f); //.scaleIn();
             }
-            //entity.selected = true;
-            //if(((Gem)board.selectedGem).curAnimation != null) ((Gem)board.selectedGem).curAnimation.play();
-            if(((Gem)board.selectedGem).curAnimation != null) ((Gem)board.selectedGem).transform.scaleOut(0.75f,1.05f,0.4f); //.scaleIn();
         } else {
             float diffRow = Math.abs(row - ((Gem)board.selectedGem).getRow());
             float diffCol = Math.abs(col - ((Gem)board.selectedGem).getCol());
             if (diffRow != diffCol || (diffRow != 0 && diffCol != 0)) {
-                if (Math.abs(diffCol - diffRow) > 1 || (diffRow != 0 && diffCol != 0)) {
+                if ((Math.abs(diffCol - diffRow) > 1 || (diffRow != 0 && diffCol != 0)) && entity.getClass().getName().endsWith("Gem") ) {
                     ((Gem) board.selectedGem).transform.stopWobble();
                     board.selectedGem = entity;
                     entity.transform.wobble();
                     if(((Gem)board.selectedGem).curAnimation != null) ((Gem)board.selectedGem).transform.scaleOut(0.75f,1.05f,0.4f); //.scaleIn();
+                } else if (!entity.getClass().getName().endsWith("Gem")) {
+                    ((Gem) board.selectedGem).transform.stopWobble();
+                    board.selectedGem = null;
                 }
             }
         }
