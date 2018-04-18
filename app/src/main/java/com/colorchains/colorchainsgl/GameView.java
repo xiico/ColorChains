@@ -33,7 +33,7 @@ public class GameView extends GLSurfaceView {
     private static boolean paused;
     public static boolean disableTouch = false;
     public static DisplayMetrics metrics;
-    private static boolean showFPS = true;
+    private static boolean showFPS = false;
     public static boolean started = false;
     //private final UI.Title title;
     // A boolean which we will set and unset
@@ -395,8 +395,12 @@ public class GameView extends GLSurfaceView {
                 }
             }
 
-            UI.update();
-            UI.draw();
+            try {
+                UI.update();
+                UI.draw();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
             if (GameView.showFPS) {
                 changeProgram(font.mProgram.getProgramId(), font.vertexBuffer);
