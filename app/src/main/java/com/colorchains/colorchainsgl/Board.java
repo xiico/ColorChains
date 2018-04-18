@@ -560,7 +560,7 @@ public class Board extends Entity {
         }
     }
 
-    public boolean autoLoad = true;
+    public boolean autoLoad = false;
     @Override
     public void update(){
         if(this.clearChains) {
@@ -665,7 +665,8 @@ public class Board extends Entity {
             }
             return;
         }
-        ((UI.InfoBox) UI.findControlById("infoBox")).visible = true;
+        if(UI.findControlById("infoBox") != null)
+            ((UI.InfoBox) UI.findControlById("infoBox")).visible = true;
 
         /********** Use EntityCollection **********/
         this.marioCol.draw();
