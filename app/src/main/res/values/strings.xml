@@ -7,4 +7,9 @@
     <string name="button_next" translatable="true">Next</string>
     <string name="button_cancel" translatable="true">Cancel</string>
     <string name="level_select" translatable="true">Level Select</string>
+    <string name="your_progress_will_be_uploaded">Your existing achievements and score will be uploaded shortly.</string>
+    <string name="achievements_exception">There was an issue communicating with achievements.</string>
+    <string name="leaderboards_exception">There was an issue communicating with leaderboards.</string>
+    <string name="status_exception_error">%1$s (status %2$d). %3$s.</string>
+    <string name="players_exception">There was an issue communicating with players.</string>
 </resources>
