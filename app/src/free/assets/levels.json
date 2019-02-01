@@ -21,7 +21,8 @@
       "maxMoves": 0,
       "targetMoves": 200,
       "sets": [],
-      "defaultTargetScore": 1000
+      "defaultTargetScore": 1000,
+      "leaderBoard": ""
     },
     {
       "id": "1",
@@ -44,7 +45,8 @@
       "maxMoves": 0,
       "targetMoves": 200,
       "sets": [],
-      "defaultTargetScore": 1000
+      "defaultTargetScore": 1000,
+      "leaderBoard": ""
     },
     {
       "id": "2",
@@ -67,7 +69,8 @@
       "maxMoves": 0,
       "targetMoves": 27,
       "sets": [],
-      "defaultTargetScore": 1000
+      "defaultTargetScore": 1000,
+      "leaderBoard": ""
     },
     {
       "id": "3",
@@ -90,7 +93,8 @@
       "maxMoves": 0,
       "targetMoves": 30,
       "sets": [],
-      "defaultTargetScore": 1000
+      "defaultTargetScore": 1000,
+      "leaderBoard": ""
     },
     {
       "id": "4",
@@ -113,7 +117,8 @@
       "maxMoves": 0,
       "targetMoves": 46,
       "sets": [],
-      "defaultTargetScore": 1000
+      "defaultTargetScore": 1000,
+      "leaderBoard": ""
     },
     {
       "id": "5",
@@ -136,7 +141,8 @@
       "maxMoves": 0,
       "targetMoves": 80,
       "sets": [],
-      "defaultTargetScore": 2000
+      "defaultTargetScore": 2000,
+      "leaderBoard": ""
     },
     {
       "id": "6",
@@ -159,7 +165,8 @@
       "maxMoves": 0,
       "targetMoves": 30,
       "sets": [],
-      "defaultTargetScore": 1000
+      "defaultTargetScore": 1000,
+      "leaderBoard": "CgkIgc7LiYMXEAIQCg"
     },
     {
       "id": "7",
@@ -182,7 +189,8 @@
       "maxMoves": 0,
       "targetMoves": 46,
       "sets": [],
-      "defaultTargetScore": 1000
+      "defaultTargetScore": 1000,
+      "leaderBoard": "CgkIgc7LiYMXEAIQDA"
     },
     {
       "id": "8",
@@ -205,7 +213,8 @@
       "maxMoves": 0,
       "targetMoves": 80,
       "sets": [],
-      "defaultTargetScore": 2000
+      "defaultTargetScore": 2000,
+      "leaderBoard": "CgkIgc7LiYMXEAIQDQ"
     },
     {
       "id": "9",
@@ -228,7 +237,8 @@
       "maxMoves": 0,
       "targetMoves": 99,
       "sets": [],
-      "defaultTargetScore": 3000
+      "defaultTargetScore": 3000,
+      "leaderBoard": ""
     },
     {
       "id": "10",
@@ -251,7 +261,8 @@
       "maxMoves": 0,
       "targetMoves": 194,
       "sets": [],
-      "defaultTargetScore": 5000
+      "defaultTargetScore": 5000,
+      "leaderBoard": ""
     },
     {
       "id": "11",
@@ -274,7 +285,8 @@
       "maxMoves": 0,
       "targetMoves": 267,
       "sets": [],
-      "defaultTargetScore": 5000
+      "defaultTargetScore": 5000,
+      "leaderBoard": ""
     },
     {
       "id": "12",
@@ -297,7 +309,8 @@
       "maxMoves": 0,
       "targetMoves": 320,
       "sets": [],
-      "defaultTargetScore": 5000
+      "defaultTargetScore": 5000,
+      "leaderBoard": ""
     },
     {
       "id": "13",
@@ -320,7 +333,8 @@
       "maxMoves": 0,
       "targetMoves": 325,
       "sets": [],
-      "defaultTargetScore": 4000
+      "defaultTargetScore": 4000,
+      "leaderBoard": ""
     },
     {
       "id": "14",
@@ -343,7 +357,8 @@
       "maxMoves": 0,
       "targetMoves": 371,
       "sets": [],
-      "defaultTargetScore": 5000
+      "defaultTargetScore": 5000,
+      "leaderBoard": ""
     },
     {
       "id": "15",
@@ -370,7 +385,8 @@
         3, 6,8,4,6,1,3,9,
         4,10,8,4,6,1,2,5,
         3, 7,8,4,6,1,3,8],
-      "defaultTargetScore": 2000
+      "defaultTargetScore": 2000,
+      "leaderBoard": ""
     },
     {
       "id": "16",
@@ -397,7 +413,8 @@
          7,6,7,5,5,1,2,11,
          7,6,3,8,5,3,2,10,
          7,4,7,5,5,1,4,11],
-      "defaultTargetScore": 5000
+      "defaultTargetScore": 5000,
+      "leaderBoard": ""
     },
     {
       "id": "17",
@@ -420,7 +437,8 @@
       "maxMoves": 0,
       "targetMoves": 5000,
       "sets": [],
-      "defaultTargetScore": 222
+      "defaultTargetScore": 222,
+      "leaderBoard": ""
     },
     {
       "id": "18",
@@ -443,7 +461,8 @@
       "maxMoves": 0,
       "targetMoves": 122,
       "sets": [],
-      "defaultTargetScore": 5000
+      "defaultTargetScore": 5000,
+      "leaderBoard": ""
     },
     {
       "id": "19",
@@ -466,7 +485,8 @@
       "maxMoves": 0,
       "targetMoves": 700,
       "sets": [],
-      "defaultTargetScore": 5000
+      "defaultTargetScore": 5000,
+      "leaderBoard": ""
     },
     {
       "id": "20",
@@ -489,7 +509,8 @@
       "maxMoves": 0,
       "targetMoves": 330,
       "sets": [],
-      "defaultTargetScore": 5000
+      "defaultTargetScore": 5000,
+      "leaderBoard": ""
     },
     {
       "id": "21",
@@ -512,7 +533,8 @@
       "maxMoves": 0,
       "targetMoves": 370,
       "sets": [],
-      "defaultTargetScore": 5000
+      "defaultTargetScore": 5000,
+      "leaderBoard": ""
     },
     {
       "id": "22",
@@ -535,7 +557,8 @@
       "maxMoves": 0,
       "targetMoves": 460,
       "sets": [],
-      "defaultTargetScore": 5000
+      "defaultTargetScore": 5000,
+      "leaderBoard": ""
     },
     {
       "id": "23",
@@ -558,7 +581,8 @@
       "maxMoves": 0,
       "targetMoves": 402,
       "sets": [],
-      "defaultTargetScore": 5000
+      "defaultTargetScore": 5000,
+      "leaderBoard": ""
     },
     {
       "id": "24",
@@ -581,7 +605,8 @@
       "maxMoves": 0,
       "targetMoves": 630,
       "sets": [],
-      "defaultTargetScore": 5000
+      "defaultTargetScore": 5000,
+      "leaderBoard": ""
     }
   ]
 }

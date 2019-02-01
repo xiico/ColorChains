@@ -5,6 +5,7 @@ package com.colorchains.colorchainsgl;
  */
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -78,10 +79,11 @@ public class MainActivity extends Activity {
         hideSystemUI();
 
         /****************/
-        startSignInIntent();
+        if(!isSignedIn())
+            startSignInIntent();
         /****************/
         setContentView(gameView);
-        //setContentView(R.layout.activity_main);
+        //setContentView(R.layout.activity_test);
     }
 
     private boolean isSignedIn() {
@@ -113,6 +115,8 @@ public class MainActivity extends Activity {
         mLeaderboardsClient = Games.getLeaderboardsClient(this, googleSignInAccount);
         mEventsClient = Games.getEventsClient(this, googleSignInAccount);
         mPlayersClient = Games.getPlayersClient(this, googleSignInAccount);
+
+        GameView.mLeaderboardsClient = mLeaderboardsClient;
 
         // Show sign-out button on main menu
         /*mMainMenuFragment.setShowSignInButton(false);*/
@@ -208,6 +212,38 @@ public class MainActivity extends Activity {
         startActivityForResult(mGoogleSignInClient.getSignInIntent(), RC_SIGN_IN);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+        if (requestCode == RC_SIGN_IN) {
+            Task<GoogleSignInAccount> task =
+                    GoogleSignIn.getSignedInAccountFromIntent(intent);
+
+            try {
+                GoogleSignInAccount account = task.getResult(ApiException.class);
+                onConnected(account);
+            } catch (ApiException apiException) {
+                String message = apiException.getMessage();
+                if (message == null || message.isEmpty()) {
+                    message = getString(R.string.signin_other_error);
+                }
+
+                onDisconnected();
+
+                new android.app.AlertDialog.Builder(this)
+                        .setMessage(message)
+                        .setNeutralButton(android.R.string.ok, null)
+                        .show();
+            }
+        }
+    }
+
+//    private void startSignInIntent() {
+//        GoogleSignInClient signInClient = GoogleSignIn.getClient(this,
+//                GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN);
+//        Intent intent = signInClient.getSignInIntent();
+//        startActivityForResult(intent, RC_SIGN_IN);
+//    }
 
     // This method executes when the player starts the game
     @Override

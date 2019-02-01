@@ -29,6 +29,7 @@ public class Stage {
     public Integer maxMoves;
     public Integer targetMoves;
     public int gemCount;
+    public String leaderBoard;
 
     public Stage(String jsonString) {
         try {
@@ -53,6 +54,7 @@ public class Stage {
                     this.sets[j] = Integer.parseInt(jSets.get(j).toString());
                 }
             }
+            this.leaderBoard = jStage.getString("leaderBoard");
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -89,8 +91,8 @@ public class Stage {
                         "\""+ entities[5] + "\"," +
                         "\""+ entities[6] + "\"," +
                         "\""+ entities[7] + "\"]," +
-                        "        \"customProperties\": [], \"targetScore\": %s, \"score\": %s, \"sets\":%s, \"highScore\":%s, \"moves\":%s, \"maxMoves\":%s, \"targetMoves\":%s }",
-                this.id, this.name, this.targetScore, this.score, this.sets != null ? Arrays.toString(this.sets) : "[]", this.highScore, moves, this.maxMoves, this.targetMoves);
+                        "        \"customProperties\": [], \"targetScore\": %s, \"score\": %s, \"sets\":%s, \"highScore\":%s, \"moves\":%s, \"maxMoves\":%s, \"targetMoves\":%s, \"leaderBoard\":\"%s\" }",
+                this.id, this.name, this.targetScore, this.score, this.sets != null ? Arrays.toString(this.sets) : "[]", this.highScore, moves, this.maxMoves, this.targetMoves, this.leaderBoard);
         return  stage;
     }
     public String toJsonString(){
@@ -103,8 +105,8 @@ public class Stage {
                         "\""+ tiles[5] + "\"," +
                         "\""+ tiles[6] + "\"," +
                         "\""+ tiles[7] + "\"]," +
-                        "        \"customProperties\": [], \"targetScore\": %s, \"score\": %s, \"sets\":%s, \"highScore\":%s }",
-                this.id, this.name, this.targetScore, this.score, this.sets != null ? Arrays.toString(this.sets) : "[]", this.highScore, this.moves, this.maxMoves);
+                        "        \"customProperties\": [], \"targetScore\": %s, \"score\": %s, \"sets\":%s, \"highScore\":%s, \"leaderBoard\":\"%s\" }",
+                this.id, this.name, this.targetScore, this.score, this.sets != null ? Arrays.toString(this.sets) : "[]", this.highScore, this.moves, this.maxMoves, this.leaderBoard);
         return  stage;
     }
 }

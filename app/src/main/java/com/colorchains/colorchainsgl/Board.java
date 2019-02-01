@@ -3,6 +3,7 @@ package com.colorchains.colorchainsgl;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.text.TextUtils;
 import android.view.MotionEvent;
 
 import org.json.JSONArray;
@@ -680,6 +681,7 @@ public class Board extends Entity {
         if (this.curStage == null) this.setCurStage(0);
         //this.curStage.score += this.calculateScore();
         saveScore();
+        saveLeaderBoard();
         //if (this.curStage.score >= this.curStage.targetScore) {
         if (this.getScoreMultiplier() >= 0) {
             //progressBar.setValue(curStage.score / (float)curStage.targetScore);
@@ -701,6 +703,12 @@ public class Board extends Entity {
         levelCompleted.visible = false;
         stars.visible = false;
         checkComplete = true;
+    }
+
+    private void saveLeaderBoard(){
+        if(!TextUtils.isEmpty(curStage.leaderBoard) && GameView.mLeaderboardsClient != null) {
+            GameView.mLeaderboardsClient.submitScore(curStage.leaderBoard, curStage.score);
+        }
     }
 
     private void loadNextLevel() {

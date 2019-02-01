@@ -1,6 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        config {
+            keyAlias 'key0'
+            keyPassword 'ColorChainsFree'
+            storeFile file('D:/OneDrive/Android/Keys/Color Chains - Free/key.jks')
+            storePassword 'ColorChainsFree'
+        }
+    }
     compileSdkVersion 26
     defaultConfig {
         applicationId "com.colorchains.colorchainsgl"
@@ -30,7 +38,8 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
     androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
