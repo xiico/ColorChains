@@ -111,7 +111,7 @@ public class MainActivity extends Activity {
                 });
     }
 
-    public void unlockAchivement(View view){
+    public void unlockAchievement(View view){
         mAchievementsClient.unlock(getString(R.string.achievement_level_one));
     }
 
