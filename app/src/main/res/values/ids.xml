@@ -14,16 +14,18 @@
     <!-- TODO: Replace this entire file with the ids.xml provided from the Google Play Console.
          NOTE: You can find this file by clicking the `Get Resources` link in
          the Events, Achievements, or Leaderboards menu of the Google Play Console. -->
-    <string name="app_id">791099401985</string>
+    <string name="app_id" translatable="false">791099401985</string>
 
-    <string name="achievement_prime">CgkIgc7LiYMXEAIQAg</string>
-    <string name="achievement_really_bored">CgkIgc7LiYMXEAIQAw</string>
-    <string name="achievement_bored">CgkIgc7LiYMXEAIQBA</string>
-    <string name="achievement_humble">CgkIgc7LiYMXEAIQBQ</string>
-    <string name="achievement_arrogant">CgkIgc7LiYMXEAIQBg</string>
-    <string name="achievement_leet">CgkIgc7LiYMXEAIQBw</string>
+    <string name="achievement_prime" translatable="false">CgkIgc7LiYMXEAIQAg</string>
+    <string name="achievement_really_bored" translatable="false">CgkIgc7LiYMXEAIQAw</string>
+    <string name="achievement_bored" translatable="false">CgkIgc7LiYMXEAIQBA</string>
+    <string name="achievement_humble" translatable="false">CgkIgc7LiYMXEAIQBQ</string>
+    <string name="achievement_arrogant" translatable="false">CgkIgc7LiYMXEAIQBg</string>
+    <string name="achievement_leet" translatable="false">CgkIgc7LiYMXEAIQBw</string>
+    <string name="achievement_tutorial" translatable="false">CgkIgc7LiYMXEAIQDw</string>
+    <string name="achievement_level_one" translatable="false">CgkIgc7LiYMXEAIQEA</string>
 
-    <string name="leaderboard_color_chains_leaderboard">CgkIgc7LiYMXEAIQAA</string>
-    <string name="leaderboard_easy">CgkIgc7LiYMXEAIQCA</string>
-    <string name="leaderboard_hard">CgkIgc7LiYMXEAIQCQ</string>
+    <string name="leaderboard_color_chains_leaderboard" translatable="false">CgkIgc7LiYMXEAIQAA</string>
+    <string name="leaderboard_easy" translatable="false">CgkIgc7LiYMXEAIQCA</string>
+    <string name="leaderboard_hard" translatable="false">CgkIgc7LiYMXEAIQCQ</string>
 </resources>

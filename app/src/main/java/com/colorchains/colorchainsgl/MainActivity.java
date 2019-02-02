@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -25,6 +26,7 @@ import com.google.android.gms.games.AchievementsClient;
 import com.google.android.gms.games.AnnotatedData;
 import com.google.android.gms.games.EventsClient;
 import com.google.android.gms.games.Games;
+import com.google.android.gms.games.GamesClient;
 import com.google.android.gms.games.LeaderboardsClient;
 import com.google.android.gms.games.Player;
 import com.google.android.gms.games.PlayersClient;
@@ -57,7 +59,7 @@ public class MainActivity extends Activity {
     private static final int RC_SIGN_IN = 9001;
 
     // tag for debug logging
-    private static final String TAG = "TanC";
+    private static final String TAG = "CCGl";
 
     // playing on hard mode?
     private boolean mHardMode = false;
@@ -82,8 +84,35 @@ public class MainActivity extends Activity {
         if(!isSignedIn())
             startSignInIntent();
         /****************/
-        setContentView(gameView);
         //setContentView(R.layout.activity_test);
+        setContentView(gameView);
+    }
+
+    /** Called when the user touches the button */
+    public void viewAchievements(View view) {
+        GameView.mAchievementsClient
+                .getAchievementsIntent()
+                .addOnSuccessListener(new OnSuccessListener<Intent>() {
+                    @Override
+                    public void onSuccess(Intent intent) {
+                        startActivityForResult(intent, R.id.container_pop_up);
+                    }
+                });
+    }
+
+    public void viewLeaderboards(View view) {
+        GameView.mLeaderboardsClient
+                .getAllLeaderboardsIntent()
+                .addOnSuccessListener(new OnSuccessListener<Intent>() {
+                    @Override
+                    public void onSuccess(Intent intent) {
+                        startActivityForResult(intent, R.id.container_pop_up);
+                    }
+                });
+    }
+
+    public void unlockAchivement(View view){
+        mAchievementsClient.unlock(getString(R.string.achievement_level_one));
     }
 
     private boolean isSignedIn() {
@@ -117,6 +146,13 @@ public class MainActivity extends Activity {
         mPlayersClient = Games.getPlayersClient(this, googleSignInAccount);
 
         GameView.mLeaderboardsClient = mLeaderboardsClient;
+        GameView.mAchievementsClient = mAchievementsClient;
+
+        Games.getGamesClient(this, googleSignInAccount).
+                setGravityForPopups(Gravity.TOP | Gravity.CENTER_HORIZONTAL);
+        Games.getGamesClient(this, googleSignInAccount).
+                setViewForPopups(findViewById(android.R.id.content));
+
 
         // Show sign-out button on main menu
         /*mMainMenuFragment.setShowSignInButton(false);*/

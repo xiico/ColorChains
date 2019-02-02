@@ -1,10 +1,15 @@
 package com.colorchains.colorchainsgl;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.MotionEvent;
+import android.view.View;
+
+import com.google.android.gms.tasks.OnSuccessListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -73,6 +78,9 @@ public class Board extends Entity {
     public EntityCollection marioCol;
     public boolean parseBoard = false;
     public List<String> moveHistory = new ArrayList<>();
+
+    // tag for debug logging
+    private static final String TAG = "CCGl";
 
     public Board(Context context)  throws JSONException {
         super("board", TYPE.BOARD,0f,0f,1280,768);
@@ -654,6 +662,19 @@ public class Board extends Entity {
         }
 
     }
+
+    /** Called when the user touches the button */
+    public void viewAchievements() {
+        GameView.mAchievementsClient
+                .getAchievementsIntent()
+                .addOnSuccessListener(new OnSuccessListener<Intent>() {
+                    @Override
+                    public void onSuccess(Intent intent) {
+                        ((MainActivity)context).startActivityForResult(intent, R.id.container_pop_up);
+                    }
+                });
+    }
+
     private boolean checkComplete = true;
 
     @Override
@@ -682,6 +703,8 @@ public class Board extends Entity {
         //this.curStage.score += this.calculateScore();
         saveScore();
         saveLeaderBoard();
+        unlockAchievements();
+        //viewAchievements();
         //if (this.curStage.score >= this.curStage.targetScore) {
         if (this.getScoreMultiplier() >= 0) {
             //progressBar.setValue(curStage.score / (float)curStage.targetScore);
@@ -708,6 +731,25 @@ public class Board extends Entity {
     private void saveLeaderBoard(){
         if(!TextUtils.isEmpty(curStage.leaderBoard) && GameView.mLeaderboardsClient != null) {
             GameView.mLeaderboardsClient.submitScore(curStage.leaderBoard, curStage.score);
+        }
+    }
+
+    private void unlockAchievements(){
+        if(GameView.mAchievementsClient != null && curStage.id.equals("0")){
+            GameView.mAchievementsClient.unlock(context.getString(R.string.achievement_level_one));
+            Log.d(TAG, context.getString(R.string.achievement_level_one));
+        }
+
+        if(GameView.mAchievementsClient != null && curStage.id.equals("5")){
+            GameView.mAchievementsClient.unlock(context.getString(R.string.achievement_tutorial));
+        }
+
+        if(GameView.mAchievementsClient != null && curStage.id.equals("6")){
+            ((MainActivity)context).runOnUiThread(new Runnable() {
+                public void run() {
+                    GameView.mAchievementsClient.unlock(context.getString(R.string.achievement_prime));
+                }
+            });
         }
     }
 

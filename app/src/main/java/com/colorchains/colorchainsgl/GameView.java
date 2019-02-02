@@ -12,6 +12,7 @@ import android.opengl.Matrix;
 import android.view.MotionEvent;
 import android.util.DisplayMetrics;
 
+import com.google.android.gms.games.AchievementsClient;
 import com.google.android.gms.games.LeaderboardsClient;
 
 import org.json.JSONException;
@@ -56,6 +57,7 @@ public class GameView extends GLSurfaceView {
     public static SharedPreferences settings;
 
     public static volatile LeaderboardsClient mLeaderboardsClient;
+    public static volatile AchievementsClient mAchievementsClient;
 
     public GameView(Context context) {
         super(context);
